@@ -1,9 +1,12 @@
 {
   "version": 2,
   "builds": [
-    { "src": "app.py", "use": "@vercel/python" }
+    { "src": "app.py", "use": "@vercel/python" },
+    { "src": "api/auth.py", "use": "@vercel/python" }
   ],
   "routes": [
+    { "src": "/login", "dest": "api/auth.py" },
+    { "src": "/user/login", "dest": "api/auth.py" },
     { "src": "/(.*)", "dest": "app.py" }
   ]
 }
