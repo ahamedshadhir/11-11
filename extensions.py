@@ -12,6 +12,11 @@ class _LoginManager(LoginManager):
             register_admin(app)
         except Exception:
             pass
+        try:
+            from i18n import install_i18n
+            install_i18n(app)
+        except Exception:
+            pass
 
 
 login_manager = _LoginManager()
