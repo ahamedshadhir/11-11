@@ -1,1 +1,147 @@
-body{background:#e3e6e6}.header-card{background:#420e15;color:#fff;border:0;border-radius:0}.header-card a,.header-card label,.deliver label{color:#fff}.header-logo img{background:#fff;border-radius:4px;padding:4px}.search-form{display:flex;flex:1;background:#fff;border-radius:6px;overflow:hidden}.search-form input{border:0;flex:1;padding:12px 14px}.search-form button{background:#be923b;color:#420e15;border:0;padding:0 18px;font-size:20px;font-weight:700}.header-rt .common-btn{background:#be923b;color:#420e15}.header-rt .icon-link{color:#fff}.mega{background:#5a1a22;color:#fff}.mega a{color:#f6f3ee}.cookie-bar{background:#231014;color:#f6f3ee}.common-btn{background:#420e15;color:#fff}.common-bd-btn{border-color:#420e15;color:#420e15}.product-card{background:#fff;border:1px solid #d5d9d9;border-radius:4px}footer,.site-footer{background:#231014;color:#f6f3ee}
+/* 11-11 marketplace chrome — burgundy / gold, Amazon-like density */
+:root{
+  --navy:#420e15;
+  --navy-2:#5a1a22;
+  --ink:#231014;
+  --gold:#be923b;
+  --gold-2:#d4a84c;
+  --flash:#fb2c36;
+  --canvas:#f6f3ee;
+  --page:#eaeded;
+  --card:#fff;
+  --line:#d5d9d9;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--page);
+  color:#111;
+  font-family:Inter,system-ui,sans-serif;
+  letter-spacing:-0.01em;
+}
+.container{width:min(1280px,calc(100% - 28px))}
+.header-card{
+  background:var(--navy);
+  color:#fff;
+  border:0;
+  border-radius:0;
+  box-shadow:0 2px 8px rgba(0,0,0,.18);
+}
+.header-row{padding:10px 0 8px;gap:18px}
+.header-card a,.header-card label,.deliver label,.header-rt .icon-link{color:#fff}
+.header-logo img{
+  width:104px;height:auto;
+  background:#fff;border-radius:6px;padding:5px 7px;
+}
+.deliver{
+  min-width:118px;padding:6px 8px;border-radius:6px;
+}
+.deliver:hover{outline:1px solid #fff3}
+.deliver label{display:block;font-size:11px;opacity:.75;line-height:1.1}
+.deliver select{
+  background:transparent;color:#fff;border:0;font-weight:700;font-size:13px;max-width:140px;
+}
+.search-wrap{flex:1}
+.search-form{
+  display:flex;align-items:stretch;background:#fff;
+  border-radius:8px;overflow:hidden;
+  box-shadow:0 0 0 2px var(--gold);
+}
+.search-form input{
+  border:0;flex:1;padding:12px 14px;font-size:15px;color:#111;outline:none;
+}
+.search-form button{
+  background:var(--gold);color:var(--navy);border:0;
+  padding:0 18px;font-size:20px;font-weight:800;cursor:pointer;
+}
+.search-form button:hover{background:var(--gold-2)}
+.cats-btn{
+  background:var(--navy-2);color:#fff;border:1px solid #fff3;
+  border-radius:6px;padding:10px 12px;white-space:nowrap;
+}
+.header-rt{display:flex;align-items:center;gap:14px}
+.header-rt .common-btn{
+  background:var(--gold);color:var(--navy);border:0;border-radius:6px;
+  padding:8px 14px;font-weight:700;
+}
+.header-rt .icon-link{font-size:13px;text-decoration:none;position:relative}
+.header-rt .badge{
+  background:var(--gold);color:var(--navy);border-radius:10px;
+  font-size:11px;padding:1px 6px;margin-left:4px;font-weight:800;
+}
+.mega{
+  background:var(--navy-2);border-top:1px solid #fff1;
+  max-height:42px;overflow:hidden;
+}
+.mega:hover,.mega:focus-within{max-height:280px;transition:max-height .2s ease}
+.mega-grid{display:flex;gap:22px;padding:8px 0 16px;overflow:auto}
+.mega a{color:#f6f3ee;text-decoration:none;font-size:13px}
+.mega h6{margin:0 0 6px;font-size:13px}
+.mega h6 a{color:var(--gold)}
+.cookie-bar{background:var(--ink);color:#f6f3ee}
+.common-btn{background:var(--navy);color:#fff;border-radius:8px}
+.common-btn:hover{background:#5a1a22;color:#fff}
+.common-bd-btn{border:1px solid var(--navy);color:var(--navy);background:#fff;border-radius:8px}
+.banner-sec{background:transparent;padding:12px 0 0}
+.banner-slide{
+  min-height:340px;border-radius:10px;overflow:hidden;
+  background-size:cover;background-position:center;
+}
+.common-outer{padding:22px 0}
+.common-title{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:14px}
+.common-title h4{
+  font-family:Inter,system-ui,sans-serif;font-weight:800;font-size:22px;
+  color:var(--navy);margin:0;
+}
+.view-all-btn{color:var(--navy);font-weight:600;text-decoration:none}
+.product-grid,.deal-grid,.best-grid,.category-list,.brand-row{
+  display:grid;gap:14px;
+}
+.product-grid{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
+.deal-grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+.card,.deal-card,.best-tile,.category-card,.brand-card,.add-view-card,.why-card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:10px;
+  overflow:hidden;
+  box-shadow:0 1px 2px rgba(15,17,17,.08);
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.card:hover,.deal-card:hover,.best-tile:hover,.category-card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 8px 24px rgba(66,14,21,.12);
+}
+.card-img,.category-img, .deal-card img, .card img{
+  width:100%;aspect-ratio:1;object-fit:cover;background:#faf8f5;display:block;
+}
+.card-body{padding:12px 12px 14px}
+.card-body h5,.deal-card h5,.category-name{
+  font-size:14px;line-height:1.35;margin:0 0 8px;color:#111;font-weight:600;
+}
+.price{color:var(--navy);font-weight:800;font-size:18px}
+.discount-per,.bg-red{
+  background:var(--flash);color:#fff;border-radius:4px;padding:2px 6px;font-size:12px;font-weight:700;
+}
+.today-deals,.best-hero{background:#fff;border-radius:12px;padding:16px;border:1px solid var(--line)}
+.timer-wrapper{display:flex;gap:6px;align-items:center}
+.time-box{
+  background:var(--navy);color:#fff;min-width:42px;text-align:center;
+  border-radius:6px;padding:6px 4px;font-weight:800;
+}
+.category-sec .category-list{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+.brand-row{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
+.brand-card{display:grid;place-items:center;min-height:88px;padding:10px}
+.brand-card img{max-height:48px;object-fit:contain}
+footer.footer,.site-footer{
+  background:var(--ink);color:#f6f3ee;margin-top:28px;
+}
+footer.footer a{color:#f6f3ee}
+footer .text-yellow{color:var(--gold)}
+.copyright{border-top:1px solid #fff2;padding:12px 0;font-size:13px;opacity:.8}
+.drawer{background:#fff}
+.flash.success{background:#e8f5e9;color:#1b5e20}
+.flash.danger{background:#fdecea;color:#8a1f16}
+@media (max-width:800px){
+  .header-row{grid-template-columns:1fr;gap:10px}
+  .banner-slide{min-height:220px}
+  .mega{display:none}
+}
