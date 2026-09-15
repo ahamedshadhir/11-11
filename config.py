@@ -3,6 +3,7 @@ from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 BASE_DIR = Path(__file__).resolve().parent
+STORE_SECRET = "1111-store-secret-key-do-not-change"
 
 
 def _on_vercel():
@@ -33,11 +34,12 @@ def _database_uri():
 
 
 class Config:
-    SECRET_KEY = os.environ.get("SECRET_KEY", "dev-1111-store-change-me")
+    SECRET_KEY = os.environ.get("SECRET_KEY") or STORE_SECRET
     SQLALCHEMY_DATABASE_URI = _database_uri()
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True, "pool_recycle": 280}
     SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = "Lax"
     REMEMBER_COOKIE_HTTPONLY = True
     ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "admin@1111.local")
     ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "admin123")
