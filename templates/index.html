@@ -2,34 +2,19 @@
 {% from "_macros.html" import product_card, stars %}
 {% block title %}11-11 | Shop electronics, fashion & home{% endblock %}
 {% block content %}
-{% set hero_banners = [
-  {'image': 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1600&q=80', 'link': '/shop?category=8', 'title': 'Footwear edit', 'text': 'Sneakers and seasonal shoes in QAR.'},
-  {'image': 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1600&q=80', 'link': '/shop?category=3', 'title': 'Phones that sell', 'text': 'Flagship Android and iPhone picks.'},
-  {'image': 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1600&q=80', 'link': '/shop?category=4', 'title': 'Audio deals', 'text': 'Headphones and earbuds under flash pricing.'}
-] %}
 <section class="banner-sec">
-  <div class="container">
-    <div class="swiper" data-slider data-autoplay="1">
-      <div class="swiper-wrapper">
-        {% for b in hero_banners %}
-        <a class="swiper-slide banner-slide" href="{{ b.link }}" style="background-image:url('{{ b.image }}')">
-          <div class="banner-copy">
-            <h3>{{ b.title }}</h3>
-            <p>{{ b.text }}</p>
-            <span class="common-btn">Shop now</span>
-          </div>
-        </a>
-        {% endfor %}
-      </div>
-      <div class="swiper-pagination"></div>
+  <a class="banner-slide" href="{{ url_for('shop') }}" style="background-image:linear-gradient(90deg,#f6efe4 0%,#f6efe4 42%,transparent 70%),url('https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1600&q=80')">
+    <div class="banner-copy">
+      <h3>Up to 50% off<br>on selected items</h3>
+      <p>Electronics, fashion and home — delivered in Qatar.</p>
+      <span class="common-btn">Shop now</span>
     </div>
-  </div>
+  </a>
 </section>
 <section class="category-sec">
   <div class="container">
     <div class="common-title">
-      <h4>Shop by category</h4>
-      <p>Electronics, fashion and home in Qatar</p>
+      <h4>Shop by Category</h4>
     </div>
     <div class="category-list">
       {% for c in all_categories %}
@@ -45,7 +30,7 @@
   <div class="container">
     <div class="common-title">
       <p class="bg-red">Flash sale</p>
-      <h4>Deals of the day</h4>
+      <h4>Deals of the Day</h4>
       <div class="timer-wrapper" id="flash-end" data-end="{{ flash_sale_end }}">
         <div class="time-box"><h3 id="flash-hours">00</h3><small>Hours</small></div>
         <div class="time-box"><h3 id="flash-minutes">00</h3><small>Mins</small></div>
@@ -61,7 +46,6 @@
         </div>
         <div class="card-body">
           <h4><a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}">{{ p.name }}</a></h4>
-          {{ stars(p.rating, p.review_count) }}
           <p class="price">{% if p.compare_at %}<del>{{ p.compare_at|qar }}</del>{% endif %} {{ p.price|qar }}</p>
           <button class="common-btn w-100" type="button" data-add="{{ p.id }}">Add to cart</button>
         </div>
@@ -70,28 +54,14 @@
     </div>
   </div>
 </section>
-<section>
+<section style="padding:48px 0">
   <div class="container">
     <div class="common-title">
-      <h4>Best sellers</h4>
-      <a class="view-all-btn" href="{{ url_for('shop') }}">View all</a>
+      <h4>Best Seller</h4>
+      <a href="{{ url_for('shop') }}">View all</a>
     </div>
     <div class="product-grid">
-      {% for p in bestsellers %}
-        {{ product_card(p) }}
-      {% endfor %}
-    </div>
-  </div>
-</section>
-<section class="bg-grey">
-  <div class="container">
-    <div class="common-title">
-      <h4>Recommended</h4>
-    </div>
-    <div class="product-grid">
-      {% for p in recommended %}
-        {{ product_card(p) }}
-      {% endfor %}
+      {% for p in bestsellers %}{{ product_card(p) }}{% endfor %}
     </div>
   </div>
 </section>
