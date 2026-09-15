@@ -1,21 +1,19 @@
 {% extends "base.html" %}
 {% from "_macros.html" import product_card, stars %}
-{% block title %}11-11 | Shop electronics, fashion & home{% endblock %}
+{% block title %}11-11{% endblock %}
 {% block content %}
 <section class="banner-sec">
   <a class="banner-slide" href="{{ url_for('shop') }}" style="background-image:linear-gradient(90deg,#f6efe4 0%,#f6efe4 42%,transparent 70%),url('https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1600&q=80')">
     <div class="banner-copy">
-      <h3>Up to 50% off<br>on selected items</h3>
-      <p>Electronics, fashion and home — delivered in Qatar.</p>
-      <span class="common-btn">Shop now</span>
+      <h3>{{ t('hero_title') }}</h3>
+      <p>{{ t('hero_text') }}</p>
+      <span class="common-btn">{{ t('shop_now') }}</span>
     </div>
   </a>
 </section>
 <section class="category-sec">
   <div class="container">
-    <div class="common-title">
-      <h4>Shop by Category</h4>
-    </div>
+    <div class="common-title"><h4>{{ t('shop_by_category') }}</h4></div>
     <div class="category-list">
       {% for c in all_categories %}
       <a class="category-card" href="{{ url_for('shop', category=c.id) }}">
@@ -29,12 +27,12 @@
 <section class="bg-grey">
   <div class="container">
     <div class="common-title">
-      <p class="bg-red">Flash sale</p>
-      <h4>Deals of the Day</h4>
+      <p class="bg-red">{{ t('flash_sale') }}</p>
+      <h4>{{ t('deals') }}</h4>
       <div class="timer-wrapper" id="flash-end" data-end="{{ flash_sale_end }}">
-        <div class="time-box"><h3 id="flash-hours">00</h3><small>Hours</small></div>
-        <div class="time-box"><h3 id="flash-minutes">00</h3><small>Mins</small></div>
-        <div class="time-box"><h3 id="flash-seconds">00</h3><small>Secs</small></div>
+        <div class="time-box"><h3 id="flash-hours">00</h3><small>{{ t('hours') }}</small></div>
+        <div class="time-box"><h3 id="flash-minutes">00</h3><small>{{ t('mins') }}</small></div>
+        <div class="time-box"><h3 id="flash-seconds">00</h3><small>{{ t('secs') }}</small></div>
       </div>
     </div>
     <div class="deal-grid">
@@ -42,12 +40,11 @@
       <article class="card">
         <div class="card-img">
           <a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}"><img src="{{ p.image }}" alt="{{ p.name }}"></a>
-          {% if p.discount_percent %}<span class="discount-per">-{{ p.discount_percent }}%</span>{% endif %}
         </div>
         <div class="card-body">
           <h4><a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}">{{ p.name }}</a></h4>
-          <p class="price">{% if p.compare_at %}<del>{{ p.compare_at|qar }}</del>{% endif %} {{ p.price|qar }}</p>
-          <button class="common-btn w-100" type="button" data-add="{{ p.id }}">Add to cart</button>
+          <p class="price">{{ p.price|qar }}</p>
+          <button class="common-btn w-100" type="button" data-add="{{ p.id }}">{{ t('add_to_cart') }}</button>
         </div>
       </article>
       {% endfor %}
@@ -56,13 +53,8 @@
 </section>
 <section style="padding:48px 0">
   <div class="container">
-    <div class="common-title">
-      <h4>Best Seller</h4>
-      <a href="{{ url_for('shop') }}">View all</a>
-    </div>
-    <div class="product-grid">
-      {% for p in bestsellers %}{{ product_card(p) }}{% endfor %}
-    </div>
+    <div class="common-title"><h4>{{ t('best_seller') }}</h4><a href="{{ url_for('shop') }}">{{ t('view_all') }}</a></div>
+    <div class="product-grid">{% for p in bestsellers %}{{ product_card(p) }}{% endfor %}</div>
   </div>
 </section>
 {% endblock %}
