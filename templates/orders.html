@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Orders | 11-11{% endblock %}
+{% block content %}
+<div class="container page-hero"><h2>My orders</h2></div>
+<div class="container" style="padding-bottom:48px">
+  {% for o in orders %}
+    <div class="panel wide">
+      <strong>{{ o.order_number }}</strong>
+      <span class="muted"> · {{ o.created_at.strftime('%Y-%m-%d %H:%M') }} · {{ o.status }} · {{ o.total|qar }}</span>
+      <ul>
+        {% for it in o.items %}
+          <li>{{ it.name }} × {{ it.quantity }} — {{ it.price|qar }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% else %}
+    <p>No orders yet.</p>
+  {% endfor %}
+</div>
+{% endblock %}

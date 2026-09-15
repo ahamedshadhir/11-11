@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Order placed | 11-11{% endblock %}
+{% block content %}
+<div class="auth-card text-center">
+  <h2>Thank you</h2>
+  <p>Your order <strong>{{ order.order_number }}</strong> is {{ order.status }}.</p>
+  <p>Total {{ order.total|qar }} · {{ order.payment_method|upper }}</p>
+  <p>Deliver to {{ order.shipping_name }}, {{ order.shipping_address }}, {{ order.shipping_city }}.</p>
+  <a class="common-btn" href="{{ url_for('track_order', n=order.order_number) }}">Track order</a>
+</div>
+{% endblock %}
