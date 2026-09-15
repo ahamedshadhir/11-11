@@ -8,21 +8,20 @@
   <link rel="icon" href="{{ url_for('static', filename='img/favicon.svg') }}" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/brand.css') }}" />
 </head>
 <body data-wish="{{ wishlist_ids|join(',') }}">
-  <div class="top-strip">
-    Free delivery in Qatar over QAR 200 · Flash deals live · Use code <b>FLASH10</b>
-  </div>
   <div class="cookie-bar" id="cookieBar">
     We use cookies, check our <a href="{{ url_for('privacy') }}">Privacy Policies</a>.
     <button class="common-btn" id="cookieAccept" type="button">Agree</button>
   </div>
   <header class="header-card">
     <div class="container header-row">
-      <a class="header-logo" href="{{ url_for('index') }}" aria-label="11-11 home">
-        <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="11-11" width="150" height="38" />
+      <a class="header-logo" href="{{ url_for('index') }}" aria-label="11:11 eleven-eleven">
+        <img src="http://185.237.99.133/site/logo" alt="eleven-eleven" width="92" height="46"
+             onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/logo.svg') }}'" />
       </a>
       <div class="header-mid">
         <div class="deliver">
@@ -121,7 +120,8 @@
     <div class="container footer-grid">
       <div>
         <a href="{{ url_for('index') }}" class="ftr-logo-link">
-          <img src="{{ url_for('static', filename='img/logo-light.svg') }}" alt="11-11" width="140" height="36" />
+          <img src="http://185.237.99.133/site/logo" alt="eleven-eleven" width="110" height="55"
+               onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/logo-light.svg') }}'" />
         </a>
         <p>Your one-stop destination for quality products at unbeatable prices.</p>
       </div>

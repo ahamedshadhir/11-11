@@ -2,17 +2,16 @@
 {% from "_macros.html" import product_card, stars %}
 {% block title %}11-11 | Shop electronics, fashion & home{% endblock %}
 {% block content %}
+{% set hero_banners = [
+  {'image': 'http://185.237.99.133/file/image/247/main-banner-png', 'link': '/shop', 'title': 'Up to 50% off'},
+  {'image': 'http://185.237.99.133/file/image/227/gemini_generated_image_uoiooduoiooduoio-png', 'link': '/shop?category=8', 'title': 'Footwear sale'},
+  {'image': 'http://185.237.99.133/file/image/239/2_gemini_generated_image_989orc989orc989o-png', 'link': '/shop', 'title': 'Seasonal offers'}
+] %}
 <section class="banner-sec">
   <div class="swiper" data-slider data-autoplay="1">
     <div class="swiper-wrapper">
-      {% for b in banners %}
-      <div class="swiper-slide banner-slide" style="background-image:url('{{ b.image }}')">
-        <div class="banner-copy">
-          <h2>{{ b.title }}</h2>
-          <p>Limited-time offers on the 11-11 marketplace.</p>
-          <a class="common-btn" href="{{ b.link }}">Shop now</a>
-        </div>
-      </div>
+      {% for b in hero_banners %}
+      <a class="swiper-slide banner-slide" href="{{ b.link }}" style="background-image:url('{{ b.image }}')" aria-label="{{ b.title }}"></a>
       {% endfor %}
     </div>
     <div class="swiper-pagination"></div>
@@ -42,7 +41,7 @@
     <div class="common-title">
       <p class="bg-red">⚡ Flash Sale</p>
       <h4>Deals of the Day</h4>
-      <p>Limited time offers — grab them before they're gone.</p>
+      <p>Limited time offers - Grab them before they're gone!</p>
       <div class="timer-wrapper" id="flash-end" data-end="{{ flash_sale_end }}">
         <div class="time-box"><h3 id="flash-hours">00</h3><small>Hours</small></div>
         <div class="colon">:</div>
