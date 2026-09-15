@@ -1,0 +1,17 @@
+.top-strip {
+  background: #420e15;
+  color: #f6f3ee;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: .04em;
+  padding: 8px 12px;
+}
+.top-strip b { color: #be923b; }
+.header-logo { display: flex; align-items: center; line-height: 0; }
+.header-logo img { width: 150px; height: auto; display: block; }
+.ftr-logo-link { display: inline-block; margin-bottom: 10px; }
+.ftr-logo-link img { width: 140px; height: auto; display: block; }
+body { font-family: Inter, "Segoe UI", Tahoma, sans-serif; }
+.common-title h4, .banner-copy h2, .ftr-logo {
+  font-family: "Playfair Display", Georgia, serif;
+}
