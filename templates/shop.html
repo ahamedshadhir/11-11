@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% from "_macros.html" import product_card %}
+{% block title %}Shop | 11-11{% endblock %}
+{% block content %}
+<div class="container page-hero">
+  <div class="breadcrumbs"><a href="{{ url_for('index') }}">Home</a> / Shop
+    {% if active_cat %} / {{ active_cat.name }}{% endif %}
+    {% if active_sub %} / {{ active_sub.name }}{% endif %}
+    {% if active_brand %} / {{ active_brand.name }}{% endif %}
+    {% if q %} / “{{ q }}”{% endif %}
+  </div>
+  <h2 style="margin:0">{% if active_cat %}{{ active_cat.name }}{% elif active_brand %}{{ active_brand.name }}{% elif q %}Results for “{{ q }}”{% else %}All products{% endif %}</h2>
+</div>
+<div class="container shop-layout" style="padding-bottom:48px">
+  <aside class="sidebar">
+    <h5>Categories</h5>
+    <a href="{{ url_for('shop') }}" class="{{ 'active' if not active_cat }}">All</a>
+    {% for c in all_categories %}
+      <a class="{{ 'active' if active_cat and active_cat.id == c.id }}" href="{{ url_for('shop', category=c.id) }}">{{ c.name }}</a>
+      {% if active_cat and active_cat.id == c.id %}
+        {% for s in c.subcategories %}
+          <a style="padding-left:12px;font-size:13px" class="{{ 'active' if active_sub and active_sub.id == s.id }}" href="{{ url_for('shop', category=c.id, sub_category_id=s.id) }}">{{ s.name }}</a>
+        {% endfor %}
+      {% endif %}
+    {% endfor %}
+    <h5 style="margin-top:18px">Brands</h5>
+    {% for b in all_brands %}
+      <a class="{{ 'active' if active_brand and active_brand.id == b.id }}" href="{{ url_for('shop', brand=b.id) }}">{{ b.name }}</a>
+    {% endfor %}
+  </aside>
+  <div>
+    <div class="toolbar">
+      <span class="muted">{{ pagination.total }} products</span>
+      <form method="get">
+        {% if active_cat %}<input type="hidden" name="category" value="{{ active_cat.id }}">{% endif %}
+        {% if active_sub %}<input type="hidden" name="sub_category_id" value="{{ active_sub.id }}">{% endif %}
+        {% if active_brand %}<input type="hidden" name="brand" value="{{ active_brand.id }}">{% endif %}
+        {% if q %}<input type="hidden" name="q" value="{{ q }}">{% endif %}
+        <select name="sort" onchange="this.form.submit()">
+          <option value="featured" {{ 'selected' if sort=='featured' }}>Featured</option>
+          <option value="newest" {{ 'selected' if sort=='newest' }}>Newest</option>
+          <option value="price_asc" {{ 'selected' if sort=='price_asc' }}>Price: low to high</option>
+          <option value="price_desc" {{ 'selected' if sort=='price_desc' }}>Price: high to low</option>
+        </select>
+      </form>
+    </div>
+    {% if products %}
+    <div class="product-grid">
+      {% for p in products %}{{ product_card(p) }}{% endfor %}
+    </div>
+    <div class="text-center mt-3">
+      {% if pagination.has_prev %}<a class="common-bd-btn" href="{{ url_for(request.endpoint, page=pagination.prev_num, **request.args) }}">Prev</a>{% endif %}
+      <span class="muted"> Page {{ pagination.page }} / {{ pagination.pages }} </span>
+      {% if pagination.has_next %}<a class="common-bd-btn" href="{{ url_for(request.endpoint, page=pagination.next_num, **request.args) }}">Next</a>{% endif %}
+    </div>
+    {% else %}
+      <p>No products matched that filter.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
