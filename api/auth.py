@@ -7,7 +7,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from flask import Flask, redirect, request
-from flask_login import current_user, login_user
+from flask_login import login_user
 
 from config import Config
 from extensions import db, login_manager
@@ -35,7 +35,6 @@ label{display:block;margin:12px 0 4px;font-size:13px}
 input{width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #d9c7a8}
 button{margin-top:16px;width:100%;padding:12px;border:0;background:#420e15;color:#fff;font-weight:700;cursor:pointer}
 .err{background:#fb2c36;color:#fff;padding:8px 10px;margin:12px 0}
-.ok{background:#2e7d32;color:#fff;padding:8px 10px;margin:12px 0}
 a{color:#be923b}
 </style></head>
 <body><div class="wrap">
@@ -51,18 +50,12 @@ a{color:#be923b}
 </div></body></html>"""
 
 
-def page(msg=""):
-    return FORM % (msg or "")
-
-
 @app.route("/", methods=["GET", "POST"])
 @app.route("/login", methods=["GET", "POST"])
 @app.route("/user/login", methods=["GET", "POST"])
 def login():
-    if getattr(current_user, "is_authenticated", False) and request.method == "GET":
-        return redirect("/")
     if request.method != "POST":
-        return page()
+        return FORM % ""
     email = (request.form.get("email") or "").strip().lower()
     password = request.form.get("password") or ""
     try:
@@ -88,7 +81,7 @@ def login():
             except Exception:
                 ok = False
         if not ok or user is None:
-            return page('<div class="err">Invalid email or password.</div>')
+            return FORM % '<div class="err">Invalid email or password.</div>'
         login_user(user, remember=False)
         return redirect("/")
     except Exception as exc:
@@ -96,4 +89,4 @@ def login():
             db.session.rollback()
         except Exception:
             pass
-        return page('<div class="err">%s</div>' % exc)
+        return FORM % ('<div class="err">%s</div>' % exc)
