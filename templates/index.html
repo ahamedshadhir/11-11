@@ -3,27 +3,33 @@
 {% block title %}11-11 | Shop electronics, fashion & home{% endblock %}
 {% block content %}
 {% set hero_banners = [
-  {'image': 'http://185.237.99.133/file/image/247/main-banner-png', 'link': '/shop', 'title': 'Up to 50% off'},
-  {'image': 'http://185.237.99.133/file/image/227/gemini_generated_image_uoiooduoiooduoio-png', 'link': '/shop?category=8', 'title': 'Footwear sale'},
-  {'image': 'http://185.237.99.133/file/image/239/2_gemini_generated_image_989orc989orc989o-png', 'link': '/shop', 'title': 'Seasonal offers'}
+  {'image': 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1600&q=80', 'link': '/shop?category=8', 'title': 'Footwear edit', 'text': 'Sneakers and seasonal shoes in QAR.'},
+  {'image': 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1600&q=80', 'link': '/shop?category=3', 'title': 'Phones that sell', 'text': 'Flagship Android and iPhone picks.'},
+  {'image': 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1600&q=80', 'link': '/shop?category=4', 'title': 'Audio deals', 'text': 'Headphones and earbuds under flash pricing.'}
 ] %}
 <section class="banner-sec">
-  <div class="swiper" data-slider data-autoplay="1">
-    <div class="swiper-wrapper">
-      {% for b in hero_banners %}
-      <a class="swiper-slide banner-slide" href="{{ b.link }}" style="background-image:url('{{ b.image }}')" aria-label="{{ b.title }}"></a>
-      {% endfor %}
+  <div class="container">
+    <div class="swiper" data-slider data-autoplay="1">
+      <div class="swiper-wrapper">
+        {% for b in hero_banners %}
+        <a class="swiper-slide banner-slide" href="{{ b.link }}" style="background-image:url('{{ b.image }}')">
+          <div class="banner-copy">
+            <h3>{{ b.title }}</h3>
+            <p>{{ b.text }}</p>
+            <span class="common-btn">Shop now</span>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+      <div class="swiper-pagination"></div>
     </div>
-    <div class="swiper-pagination"></div>
-    <div class="swiper-button-prev">‹</div>
-    <div class="swiper-button-next">›</div>
   </div>
 </section>
 <section class="category-sec">
   <div class="container">
     <div class="common-title">
-      <h4>Shop by Category</h4>
-      <p>Browse through our wide range of products</p>
+      <h4>Shop by category</h4>
+      <p>Electronics, fashion and home in Qatar</p>
     </div>
     <div class="category-list">
       {% for c in all_categories %}
@@ -33,21 +39,17 @@
       </a>
       {% endfor %}
     </div>
-    <p class="text-center mt-3"><a class="common-bd-btn" href="{{ url_for('categories_page') }}">View all Categories</a></p>
   </div>
 </section>
 <section class="bg-grey">
   <div class="container">
     <div class="common-title">
-      <p class="bg-red">⚡ Flash Sale</p>
-      <h4>Deals of the Day</h4>
-      <p>Limited time offers - Grab them before they're gone!</p>
+      <p class="bg-red">Flash sale</p>
+      <h4>Deals of the day</h4>
       <div class="timer-wrapper" id="flash-end" data-end="{{ flash_sale_end }}">
         <div class="time-box"><h3 id="flash-hours">00</h3><small>Hours</small></div>
-        <div class="colon">:</div>
-        <div class="time-box"><h3 id="flash-minutes">00</h3><small>Minutes</small></div>
-        <div class="colon">:</div>
-        <div class="time-box"><h3 id="flash-seconds">00</h3><small>Seconds</small></div>
+        <div class="time-box"><h3 id="flash-minutes">00</h3><small>Mins</small></div>
+        <div class="time-box"><h3 id="flash-seconds">00</h3><small>Secs</small></div>
       </div>
     </div>
     <div class="deal-grid">
@@ -60,16 +62,8 @@
         <div class="card-body">
           <h4><a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}">{{ p.name }}</a></h4>
           {{ stars(p.rating, p.review_count) }}
-          <p class="price"><del>{{ p.compare_at|qar }}</del> {{ p.price|qar }}</p>
-          <div class="day-progress">
-            <div style="display:flex;justify-content:space-between">
-              <span class="grey-star">Sold: {{ p.sold }}</span>
-              <span class="grey-star">{{ p.stock }} left</span>
-            </div>
-            {% set pct = (p.sold / ((p.sold + p.stock) or 1) * 100)|int %}
-            <div class="progress"><div class="progress-bar" style="width:{{ pct }}%"></div></div>
-          </div>
-          <button class="common-btn w-100" type="button" data-add="{{ p.id }}">Grab Now</button>
+          <p class="price">{% if p.compare_at %}<del>{{ p.compare_at|qar }}</del>{% endif %} {{ p.price|qar }}</p>
+          <button class="common-btn w-100" type="button" data-add="{{ p.id }}">Add to cart</button>
         </div>
       </article>
       {% endfor %}
@@ -78,105 +72,26 @@
 </section>
 <section>
   <div class="container">
-    <div class="common-outer">
-      <div class="common-title" style="text-align:left;margin:0"><h4>Best Seller</h4></div>
-      <a class="view-all-btn" href="{{ url_for('shop') }}">View all</a>
-    </div>
-    <div class="best-grid">
-      <div class="best-left">
-        {% for p in bestsellers[:4] %}
-        <a class="best-tile" href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}">
-          <img src="{{ p.image }}" alt="{{ p.name }}">
-          <div>
-            <h4 style="margin:0 0 6px">{{ p.name }}</h4>
-            <p class="price" style="margin:0">{% if p.compare_at %}<del>{{ p.compare_at|qar }}</del>{% endif %} {{ p.price|qar }}</p>
-          </div>
-        </a>
-        {% endfor %}
-      </div>
-      {% if bestsellers|length > 4 %}
-      {% set hero = bestsellers[4] %}
-      <a class="best-hero" href="{{ url_for('product_detail', pid=hero.id, slug=hero.slug) }}">
-        <img src="{{ hero.image }}" alt="{{ hero.name }}">
-        <div class="best-dis">
-          <h4>{{ hero.name }}</h4>
-          <p class="price">{% if hero.compare_at %}<del>{{ hero.compare_at|qar }}</del>{% endif %} {{ hero.price|qar }}</p>
-        </div>
-      </a>
-      {% endif %}
-    </div>
-  </div>
-</section>
-<section>
-  <div class="container">
-    <div class="common-outer">
-      <div class="common-title" style="text-align:left;margin:0"><h4>Recommended For You</h4></div>
+    <div class="common-title">
+      <h4>Best sellers</h4>
       <a class="view-all-btn" href="{{ url_for('shop') }}">View all</a>
     </div>
     <div class="product-grid">
-      {% for p in recommended %}{{ product_card(p) }}{% endfor %}
-    </div>
-  </div>
-</section>
-<section>
-  <div class="container">
-    <div class="common-outer">
-      <div class="common-title" style="text-align:left;margin:0"><h4>Shop By Brands</h4></div>
-      <a class="view-all-btn" href="{{ url_for('shop') }}">View all</a>
-    </div>
-    <div class="brand-row">
-      {% for b in all_brands[:6] %}
-      <a class="brand-card" href="{{ url_for('shop', brand=b.id) }}">{{ b.name }}</a>
+      {% for p in bestsellers %}
+        {{ product_card(p) }}
       {% endfor %}
     </div>
-  </div>
-</section>
-<section>
-  <div class="container add-row">
-    {% for pr in promos %}
-    <a class="add-view-card" href="{{ pr.link }}"><img src="{{ pr.image }}" alt="{{ pr.title }}"></a>
-    {% endfor %}
   </div>
 </section>
 <section class="bg-grey">
   <div class="container">
-    <div class="common-outer">
-      <div class="common-title" style="text-align:left;margin:0"><h4>Deals on Accessories</h4></div>
-      <a class="view-all-btn" href="{{ url_for('shop', category=5) }}">View all</a>
+    <div class="common-title">
+      <h4>Recommended</h4>
     </div>
     <div class="product-grid">
-      {% for p in accessory_deals %}{{ product_card(p) }}{% endfor %}
-    </div>
-  </div>
-</section>
-<section>
-  <div class="container">
-    <div class="common-outer">
-      <div class="common-title" style="text-align:left;margin:0"><h4>Today's Deals on products</h4></div>
-      <a class="view-all-btn" href="{{ url_for('shop') }}">View all</a>
-    </div>
-    <div class="today-deals">
-      {% for c in all_categories %}
-      <a class="deal-card" href="{{ url_for('shop', category=c.id) }}">
-        <img src="{{ c.image }}" alt="{{ c.name }}">
-        <h4>{{ c.name }}</h4>
-      </a>
+      {% for p in recommended %}
+        {{ product_card(p) }}
       {% endfor %}
-    </div>
-  </div>
-</section>
-<section>
-  <div class="container">
-    <div class="common-title">
-      <h4>Why Shop With Us</h4>
-      <p>Experience the difference with our premium services</p>
-    </div>
-    <div class="why-shop-inr">
-      <div class="why-card"><h4>Free Delivery</h4><p>On orders over QAR 200</p></div>
-      <div class="why-card"><h4>Secure Payment</h4><p>100% secure transactions</p></div>
-      <div class="why-card"><h4>Easy Returns</h4><p>30-day return policy</p></div>
-      <div class="why-card"><h4>24/7 Support</h4><p>Dedicated customer service</p></div>
-      <div class="why-card"><h4>Best Prices</h4><p>Price match guarantee</p></div>
     </div>
   </div>
 </section>
