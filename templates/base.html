@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ lang }}" dir="{{ 'rtl' if is_rtl|default(false) else 'ltr' }}">
+<html lang="{{ lang }}" dir="{{ 'rtl' if lang=='ar' else 'ltr' }}">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -13,41 +13,29 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/rtl.css') }}" />
 </head>
 <body data-wish="{{ wishlist_ids|join(',') }}">
-  <div class="cookie-bar" id="cookieBar">
-    {{ t('cookies') }} <a href="{{ url_for('privacy') }}">{{ t('privacy') }}</a>.
-    <button class="common-btn" id="cookieAccept" type="button">{{ t('agree') }}</button>
-  </div>
   <header class="header-card">
     <div class="container header-row">
       <a class="header-logo" href="{{ url_for('index') }}">
         <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="11:11" width="210" height="78" />
       </a>
       <div class="header-mid">
-        <div class="deliver">
-          <label for="deliverSelect">{{ t('deliver_to') }}</label>
-          <select id="deliverSelect">
-            <option value="">{{ deliver_to }}</option>
-            {% for area in qatar_areas %}<option value="{{ area }}">{{ area }}</option>{% endfor %}
-          </select>
-        </div>
         <form class="search-form" action="{{ url_for('shop') }}" method="get">
-          <input name="q" id="liveSearch" placeholder="{{ t('search') }}" value="{{ request.args.get('q','') }}" />
+          <input name="q" id="liveSearch" placeholder="{% if lang=='ar' %}ابحث في 11-11{% else %}Search 11-11{% endif %}" value="{{ request.args.get('q','') }}" />
           <button type="submit">⌕</button>
         </form>
-        <button class="cats-btn" type="button">{{ t('all_categories') }}</button>
       </div>
       <div class="header-rt">
         <select id="langSelect">
-          <option value="en" {% if lang=='en' %}selected{% endif %}>English</option>
+          <option value="en" {% if lang!='ar' %}selected{% endif %}>English</option>
           <option value="ar" {% if lang=='ar' %}selected{% endif %}>العربية</option>
         </select>
-        <a class="icon-link" href="{{ url_for('wishlist') }}">♡ {{ t('wishlist') }} <span class="badge" id="wishCount">{{ nav_wish_count }}</span></a>
-        <button class="icon-link" id="openCart" type="button">🛒 {{ t('cart') }} <span class="badge" id="cartCount">{{ nav_cart_count }}</span></button>
+        <a class="icon-link" href="{{ url_for('wishlist') }}">♡ {% if lang=='ar' %}المفضلة{% else %}Wishlist{% endif %}</a>
+        <button class="icon-link" id="openCart" type="button">🛒 {% if lang=='ar' %}السلة{% else %}Cart{% endif %} <span class="badge cart-count" id="cartCount">{{ nav_cart_count }}</span></button>
         {% if current_user.is_authenticated %}
-          {% if current_user.is_admin %}<a class="icon-link" href="{{ url_for('admin_home') }}">{{ t('admin') }}</a>{% endif %}
+          {% if current_user.is_admin %}<a class="icon-link" href="{{ url_for('admin_home') }}">{% if lang=='ar' %}الإدارة{% else %}Admin{% endif %}</a>{% endif %}
           <a class="common-btn" href="{{ url_for('account') }}">{{ current_user.name.split()[0] }}</a>
         {% else %}
-          <a class="common-btn" href="/static/login.html">{{ t('login') }}</a>
+          <a class="common-btn" href="/static/login.html">{% if lang=='ar' %}تسجيل الدخول{% else %}Login{% endif %}</a>
         {% endif %}
       </div>
     </div>
@@ -55,14 +43,14 @@
   <main>{% block content %}{% endblock %}</main>
   <div class="overlay" id="overlay"></div>
   <aside class="drawer" id="cartDrawer">
-    <div class="drawer-head"><h5>{{ t('cart') }}</h5><button type="button" id="closeCart">×</button></div>
+    <div class="drawer-head"><h5>{% if lang=='ar' %}السلة{% else %}Cart{% endif %}</h5><button type="button" id="closeCart">×</button></div>
     <div class="drawer-body" id="drawerItems"></div>
     <div class="drawer-foot">
-      <a class="common-bd-btn" href="{{ url_for('cart') }}">{{ t('view_cart') }}</a>
-      <a class="common-btn" href="{{ url_for('checkout') }}">{{ t('checkout') }}</a>
+      <a class="common-bd-btn" href="{{ url_for('cart') }}">{% if lang=='ar' %}عرض السلة{% else %}View Cart{% endif %}</a>
+      <a class="common-btn" href="{{ url_for('checkout') }}">{% if lang=='ar' %}إتمام الطلب{% else %}Checkout{% endif %}</a>
     </div>
   </aside>
-  <footer class="footer"><div class="container copyright">&copy; {{ year }} 11-11</div></footer>
+  <footer class="footer"><div class="container copyright">&copy; 11-11</div></footer>
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

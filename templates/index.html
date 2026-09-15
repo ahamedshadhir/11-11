@@ -1,19 +1,19 @@
 {% extends "base.html" %}
-{% from "_macros.html" import product_card, stars %}
+{% from "_macros.html" import product_card %}
 {% block title %}11-11{% endblock %}
 {% block content %}
 <section class="banner-sec">
   <a class="banner-slide" href="{{ url_for('shop') }}" style="background-image:linear-gradient(90deg,#f6efe4 0%,#f6efe4 42%,transparent 70%),url('https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1600&q=80')">
     <div class="banner-copy">
-      <h3>{{ t('hero_title') }}</h3>
-      <p>{{ t('hero_text') }}</p>
-      <span class="common-btn">{{ t('shop_now') }}</span>
+      <h3>{% if lang=='ar' %}خصم حتى 50% على منتجات مختارة{% else %}Up to 50% off on selected items{% endif %}</h3>
+      <p>{% if lang=='ar' %}إلكترونيات وأزياء ومنزل — التوصيل في قطر.{% else %}Electronics, fashion and home — delivered in Qatar.{% endif %}</p>
+      <span class="common-btn">{% if lang=='ar' %}تسوق الآن{% else %}Shop now{% endif %}</span>
     </div>
   </a>
 </section>
 <section class="category-sec">
   <div class="container">
-    <div class="common-title"><h4>{{ t('shop_by_category') }}</h4></div>
+    <div class="common-title"><h4>{% if lang=='ar' %}تسوق حسب القسم{% else %}Shop by Category{% endif %}</h4></div>
     <div class="category-list">
       {% for c in all_categories %}
       <a class="category-card" href="{{ url_for('shop', category=c.id) }}">
@@ -27,24 +27,17 @@
 <section class="bg-grey">
   <div class="container">
     <div class="common-title">
-      <p class="bg-red">{{ t('flash_sale') }}</p>
-      <h4>{{ t('deals') }}</h4>
-      <div class="timer-wrapper" id="flash-end" data-end="{{ flash_sale_end }}">
-        <div class="time-box"><h3 id="flash-hours">00</h3><small>{{ t('hours') }}</small></div>
-        <div class="time-box"><h3 id="flash-minutes">00</h3><small>{{ t('mins') }}</small></div>
-        <div class="time-box"><h3 id="flash-seconds">00</h3><small>{{ t('secs') }}</small></div>
-      </div>
+      <p class="bg-red">{% if lang=='ar' %}عروض خاطفة{% else %}Flash sale{% endif %}</p>
+      <h4>{% if lang=='ar' %}عروض اليوم{% else %}Deals of the Day{% endif %}</h4>
     </div>
     <div class="deal-grid">
       {% for p in flash_products %}
       <article class="card">
-        <div class="card-img">
-          <a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}"><img src="{{ p.image }}" alt="{{ p.name }}"></a>
-        </div>
+        <div class="card-img"><a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}"><img src="{{ p.image }}" alt="{{ p.name }}"></a></div>
         <div class="card-body">
           <h4><a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}">{{ p.name }}</a></h4>
           <p class="price">{{ p.price|qar }}</p>
-          <button class="common-btn w-100" type="button" data-add="{{ p.id }}">{{ t('add_to_cart') }}</button>
+          <button class="common-btn w-100" type="button" data-add="{{ p.id }}">{% if lang=='ar' %}أضف للسلة{% else %}Add to cart{% endif %}</button>
         </div>
       </article>
       {% endfor %}
@@ -53,7 +46,7 @@
 </section>
 <section style="padding:48px 0">
   <div class="container">
-    <div class="common-title"><h4>{{ t('best_seller') }}</h4><a href="{{ url_for('shop') }}">{{ t('view_all') }}</a></div>
+    <div class="common-title"><h4>{% if lang=='ar' %}الأكثر مبيعاً{% else %}Best Seller{% endif %}</h4></div>
     <div class="product-grid">{% for p in bestsellers %}{{ product_card(p) }}{% endfor %}</div>
   </div>
 </section>
