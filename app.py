@@ -12,44 +12,64 @@ from extensions import db, login_manager
 from models import User, Category, SubCategory, Brand, Product, CartItem, WishlistItem, Order, OrderItem, Review, Banner, Promo, Address
 from seed import seed_all
 
+ROOT = Path(__file__).resolve().parent
 
 def create_app():
-    app = Flask(__name__, instance_relative_config=True)
+    on_vercel = bool(os.environ.get('VERCEL') or os.environ.get('VERCEL_ENV'))
+    app = Flask(
+        __name__,
+        instance_path='/tmp' if on_vercel else str(ROOT / 'instance'),
+        template_folder=str(ROOT / 'templates'),
+        static_folder=str(ROOT / 'static'),
+    )
     app.config.from_object(Config)
-    Path(app.instance_path).mkdir(parents=True, exist_ok=True)
+    try:
+        Path(app.instance_path).mkdir(parents=True, exist_ok=True)
+    except OSError:
+        pass
     db.init_app(app)
     login_manager.init_app(app)
     with app.app_context():
-        db.create_all()
-        seed_all(app)
+        try:
+            db.create_all()
+            seed_all(app)
+        except Exception as exc:
+            app.logger.exception('db bootstrap failed: %s', exc)
 
     @app.context_processor
     def inject_globals():
-        cats = Category.query.order_by(Category.id).all()
-        brands = Brand.query.order_by(Brand.name).all()
+        try:
+            cats = Category.query.order_by(Category.id).all()
+            brands = Brand.query.order_by(Brand.name).all()
+        except Exception:
+            cats, brands = [], []
         cart_count = wish_count = cart_total = 0
-        if current_user.is_authenticated:
-            items = CartItem.query.filter_by(user_id=current_user.id).all()
-            cart_count = sum(i.quantity for i in items)
-            cart_total = sum(i.quantity * i.product.price for i in items if i.product)
-            wish_count = WishlistItem.query.filter_by(user_id=current_user.id).count()
-            wish_ids = [i.product_id for i in WishlistItem.query.filter_by(user_id=current_user.id).all()]
-        else:
-            guest = session.get('cart', {})
-            cart_count = sum(guest.values())
-            if guest:
-                products = Product.query.filter(Product.id.in_(list(map(int, guest.keys())))).all()
-                cart_total = sum(p.price * guest.get(str(p.id), 0) for p in products)
-            wish_count = len(session.get('wishlist', []))
-            wish_ids = list(session.get('wishlist', []))
+        wish_ids = []
+        try:
+            if current_user.is_authenticated:
+                items = CartItem.query.filter_by(user_id=current_user.id).all()
+                cart_count = sum(i.quantity for i in items)
+                cart_total = sum(i.quantity * i.product.price for i in items if i.product)
+                wish_count = WishlistItem.query.filter_by(user_id=current_user.id).count()
+                wish_ids = [i.product_id for i in WishlistItem.query.filter_by(user_id=current_user.id).all()]
+            else:
+                guest = session.get('cart', {})
+                cart_count = sum(guest.values())
+                if guest:
+                    products = Product.query.filter(Product.id.in_(list(map(int, guest.keys())))).all()
+                    cart_total = sum(p.price * guest.get(str(p.id), 0) for p in products)
+                wish_count = len(session.get('wishlist', []))
+                wish_ids = list(session.get('wishlist', []))
+        except Exception:
+            pass
         return {
-            'store_name': app.config['STORE_NAME'], 'currency': app.config['CURRENCY'],
+            'store_name': app.config.get('STORE_NAME', '11-11'), 'currency': app.config.get('CURRENCY', 'QAR'),
             'all_categories': cats, 'all_brands': brands, 'nav_cart_count': cart_count,
             'nav_wish_count': wish_count, 'nav_cart_total': cart_total,
-            'flash_sale_end': app.config['FLASH_SALE_END'], 'year': datetime.utcnow().year,
+            'flash_sale_end': app.config.get('FLASH_SALE_END', ''), 'year': datetime.utcnow().year,
             'wishlist_ids': wish_ids, 'lang': session.get('lang', 'en'),
             'deliver_to': session.get('deliver_to', 'Detecting...'),
-            'qatar_areas': ['Doha \u2014 West Bay', 'Doha \u2014 The Pearl', 'Doha \u2014 Lusail', 'Doha \u2014 Al Sadd', 'Al Wakrah', 'Al Khor', 'Al Rayyan'],
+            'qatar_areas': ['Doha — West Bay', 'Doha — The Pearl', 'Doha — Lusail', 'Doha — Al Sadd', 'Al Wakrah', 'Al Khor', 'Al Rayyan'],
         }
 
     def money(value):
@@ -207,11 +227,9 @@ def create_app():
     @app.route('/shop/product/search')
     def search():
         return redirect(url_for('shop', q=request.args.get('q', '')))
-
     @app.route('/shop/category/index')
     def categories_page():
         return render_template('categories.html')
-
     @app.route('/product/<int:pid>/<slug>')
     @app.route('/shop/product/<int:pid>/<slug>')
     def product_detail(pid, slug):
@@ -219,47 +237,35 @@ def create_app():
         related = Product.query.filter(Product.category_id == product.category_id, Product.id != product.id).limit(4).all()
         reviews = Review.query.filter_by(product_id=product.id).order_by(Review.created_at.desc()).all()
         return render_template('product.html', product=product, related=related, reviews=reviews)
-
     @app.route('/cart/add/<int:pid>', methods=['POST', 'GET'])
     def cart_add(pid):
         product = add_to_cart(pid, request.form.get('qty', 1, type=int) or 1)
         if not product:
             abort(404)
         if request.headers.get('X-Requested-With') == 'fetch' or request.is_json:
-            data = cart_payload()
-            data['message'] = f'{product.name} added to cart.'
-            return jsonify(data)
+            data = cart_payload(); data['message'] = f'{product.name} added to cart.'; return jsonify(data)
         flash(f'{product.name} added to cart.', 'success')
         return redirect(request.referrer or url_for('cart'))
-
     @app.route('/api/cart')
     def api_cart():
         return jsonify(cart_payload())
-
     @app.route('/api/cart/add', methods=['POST'])
     def api_cart_add():
         data = request.get_json(silent=True) or request.form
         product = add_to_cart(int(data.get('pid') or data.get('id') or 0), int(data.get('qty') or 1))
         if not product:
             return jsonify({'ok': False, 'error': 'Product not found'}), 404
-        payload = cart_payload()
-        payload['message'] = f'{product.name} added to cart.'
-        return jsonify(payload)
-
+        payload = cart_payload(); payload['message'] = f'{product.name} added to cart.'; return jsonify(payload)
     @app.route('/api/cart/update', methods=['POST'])
     def api_cart_update():
         data = request.get_json(silent=True) or request.form
         set_cart_qty(int(data.get('pid') or 0), int(data.get('qty') or 1))
         return jsonify(cart_payload())
-
     @app.route('/api/cart/remove', methods=['POST'])
     def api_cart_remove():
         data = request.get_json(silent=True) or request.form
         set_cart_qty(int(data.get('pid') or 0), 0)
-        payload = cart_payload()
-        payload['message'] = 'Item removed.'
-        return jsonify(payload)
-
+        payload = cart_payload(); payload['message'] = 'Item removed.'; return jsonify(payload)
     @app.route('/api/wishlist/toggle', methods=['POST'])
     def api_wishlist_toggle():
         data = request.get_json(silent=True) or request.form
@@ -267,11 +273,7 @@ def create_app():
         if not db.session.get(Product, pid):
             return jsonify({'ok': False}), 404
         added = toggle_wish(pid)
-        payload = cart_payload()
-        payload['added'] = added
-        payload['message'] = 'Saved to wishlist.' if added else 'Removed from wishlist.'
-        return jsonify(payload)
-
+        payload = cart_payload(); payload['added'] = added; payload['message'] = 'Saved to wishlist.' if added else 'Removed from wishlist.'; return jsonify(payload)
     @app.route('/api/search')
     def api_search():
         q = (request.args.get('q') or '').strip()
@@ -280,33 +282,24 @@ def create_app():
         like = f'%{q}%'
         items = Product.query.filter(or_(Product.name.ilike(like), Product.description.ilike(like))).limit(8).all()
         return jsonify({'results': [{'id': p.id, 'name': p.name, 'slug': p.slug, 'image': p.image, 'price': p.price, 'url': url_for('product_detail', pid=p.id, slug=p.slug)} for p in items]})
-
     @app.route('/api/coupon', methods=['POST'])
     def api_coupon():
         data = request.get_json(silent=True) or request.form
         code = (data.get('code') or '').strip().upper()
         if code == 'FLASH10':
             session['coupon'] = code
-            payload = cart_payload()
-            payload['message'] = 'Coupon FLASH10 applied (10% off).'
-            return jsonify(payload)
+            payload = cart_payload(); payload['message'] = 'Coupon FLASH10 applied (10% off).'; return jsonify(payload)
         session.pop('coupon', None)
-        payload = cart_payload()
-        payload['ok'] = False
-        payload['message'] = 'Invalid coupon. Try FLASH10.'
-        return jsonify(payload)
-
+        payload = cart_payload(); payload['ok'] = False; payload['message'] = 'Invalid coupon. Try FLASH10.'; return jsonify(payload)
     @app.route('/api/location', methods=['POST'])
     def api_location():
         data = request.get_json(silent=True) or request.form
         session['deliver_to'] = (data.get('area') or '').strip() or 'Doha'
         return jsonify({'ok': True, 'area': session['deliver_to']})
-
     @app.route('/lang/<code>')
     def set_lang(code):
         session['lang'] = 'ar' if code == 'ar' else 'en'
         return redirect(request.referrer or url_for('index'))
-
     @app.route('/cart')
     @app.route('/shop/cart')
     def cart():
@@ -315,14 +308,12 @@ def create_app():
         shipping = 0 if subtotal >= 200 or subtotal == 0 else 25
         discount = round(subtotal * 0.10, 2) if session.get('coupon') == 'FLASH10' else 0
         return render_template('cart.html', rows=rows, subtotal=subtotal, shipping=shipping, discount=discount, coupon=session.get('coupon'), total=max(0, subtotal + shipping - discount))
-
     @app.route('/checkout', methods=['GET', 'POST'])
     @app.route('/shop/cart/checkout', methods=['GET', 'POST'])
     def checkout():
         rows = get_cart_rows()
         if not rows:
-            flash('Your cart is empty.', 'info')
-            return redirect(url_for('shop'))
+            flash('Your cart is empty.', 'info'); return redirect(url_for('shop'))
         subtotal = sum(r['line'] for r in rows)
         shipping = 0 if subtotal >= 200 else 25
         discount = round(subtotal * 0.10, 2) if session.get('coupon') == 'FLASH10' else 0
@@ -331,39 +322,29 @@ def create_app():
             if not current_user.is_authenticated:
                 flash('Please log in or create an account to place an order.', 'info')
                 return redirect(url_for('login', next=url_for('checkout')))
-            name = request.form.get('name', '').strip()
-            phone = request.form.get('phone', '').strip()
-            address = request.form.get('address', '').strip()
-            city = request.form.get('city', 'Doha').strip()
-            method = request.form.get('payment_method', 'cod')
+            name = request.form.get('name', '').strip(); phone = request.form.get('phone', '').strip(); address = request.form.get('address', '').strip(); city = request.form.get('city', 'Doha').strip(); method = request.form.get('payment_method', 'cod')
             if not name or not phone or not address:
                 flash('Please fill name, phone and address.', 'danger')
                 return render_template('checkout.html', rows=rows, subtotal=subtotal, shipping=shipping, discount=discount, coupon=session.get('coupon'), total=total)
             order_no = '1111-' + secrets.token_hex(4).upper()
             order = Order(user_id=current_user.id, order_number=order_no, status='confirmed' if method == 'cod' else 'pending', payment_method=method, subtotal=subtotal, shipping=shipping, total=total, shipping_name=name, shipping_phone=phone, shipping_address=address, shipping_city=city, note=request.form.get('note', ''))
-            db.session.add(order)
-            db.session.flush()
+            db.session.add(order); db.session.flush()
             for r in rows:
                 p = r['product']
                 db.session.add(OrderItem(order_id=order.id, product_id=p.id, name=p.name, price=p.price, quantity=r['qty'], image=p.image))
-                p.sold += r['qty']
-                p.stock = max(0, p.stock - r['qty'])
-            CartItem.query.filter_by(user_id=current_user.id).delete()
-            db.session.commit()
+                p.sold += r['qty']; p.stock = max(0, p.stock - r['qty'])
+            CartItem.query.filter_by(user_id=current_user.id).delete(); db.session.commit()
             flash(f'Order {order_no} placed successfully.', 'success')
             return redirect(url_for('order_thanks', order_number=order_no))
         return render_template('checkout.html', rows=rows, subtotal=subtotal, shipping=shipping, discount=discount, coupon=session.get('coupon'), total=total)
-
     @app.route('/order/thanks/<order_number>')
     @login_required
     def order_thanks(order_number):
         return render_template('thanks.html', order=Order.query.filter_by(order_number=order_number, user_id=current_user.id).first_or_404())
-
     @app.route('/account/orders')
     @login_required
     def my_orders():
         return render_template('orders.html', orders=Order.query.filter_by(user_id=current_user.id).order_by(Order.created_at.desc()).all())
-
     @app.route('/shop/order/track', methods=['GET', 'POST'])
     @app.route('/track', methods=['GET', 'POST'])
     def track_order():
@@ -375,25 +356,20 @@ def create_app():
                 if not order:
                     flash('No order found with that number.', 'danger')
         return render_template('track.html', order=order)
-
     @app.route('/wishlist/add/<int:pid>')
     @app.route('/shop/wishlist/add-wishlist')
     def wishlist_add(pid=None):
         pid = pid or request.args.get('id', type=int)
         if pid:
-            toggle_wish(pid)
-            flash('Saved to wishlist.', 'success')
+            toggle_wish(pid); flash('Saved to wishlist.', 'success')
         return redirect(request.referrer or url_for('wishlist'))
-
     @app.route('/wishlist/remove/<int:pid>')
     def wishlist_remove(pid):
         if current_user.is_authenticated:
-            WishlistItem.query.filter_by(user_id=current_user.id, product_id=pid).delete()
-            db.session.commit()
+            WishlistItem.query.filter_by(user_id=current_user.id, product_id=pid).delete(); db.session.commit()
         else:
             session['wishlist'] = [x for x in session.get('wishlist', []) if x != pid]
         return redirect(url_for('wishlist'))
-
     @app.route('/wishlist')
     @app.route('/shop/wishlist')
     def wishlist():
@@ -405,7 +381,6 @@ def create_app():
             if ids:
                 products = Product.query.filter(Product.id.in_(ids)).all()
         return render_template('wishlist.html', products=products)
-
     @app.route('/login', methods=['GET', 'POST'])
     @app.route('/user/login', methods=['GET', 'POST'])
     def login():
@@ -414,86 +389,63 @@ def create_app():
         if request.method == 'POST':
             user = User.query.filter_by(email=request.form.get('email', '').strip().lower()).first()
             if user and user.check_password(request.form.get('password', '')):
-                login_user(user, remember=True)
-                merge_guest_cart(user)
+                login_user(user, remember=True); merge_guest_cart(user)
                 flash(f'Welcome back, {user.name}.', 'success')
                 return redirect(request.args.get('next') or url_for('index'))
             flash('Invalid email or password.', 'danger')
         return render_template('login.html')
-
     @app.route('/register', methods=['GET', 'POST'])
     @app.route('/user/signup', methods=['GET', 'POST'])
     def register():
         if request.method == 'POST':
-            name = request.form.get('name', '').strip()
-            email = request.form.get('email', '').strip().lower()
-            password = request.form.get('password', '')
+            name = request.form.get('name', '').strip(); email = request.form.get('email', '').strip().lower(); password = request.form.get('password', '')
             if not name or not email or len(password) < 6:
                 flash('Name, email and a password of at least 6 characters are required.', 'danger')
             elif User.query.filter_by(email=email).first():
                 flash('That email is already registered.', 'danger')
             else:
-                user = User(name=name, email=email, phone=request.form.get('phone'))
-                user.set_password(password)
-                db.session.add(user)
-                db.session.commit()
-                login_user(user)
-                merge_guest_cart(user)
-                flash('Account created.', 'success')
-                return redirect(url_for('index'))
+                user = User(name=name, email=email, phone=request.form.get('phone')); user.set_password(password)
+                db.session.add(user); db.session.commit(); login_user(user); merge_guest_cart(user)
+                flash('Account created.', 'success'); return redirect(url_for('index'))
         return render_template('register.html')
-
     @app.route('/logout')
     def logout():
-        logout_user()
-        flash('Signed out.', 'info')
-        return redirect(url_for('index'))
-
+        logout_user(); flash('Signed out.', 'info'); return redirect(url_for('index'))
     @app.route('/account', methods=['GET', 'POST'])
     @login_required
     def account():
         if request.method == 'POST':
             current_user.name = request.form.get('name', current_user.name)
             current_user.phone = request.form.get('phone', current_user.phone)
-            db.session.commit()
-            flash('Profile updated.', 'success')
+            db.session.commit(); flash('Profile updated.', 'success')
         return render_template('account.html')
-
     @app.route('/user/signup-vendor', methods=['GET', 'POST'])
     def become_seller():
         if request.method == 'POST':
-            flash('Seller application received. We will contact you shortly.', 'success')
-            return redirect(url_for('index'))
+            flash('Seller application received. We will contact you shortly.', 'success'); return redirect(url_for('index'))
         return render_template('seller.html')
-
     @app.route('/product/<int:pid>/review', methods=['POST'])
     @login_required
     def add_review(pid):
         product = db.session.get(Product, pid) or abort(404)
-        rating = max(1, min(5, request.form.get('rating', 5, type=int)))
-        comment = request.form.get('comment', '').strip()
+        rating = max(1, min(5, request.form.get('rating', 5, type=int))); comment = request.form.get('comment', '').strip()
         existing = Review.query.filter_by(product_id=pid, user_id=current_user.id).first()
         if existing:
-            existing.rating = rating
-            existing.comment = comment
+            existing.rating = rating; existing.comment = comment
         else:
             db.session.add(Review(product_id=pid, user_id=current_user.id, rating=rating, comment=comment))
         db.session.flush()
         agg = db.session.query(func.avg(Review.rating), func.count(Review.id)).filter_by(product_id=pid).first()
-        product.rating = round(float(agg[0] or 0), 1)
-        product.review_count = int(agg[1] or 0)
-        db.session.commit()
-        flash('Thanks for the review.', 'success')
+        product.rating = round(float(agg[0] or 0), 1); product.review_count = int(agg[1] or 0)
+        db.session.commit(); flash('Thanks for the review.', 'success')
         return redirect(url_for('product_detail', pid=product.id, slug=product.slug))
-
     @app.route('/aboutus')
     def about():
         return render_template('page.html', title='Our Story', body='about')
     @app.route('/contactus', methods=['GET', 'POST'])
     def contact():
         if request.method == 'POST':
-            flash('Message sent. Our team will reply by email.', 'success')
-            return redirect(url_for('contact'))
+            flash('Message sent. Our team will reply by email.', 'success'); return redirect(url_for('contact'))
         return render_template('contact.html')
     @app.route('/faq')
     def faq():
@@ -519,40 +471,26 @@ def create_app():
     @app.route('/blog')
     def blog():
         return render_template('page.html', title='Blog', body='blog')
-
     def admin_required():
         if not current_user.is_authenticated or not current_user.is_admin:
             abort(403)
-
     @app.route('/admin')
     @login_required
     def admin_home():
         admin_required()
         stats = {'products': Product.query.count(), 'orders': Order.query.count(), 'users': User.query.count(), 'revenue': db.session.query(func.coalesce(func.sum(Order.total), 0)).scalar()}
         return render_template('admin.html', stats=stats, orders=Order.query.order_by(Order.created_at.desc()).limit(12).all(), products=Product.query.order_by(Product.id).all())
-
     @app.route('/admin/product/<int:pid>', methods=['POST'])
     @login_required
     def admin_update_product(pid):
-        admin_required()
-        p = db.session.get(Product, pid) or abort(404)
-        p.price = float(request.form.get('price', p.price))
-        p.stock = int(request.form.get('stock', p.stock))
-        p.name = request.form.get('name', p.name)
-        db.session.commit()
-        flash('Product updated.', 'success')
-        return redirect(url_for('admin_home'))
-
+        admin_required(); p = db.session.get(Product, pid) or abort(404)
+        p.price = float(request.form.get('price', p.price)); p.stock = int(request.form.get('stock', p.stock)); p.name = request.form.get('name', p.name)
+        db.session.commit(); flash('Product updated.', 'success'); return redirect(url_for('admin_home'))
     @app.route('/admin/order/<int:oid>/status', methods=['POST'])
     @login_required
     def admin_order_status(oid):
-        admin_required()
-        order = db.session.get(Order, oid) or abort(404)
-        order.status = request.form.get('status', order.status)
-        db.session.commit()
-        flash('Order status updated.', 'success')
-        return redirect(url_for('admin_home'))
-
+        admin_required(); order = db.session.get(Order, oid) or abort(404)
+        order.status = request.form.get('status', order.status); db.session.commit(); flash('Order status updated.', 'success'); return redirect(url_for('admin_home'))
     @app.errorhandler(404)
     def not_found(_e):
         return render_template('page.html', title='Page not found', body='404'), 404
