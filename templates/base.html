@@ -11,6 +11,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/brand.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/amazon.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}" />
 </head>
 <body data-wish="{{ wishlist_ids|join(',') }}">
   <div class="cookie-bar" id="cookieBar">
@@ -35,33 +37,20 @@
         </div>
         <div class="search-wrap">
           <form class="search-form" action="{{ url_for('shop') }}" method="get" autocomplete="off">
-            <input type="text" name="q" id="liveSearch" placeholder="Search for products..." value="{{ request.args.get('q','') }}" />
+            <input type="text" name="q" id="liveSearch" placeholder="Search 11-11" value="{{ request.args.get('q','') }}" />
             <button type="submit" aria-label="Search">⌕</button>
           </form>
           <div class="search-suggest" id="searchSuggest"></div>
         </div>
-        <button class="cats-btn" type="button">All Categories</button>
       </div>
       <div class="header-rt">
-        <div class="lang-drop">
-          <select id="langSelect">
-            <option value="en" {% if lang=='en' %}selected{% endif %}>Eng</option>
-            <option value="ar" {% if lang=='ar' %}selected{% endif %}>Arabic</option>
-          </select>
-        </div>
-        <a class="icon-link mobile-only" id="openMenu" type="button">☰</a>
-        <a class="icon-link" href="{{ url_for('wishlist') }}" title="Wishlist">
-          ♡ <span class="wish-label">Wishlist</span>
-          <span class="badge" id="wishCount">{{ nav_wish_count }}</span>
-        </a>
-        <button class="icon-link" id="openCart" type="button" title="Cart">
-          🛒 Cart
-          <span class="badge cart-count" id="cartCount">{{ nav_cart_count }}</span>
-        </button>
+        <a class="icon-link" href="{{ url_for('wishlist') }}">♡ <span class="badge" id="wishCount">{{ nav_wish_count }}</span></a>
+        <button class="icon-link" id="openCart" type="button">🛒 <span class="badge cart-count" id="cartCount">{{ nav_cart_count }}</span></button>
         {% if current_user.is_authenticated %}
+          {% if current_user.is_admin %}<a class="icon-link" href="{{ url_for('admin_home') }}">Admin</a>{% endif %}
           <a class="common-btn" href="{{ url_for('account') }}">{{ current_user.name.split()[0] }}</a>
         {% else %}
-          <a class="common-btn" href="{{ url_for('login') }}">Login</a>
+          <a class="common-btn" href="/static/login.html">Login</a>
         {% endif %}
       </div>
     </div>
@@ -80,93 +69,17 @@
       </div>
     </div>
   </header>
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      {% for cat, msg in messages %}
-        <div class="flash {{ cat }} container">{{ msg }}</div>
-      {% endfor %}
-    {% endif %}
-  {% endwith %}
-  <main>{% block content %}{% endblock %}</main>
-  <div class="overlay" id="overlay"></div>
-  <aside class="drawer" id="cartDrawer">
-    <div class="drawer-head">
-      <h5>Cart (<span id="drawerCount">{{ nav_cart_count }}</span>)</h5>
-      <button type="button" id="closeCart" aria-label="Close">×</button>
-    </div>
-    <div class="drawer-body" id="drawerItems"></div>
-    <div class="drawer-foot">
-      <p>Total <strong id="drawerTotal">{{ nav_cart_total|qar }}</strong></p>
-      <div class="row-2">
-        <a class="common-bd-btn" href="{{ url_for('cart') }}">View Cart</a>
-        <a class="common-btn" href="{{ url_for('checkout') }}">Checkout</a>
-      </div>
-    </div>
-  </aside>
-  <aside class="drawer left" id="menuDrawer">
-    <div class="drawer-head">
-      <h5>Menu</h5>
-      <button type="button" id="closeMenu">×</button>
-    </div>
-    <div class="drawer-body">
-      <a href="{{ url_for('shop') }}">All Categories</a>
-      {% for cat in all_categories %}
-        <a href="{{ url_for('shop', category=cat.id) }}" style="display:block;padding:8px 0">{{ cat.name }}</a>
-      {% endfor %}
-    </div>
-  </aside>
-  <div class="toast-wrap" id="toasts"></div>
-  <footer class="footer">
-    <div class="container footer-grid">
-      <div>
-        <a href="{{ url_for('index') }}" class="ftr-logo-link">
-          <img src="http://185.237.99.133/site/logo" alt="eleven-eleven" width="110" height="55"
-               onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/logo-light.svg') }}'" />
-        </a>
-        <p>Your one-stop destination for quality products at unbeatable prices.</p>
-      </div>
-      <div class="ftr-links">
-        <h5>About Us</h5>
-        <ul>
-          <li><a href="{{ url_for('about') }}">Our Story</a></li>
-          <li><a href="{{ url_for('faq') }}">Careers</a></li>
-          <li><a href="{{ url_for('contact') }}">Press</a></li>
-          <li><a href="{{ url_for('blog') }}">Blog</a></li>
-          <li><a class="text-yellow" href="{{ url_for('become_seller') }}">Become a Seller</a></li>
-        </ul>
-      </div>
-      <div class="ftr-links">
-        <h5>Customer Service</h5>
-        <ul>
-          <li><a href="{{ url_for('contact') }}">Contact Us</a></li>
-          <li><a href="{{ url_for('track_order') }}">Track Order</a></li>
-          <li><a href="{{ url_for('returns') }}">Returns</a></li>
-          <li><a href="{{ url_for('shipping_policy') }}">Shipping Info</a></li>
-          <li><a href="{{ url_for('faq') }}">FAQ</a></li>
-        </ul>
-      </div>
-      <div class="ftr-links">
-        <h5>Categories</h5>
-        <ul>
-          {% for cat in all_categories[:5] %}
-          <li><a href="{{ url_for('shop', category=cat.id) }}">{{ cat.name }}</a></li>
-          {% endfor %}
-        </ul>
-      </div>
-      <div class="ftr-links">
-        <h5>Legal</h5>
-        <ul>
-          <li><a href="{{ url_for('privacy') }}">Privacy Policy</a></li>
-          <li><a href="{{ url_for('terms') }}">Terms of Service</a></li>
-          <li><a href="{{ url_for('cookies') }}">Cookie Policy</a></li>
-          <li><a href="{{ url_for('accessibility') }}">Accessibility</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="copyright">
-      <div class="container">&copy; {{ year }} <a href="{{ url_for('index') }}">11-11</a> | All Rights Reserved. Powered By The 11-11 Store</div>
-    </div>
-  </footer>
+  <main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container flash-wrap">
+          {% for cat, msg in messages %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+  {% include '_macros.html' ignore missing %}
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
