@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Login | 11-11</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#f6f3ee;color:#420e15}
+.wrap{max-width:420px;margin:8vh auto;padding:28px;background:#fff;border:1px solid #e7dcc8}
+h2{margin:0 0 8px}
+.muted{color:#7a5a3a;font-size:14px;line-height:1.4}
+label{display:block;margin:12px 0 4px;font-size:13px}
+input{width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #d9c7a8}
+button{margin-top:16px;width:100%;padding:12px;border:0;background:#420e15;color:#fff;font-weight:700;cursor:pointer}
+a{color:#be923b}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h2>Login</h2>
+<p class="muted">Demo: demo@1111.local / demo123<br>Admin: admin@1111.local / admin123</p>
+<form method="post" action="/login">
+<label>Email</label>
+<input type="email" name="email" value="demo@1111.local" required>
+<label>Password</label>
+<input type="password" name="password" value="demo123" required>
+<button type="submit">Sign in</button>
+</form>
+<p class="muted" style="margin-top:16px"><a href="/">Back to store</a></p>
+</div>
+</body>
+</html>
