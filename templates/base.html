@@ -3,19 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{% block title %}{{ store_name }}{% endblock %}</title>
+  <title>{% block title %}{{ store_name }} | Shop electronics, fashion & home{% endblock %}</title>
   <meta name="description" content="11-11 marketplace — electronics, fashion and home in Qatar." />
+  <link rel="icon" href="{{ url_for('static', filename='img/favicon.svg') }}" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
 </head>
 <body data-wish="{{ wishlist_ids|join(',') }}">
+  <div class="top-strip">
+    Free delivery in Qatar over QAR 200 · Flash deals live · Use code <b>FLASH10</b>
+  </div>
   <div class="cookie-bar" id="cookieBar">
     We use cookies, check our <a href="{{ url_for('privacy') }}">Privacy Policies</a>.
     <button class="common-btn" id="cookieAccept" type="button">Agree</button>
   </div>
   <header class="header-card">
     <div class="container header-row">
-      <a class="header-logo" href="{{ url_for('index') }}">
-        <span class="mark">11</span> 11
+      <a class="header-logo" href="{{ url_for('index') }}" aria-label="11-11 home">
+        <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="11-11" width="150" height="38" />
       </a>
       <div class="header-mid">
         <div class="deliver">
@@ -113,7 +120,9 @@
   <footer class="footer">
     <div class="container footer-grid">
       <div>
-        <div class="ftr-logo">11-11</div>
+        <a href="{{ url_for('index') }}" class="ftr-logo-link">
+          <img src="{{ url_for('static', filename='img/logo-light.svg') }}" alt="11-11" width="140" height="36" />
+        </a>
         <p>Your one-stop destination for quality products at unbeatable prices.</p>
       </div>
       <div class="ftr-links">
