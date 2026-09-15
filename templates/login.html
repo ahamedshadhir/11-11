@@ -4,7 +4,7 @@
 <div class="auth-card">
   <h2>Login</h2>
   <p class="muted">Demo customer: demo@1111.local / demo123<br>Admin: admin@1111.local / admin123</p>
-  <form method="post" action="/signin">
+  <form method="post" action="{{ url_for('login') }}">
     <label>Email</label>
     <input type="email" name="email" required>
     <label>Password</label>
