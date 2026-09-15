@@ -36,9 +36,24 @@ IMG = {
     'brand': 'https://images.unsplash.com/photo-1560393464-5c69a73c5770?auto=format&fit=crop&w=400&q=80',
 }
 
+def ensure_users(app):
+    rows = [
+        (app.config['ADMIN_EMAIL'], 'Store Admin', app.config['ADMIN_PASSWORD'], True),
+        ('demo@1111.local', 'Aisha Al-Thani', 'demo123', False),
+    ]
+    for email, name, pw, admin in rows:
+        u = User.query.filter_by(email=email).first()
+        if not u:
+            u = User(name=name, email=email, is_admin=admin)
+            db.session.add(u)
+        u.set_password(pw)
+        u.is_admin = bool(admin)
+    db.session.commit()
+
 def seed_all(app):
     with app.app_context():
         if Product.query.count() > 0:
+            ensure_users(app)
             return
         admin = User(name='Store Admin', email=app.config['ADMIN_EMAIL'], is_admin=True)
         admin.set_password(app.config['ADMIN_PASSWORD'])
