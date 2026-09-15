@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Settings | Admin{% endblock %}
+{% block content %}
+{% from "_admin_nav.html" import admin_nav %}
+<div class="adm-wrap">
+  {{ admin_nav('settings') }}
+  <div class="adm-main">
+    <h1>Store configuration</h1>
+    <div class="adm-card">
+      <p>Store name: <b>11-11</b></p>
+      <p>Currency: <b>QAR</b></p>
+      <p>Coupon: <b>FLASH10</b> (10% off)</p>
+      <p>Admin: <b>admin@1111.local</b></p>
+      <p>Database: Neon Postgres via DATABASE_URL</p>
+      <p>Colors: burgundy #420e15, gold #be923b, flash #fb2c36, canvas #f6f3ee</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

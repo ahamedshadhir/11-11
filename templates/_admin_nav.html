@@ -1,0 +1,11 @@
+{% macro admin_nav(active) %}
+<aside class="adm-side">
+  <a class="adm-brand" href="/admin">11-11 Admin</a>
+  <a class="{% if active=='dash' %}on{% endif %}" href="/admin">Dashboard</a>
+  <a class="{% if active=='products' %}on{% endif %}" href="/admin/products">Products</a>
+  <a class="{% if active=='users' %}on{% endif %}" href="/admin/users">Users</a>
+  <a class="{% if active=='banners' %}on{% endif %}" href="/admin/banners">Banners</a>
+  <a class="{% if active=='settings' %}on{% endif %}" href="/admin/settings">Settings</a>
+  <a href="/">View store</a>
+</aside>
+{% endmacro %}
