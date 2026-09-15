@@ -8,7 +8,7 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
     email = db.Column(db.String(180), unique=True, nullable=False, index=True)
-    password_hash = db.Column(db.String(256), nullable=False)
+    password_hash = db.Column(db.Text, nullable=False)
     phone = db.Column(db.String(40))
     is_admin = db.Column(db.Boolean, default=False)
     is_vendor = db.Column(db.Boolean, default=False)
@@ -21,15 +21,21 @@ class User(UserMixin, db.Model):
     addresses = db.relationship("Address", backref="user", cascade="all, delete-orphan")
 
     def set_password(self, password: str):
-        self.password_hash = generate_password_hash(password)
+        self.password_hash = generate_password_hash(password, method="pbkdf2:sha256")
 
     def check_password(self, password: str) -> bool:
-        return check_password_hash(self.password_hash, password)
+        try:
+            return bool(self.password_hash) and check_password_hash(self.password_hash, password)
+        except Exception:
+            return False
 
 
 @login_manager.user_loader
 def load_user(user_id):
-    return db.session.get(User, int(user_id))
+    try:
+        return db.session.get(User, int(user_id))
+    except Exception:
+        return None
 
 
 class Address(db.Model):
@@ -87,7 +93,6 @@ class Product(db.Model):
     subcategory_id = db.Column(db.Integer, db.ForeignKey("sub_category.id"))
     brand_id = db.Column(db.Integer, db.ForeignKey("brand.id"))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
     reviews = db.relationship("Review", backref="product", cascade="all, delete-orphan")
 
     @property
