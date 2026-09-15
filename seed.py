@@ -1,5 +1,4 @@
 from models import db, User, Category, SubCategory, Brand, Product, Banner, Promo, Review
-from hooks import install_login_hook
 
 IMG = {
     'laptop': 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=900&q=80',
@@ -52,7 +51,6 @@ def ensure_users(app):
     db.session.commit()
 
 def seed_all(app):
-    install_login_hook(app)
     with app.app_context():
         if Product.query.count() > 0:
             ensure_users(app)
@@ -101,42 +99,21 @@ def seed_all(app):
         ])
         db.session.flush()
         db.session.add_all([
-            Product(id=7, name='Samsung Galaxy S23', slug='samsung-galaxy-s23', description='Flagship Android phone with a triple camera system.', image=IMG['phone'], price=95000, compare_at=120000, stock=44, sold=9, rating=3.2, review_count=2, is_featured=True, is_flash=True, is_bestseller=True, category_id=3, subcategory_id=7, brand_id=1),
-            Product(id=8, name='White Sneakers', slug='white-sneakers', description='Clean everyday sneakers with cushioned sole.', image=IMG['sneakers_w'], price=200, compare_at=250, stock=19, sold=56, rating=5.0, review_count=1, is_featured=True, is_flash=True, is_bestseller=True, category_id=8, subcategory_id=18, brand_id=9),
-            Product(id=9, name='Black Running Sneakers', slug='black-running-sneakers', description='Performance running sneakers.', image=IMG['sneakers_b'], price=2999, compare_at=3500, stock=147, sold=3, rating=3.5, review_count=1, is_featured=True, is_flash=True, is_bestseller=True, category_id=8, subcategory_id=18, brand_id=9),
-            Product(id=10, name='Ashish', slug='ashish', description='Everyday accessory pick from the 11-11 catalog.', image=IMG['watch'], price=5000, compare_at=5000, stock=30, sold=12, is_bestseller=True, category_id=5, subcategory_id=13, brand_id=3),
-            Product(id=11, name='White sneaker', slug='white-sneaker', description='Minimal white sneaker with leather overlay.', image=IMG['sneakers_w2'], price=3500, compare_at=3999, stock=22, sold=8, is_bestseller=True, category_id=8, subcategory_id=18, brand_id=9),
-            Product(id=12, name='Ultra Slim Gaming Laptop', slug='ultra-slim-gaming-laptop', description='Thin gaming laptop with dedicated GPU.', image=IMG['gaming_laptop'], price=79999, compare_at=85999, stock=11, sold=4, is_featured=True, is_bestseller=True, category_id=2, subcategory_id=6, brand_id=6),
-            Product(name='MacBook Air 13', slug='macbook-air-13', description='Fanless ultra-portable laptop.', image=IMG['laptop'], price=4499, compare_at=4999, stock=18, sold=21, rating=4.7, review_count=14, is_featured=True, is_bestseller=True, category_id=2, subcategory_id=6, brand_id=6),
-            Product(name='iPhone 15 Pro', slug='iphone-15-pro', description='Titanium iPhone with A17 Pro.', image=IMG['iphone'], price=4899, compare_at=5299, stock=25, sold=40, rating=4.8, review_count=32, is_featured=True, category_id=3, subcategory_id=8, brand_id=6),
-            Product(name='Pixel 8', slug='pixel-8', description='Google Pixel with computational photography.', image=IMG['android'], price=2499, compare_at=2799, stock=16, sold=9, rating=4.5, review_count=7, category_id=3, subcategory_id=7, brand_id=1),
-            Product(name='Wireless Over-Ear Headphones', slug='wireless-over-ear', description='ANC headphones with 30-hour battery.', image=IMG['headphones'], price=899, compare_at=1199, stock=40, sold=63, rating=4.6, review_count=28, is_featured=True, is_bestseller=True, category_id=4, subcategory_id=9, brand_id=7),
-            Product(name='True Wireless Earbuds', slug='true-wireless-earbuds', description='Compact earbuds with ANC.', image=IMG['earbuds'], price=399, compare_at=549, stock=80, sold=120, rating=4.3, review_count=41, category_id=4, subcategory_id=10, brand_id=7),
-            Product(name='Clear Phone Case', slug='clear-phone-case', description='Slim shock-absorbing case.', image=IMG['case'], price=49, compare_at=79, stock=200, sold=310, rating=4.1, review_count=18, category_id=5, subcategory_id=11, brand_id=3),
-            Product(name='Fast Wall Charger 65W', slug='fast-wall-charger-65w', description='GaN charger with dual USB-C.', image=IMG['charger'], price=129, compare_at=179, stock=90, sold=55, rating=4.4, review_count=11, category_id=5, subcategory_id=12, brand_id=6),
-            Product(name='20,000mAh Power Bank', slug='power-bank-20000', description='High-capacity power bank.', image=IMG['powerbank'], price=159, compare_at=199, stock=70, sold=88, rating=4.2, review_count=19, category_id=5, subcategory_id=13, brand_id=1),
-            Product(name='DSLR Camera Kit', slug='dslr-camera-kit', description='24MP DSLR with 18-55mm lens.', image=IMG['camera'], price=2899, compare_at=3299, stock=9, sold=6, rating=4.5, review_count=5, is_featured=True, category_id=6, subcategory_id=14, brand_id=7),
-            Product(name='Travel Tripod', slug='travel-tripod', description='Compact aluminum tripod.', image=IMG['tripod'], price=189, compare_at=249, stock=34, sold=17, rating=4.0, review_count=3, category_id=6, subcategory_id=15, brand_id=7),
-            Product(name='55-inch 4K Smart TV', slug='55-inch-4k-smart-tv', description='4K HDR smart TV.', image=IMG['tv'], price=1899, compare_at=2299, stock=14, sold=22, rating=4.4, review_count=16, is_featured=True, category_id=7, subcategory_id=16, brand_id=1),
-            Product(name='2.1 Home Theatre Soundbar', slug='home-theatre-soundbar', description='Soundbar plus wireless subwoofer.', image=IMG['theatre'], price=799, compare_at=999, stock=20, sold=13, rating=4.3, review_count=8, category_id=7, subcategory_id=17, brand_id=7),
-            Product(name='Leather Crossbody Bag', slug='leather-crossbody-bag', description='Structured leather bag.', image=IMG['bag'], price=1299, compare_at=1599, stock=15, sold=7, rating=4.6, review_count=4, category_id=8, brand_id=4),
-            Product(name='All-in-One Desktop', slug='all-in-one-desktop', description='27-inch all-in-one desktop.', image=IMG['desktop'], price=3999, compare_at=4499, stock=8, sold=3, rating=4.2, review_count=2, category_id=2, subcategory_id=5, brand_id=6),
+            Product(id=7, name='Samsung Galaxy S23', slug='samsung-galaxy-s23', description='Flagship Android phone.', image=IMG['phone'], price=95000, compare_at=120000, stock=44, sold=9, rating=3.2, review_count=2, is_featured=True, is_flash=True, is_bestseller=True, category_id=3, subcategory_id=7, brand_id=1),
+            Product(id=8, name='White Sneakers', slug='white-sneakers', description='Everyday sneakers.', image=IMG['sneakers_w'], price=200, compare_at=250, stock=19, sold=56, rating=5.0, review_count=1, is_featured=True, is_flash=True, is_bestseller=True, category_id=8, subcategory_id=18, brand_id=9),
+            Product(id=9, name='Black Running Sneakers', slug='black-running-sneakers', description='Running sneakers.', image=IMG['sneakers_b'], price=2999, compare_at=3500, stock=147, sold=3, rating=3.5, review_count=1, is_featured=True, is_flash=True, is_bestseller=True, category_id=8, subcategory_id=18, brand_id=9),
+            Product(name='MacBook Air 13', slug='macbook-air-13', description='Ultra-portable laptop.', image=IMG['laptop'], price=4499, compare_at=4999, stock=18, sold=21, rating=4.7, review_count=14, is_featured=True, is_bestseller=True, category_id=2, subcategory_id=6, brand_id=6),
+            Product(name='iPhone 15 Pro', slug='iphone-15-pro', description='Titanium iPhone.', image=IMG['iphone'], price=4899, compare_at=5299, stock=25, sold=40, rating=4.8, review_count=32, is_featured=True, category_id=3, subcategory_id=8, brand_id=6),
+            Product(name='Wireless Over-Ear Headphones', slug='wireless-over-ear', description='ANC headphones.', image=IMG['headphones'], price=899, compare_at=1199, stock=40, sold=63, rating=4.6, review_count=28, is_featured=True, is_bestseller=True, category_id=4, subcategory_id=9, brand_id=7),
+            Product(name='Clear Phone Case', slug='clear-phone-case', description='Slim case.', image=IMG['case'], price=49, compare_at=79, stock=200, sold=310, rating=4.1, review_count=18, category_id=5, subcategory_id=11, brand_id=3),
+            Product(name='Fast Wall Charger 65W', slug='fast-wall-charger-65w', description='GaN charger.', image=IMG['charger'], price=129, compare_at=179, stock=90, sold=55, rating=4.4, review_count=11, category_id=5, subcategory_id=12, brand_id=6),
+            Product(name='55-inch 4K Smart TV', slug='55-inch-4k-smart-tv', description='4K HDR TV.', image=IMG['tv'], price=1899, compare_at=2299, stock=14, sold=22, rating=4.4, review_count=16, is_featured=True, category_id=7, subcategory_id=16, brand_id=1),
         ])
-        db.session.flush()
         db.session.add_all([
             Banner(title='Shoes Sale', image=IMG['banner1'], link='/shop?category=8', sort_order=1),
-            Banner(title='Get 200 off on first Brand', image=IMG['banner2'], link='/shop?brand=1', sort_order=2),
+            Banner(title='Brand offer', image=IMG['banner2'], link='/shop?brand=1', sort_order=2),
             Banner(title='Seasonal Offers', image=IMG['banner3'], link='/shop', sort_order=3),
-            Promo(title='Special Offer On Headphones', image=IMG['promo1'], link='/shop?category=4'),
-            Promo(title='Special Offer On Products', image=IMG['promo2'], link='/shop?brand=7'),
-        ])
-        s23 = Product.query.filter_by(slug='samsung-galaxy-s23').first()
-        ws = Product.query.filter_by(slug='white-sneakers').first()
-        brs = Product.query.filter_by(slug='black-running-sneakers').first()
-        db.session.add_all([
-            Review(product=s23, user=demo, rating=3, comment='Good camera, battery is average.'),
-            Review(product=s23, user=admin, rating=4, comment='Solid flagship.'),
-            Review(product=ws, user=demo, rating=5, comment='Comfortable and look expensive.'),
-            Review(product=brs, user=demo, rating=4, comment='Great for evening runs around the Corniche.'),
+            Promo(title='Headphones', image=IMG['promo1'], link='/shop?category=4'),
+            Promo(title='Products', image=IMG['promo2'], link='/shop?brand=7'),
         ])
         db.session.commit()
