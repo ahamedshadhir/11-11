@@ -1,17 +1,21 @@
-.top-strip {
-  background: #420e15;
-  color: #f6f3ee;
-  text-align: center;
-  font-size: 12px;
-  letter-spacing: .04em;
-  padding: 8px 12px;
-}
-.top-strip b { color: #be923b; }
+.top-strip { display: none; }
 .header-logo { display: flex; align-items: center; line-height: 0; }
-.header-logo img { width: 150px; height: auto; display: block; }
+.header-logo img { width: 92px; height: auto; display: block; }
 .ftr-logo-link { display: inline-block; margin-bottom: 10px; }
-.ftr-logo-link img { width: 140px; height: auto; display: block; }
-body { font-family: Inter, "Segoe UI", Tahoma, sans-serif; }
-.common-title h4, .banner-copy h2, .ftr-logo {
-  font-family: "Playfair Display", Georgia, serif;
+.ftr-logo-link img { width: 110px; height: auto; display: block; filter: brightness(0) invert(1); }
+.banner-sec { background: #f3ebe3; }
+.banner-slide { min-height: 420px; background-size: cover; background-position: center; }
+.banner-slide::after { display: none; }
+.banner-copy { display: none; }
+.cookie-bar {
+  position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
+  background: #ffe566; color: #1a1a1a; border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.12); z-index: 200; width: max-content; max-width: calc(100% - 24px);
 }
+.cookie-bar a { color: #420e15; text-decoration: underline; }
+.cookie-bar .common-btn { background: #149157; border-color: #149157; color: #fff; padding: 8px 16px; border-radius: 8px; }
+.cookie-bar .common-btn:hover { background: #0e7a46; color: #fff; }
+.category-card { border: 1px solid #eee; box-shadow: none; border-radius: 16px; }
+.category-card:hover { box-shadow: 0 8px 24px rgba(66,14,21,.08); }
+.common-title h4 { font-family: Georgia, "Times New Roman", serif; font-weight: 600; }
+.bg-red { background: #fb2c36; }
