@@ -1,4 +1,5 @@
 from models import db, User, Category, SubCategory, Brand, Product, Banner, Promo, Review
+from hooks import install_login_hook
 
 IMG = {
     'laptop': 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=900&q=80',
@@ -51,6 +52,7 @@ def ensure_users(app):
     db.session.commit()
 
 def seed_all(app):
+    install_login_hook(app)
     with app.app_context():
         if Product.query.count() > 0:
             ensure_users(app)
