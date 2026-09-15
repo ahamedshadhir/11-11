@@ -16,6 +16,30 @@ def register_admin(app):
         if not getattr(current_user, 'is_authenticated', False) or not getattr(current_user, 'is_admin', False):
             abort(403)
 
+    @app.route('/about')
+    def about_alias():
+        return redirect('/aboutus')
+
+    @app.route('/contact')
+    def contact_alias():
+        return redirect('/contactus')
+
+    @app.route('/categories')
+    def categories_alias():
+        return redirect('/shop/category/index')
+
+    @app.route('/returns')
+    def returns_alias():
+        return redirect('/return-policy')
+
+    @app.route('/cookies')
+    def cookies_alias():
+        return redirect('/cookie-policy')
+
+    @app.route('/shipping-policy')
+    def shipping_alias():
+        return redirect('/site/shipping-policy')
+
     @app.route('/admin/products', methods=['GET', 'POST'])
     @login_required
     def admin_products():
