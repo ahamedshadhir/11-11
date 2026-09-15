@@ -1,0 +1,23 @@
+{% macro stars(rating, count=None) %}
+  <div class="stars">
+    {% set r = rating or 0 %}
+    {% for i in range(1,6) %}{% if r >= i %}★{% elif r >= i-0.5 %}☆{% else %}☆{% endif %}{% endfor %}
+    {% if count is not none %}<span class="grey-star">({{ count }})</span>{% endif %}
+  </div>
+{% endmacro %}
+
+{% macro product_card(p) %}
+  <article class="card">
+    <div class="card-img">
+      <a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}"><img src="{{ p.image }}" alt="{{ p.name }}"></a>
+      {% if p.discount_percent %}<span class="discount-per">-{{ p.discount_percent }}%</span>{% endif %}
+      <button class="like-btn {% if p.id in wishlist_ids %}on{% endif %}" type="button" data-pid="{{ p.id }}" title="Wishlist">♡</button>
+    </div>
+    <div class="card-body">
+      <h4><a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}">{{ p.name }}</a></h4>
+      {{ stars(p.rating, p.review_count) }}
+      <p class="price">{% if p.compare_at and p.compare_at > p.price %}<del>{{ p.compare_at|qar }}</del>{% endif %} {{ p.price|qar }}</p>
+      <button class="common-btn w-100 mt-2" type="button" data-add="{{ p.id }}">Add to cart</button>
+    </div>
+  </article>
+{% endmacro %}

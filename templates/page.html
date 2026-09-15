@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} | 11-11{% endblock %}
+{% block content %}
+<div class="panel wide">
+  <h2>{{ title }}</h2>
+  {% if body == 'about' %}
+    <p>11-11 is a Qatar marketplace for electronics, fashion and home. We started as a flash-sale store and grew into a full catalog with local delivery and vendor onboarding.</p>
+  {% elif body == 'privacy' %}
+    <p>We collect the account details you submit, order history and basic device data needed to run the shop. We do not sell personal data. Contact support@1111.local to request a copy or deletion.</p>
+  {% elif body == 'terms' %}
+    <p>By placing an order you agree to pay the listed QAR price, accept our 30-day return window, and keep product listings accurate if you sell on the platform.</p>
+  {% elif body == 'cookies' %}
+    <p>Essential cookies keep you signed in and remember the cart. Analytics cookies are optional and can be declined from the banner.</p>
+  {% elif body == 'access' %}
+    <p>We aim for readable contrast, keyboard-friendly controls and descriptive labels. Email accessibility@1111.local if something is hard to use.</p>
+  {% elif body == 'returns' %}
+    <p>Start a return from your order page within 30 days. We collect in Doha at no charge. Refunds go back to the original payment method after inspection.</p>
+  {% elif body == 'shipping' %}
+    <p>Free delivery on orders over QAR 200. Standard rate is QAR 25. Same-day slots appear at checkout when stock is in the Doha warehouse.</p>
+  {% elif body == 'blog' %}
+    <p>No posts yet. Offers and product drops will appear here.</p>
+  {% elif body == '404' %}
+    <p>That page does not exist. <a href="{{ url_for('index') }}">Back to the store</a>.</p>
+  {% elif body == '403' %}
+    <p>You need an admin account for that page.</p>
+  {% endif %}
+</div>
+{% endblock %}
