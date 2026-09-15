@@ -9,8 +9,13 @@ def _on_vercel():
 
 
 def _database_uri():
-    if os.environ.get("DATABASE_URL"):
-        return os.environ["DATABASE_URL"]
+    url = os.environ.get("DATABASE_URL") or os.environ.get("POSTGRES_URL") or os.environ.get("POSTGRES_PRISMA_URL")
+    if url:
+        if url.startswith("postgres://"):
+            url = "postgresql+psycopg2://" + url[len("postgres://"):]
+        elif url.startswith("postgresql://") and "+psycopg2" not in url:
+            url = "postgresql+psycopg2://" + url[len("postgresql://"):]
+        return url
     if _on_vercel():
         return "sqlite:////tmp/1111-store.db"
     instance = BASE_DIR / "instance"
@@ -22,6 +27,7 @@ class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-1111-store-change-me")
     SQLALCHEMY_DATABASE_URI = _database_uri()
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}
     SESSION_COOKIE_HTTPONLY = True
     REMEMBER_COOKIE_HTTPONLY = True
     ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "admin@1111.local")
