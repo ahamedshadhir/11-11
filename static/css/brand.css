@@ -17,9 +17,18 @@
 .ftr-logo-link img { width: 160px; height: auto; display: block; filter: brightness(0) invert(1); }
 .banner-copy { display: block; }
 .cookie-bar {
-  position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
-  background: #ffe566; color: #1a1a1a; border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(0,0,0,.12); z-index: 200; width: max-content; max-width: calc(100% - 24px);
+  position: fixed;
+  inset: auto 16px 16px 16px;
+  margin-inline: auto;
+  left: auto;
+  transform: none;
+  background: #f3e27a;
+  color: #1a1a1a;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.12);
+  z-index: 200;
+  width: min(640px, calc(100% - 32px));
+  max-width: calc(100% - 32px);
 }
 .cookie-bar a { color: #420e15; text-decoration: underline; }
 .cookie-bar .common-btn { background: #149157; border-color: #149157; color: #fff; padding: 8px 16px; border-radius: 8px; }
