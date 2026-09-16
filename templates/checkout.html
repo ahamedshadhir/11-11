@@ -4,58 +4,60 @@
 <section class="check-page">
   <div class="container">
     <h1>Checkout</h1>
-    <div class="check-grid">
-      <div>
-      <form method="post" action="/pay/skipcash" class="check-form">
+    <form method="post" action="/checkout/pay" class="check-grid">
+      <div class="check-form">
         <h2>Delivery</h2>
         <div class="check-2">
-          <div><label>Full name</label><input type="text" name="name" required value="{{ current_user.name if current_user.is_authenticated else '' }}"></div>
-          <div><label>Phone</label><input type="tel" name="phone" required value="{{ current_user.phone if current_user.is_authenticated else '50000000' }}"></div>
+          <div>
+            <label>Full name</label>
+            <input type="text" name="name" required value="{{ current_user.name if current_user.is_authenticated else '' }}">
+          </div>
+          <div>
+            <label>Phone</label>
+            <input type="tel" name="phone" required value="{{ current_user.phone if current_user.is_authenticated else '' }}">
+          </div>
         </div>
         <label>Email</label>
         <input type="email" name="email" value="{{ current_user.email if current_user.is_authenticated else '' }}">
         <label>Address</label>
-        <input type="text" name="address" required value="West Bay">
+        <input type="text" name="address" required placeholder="Street, building, zone">
         <div class="check-2">
-          <div><label>City</label><input type="text" name="city" value="Doha"></div>
-          <div><label>Payment</label>
-            <select name="payment_method">
-              <option value="skipcash">SkipCash</option>
-              <option value="sadad">Sadad</option>
-              <option value="cod">Cash on delivery</option>
-            </select>
+          <div>
+            <label>City</label>
+            <input type="text" name="city" value="Doha">
+          </div>
+          <div>
+            <label>Note</label>
+            <input type="text" name="note" placeholder="Optional">
           </div>
         </div>
-        <button class="common-btn check-submit" type="submit">Pay with SkipCash · {{ total|qar }}</button>
-      </form>
-      <form method="post" action="/pay/sadad" class="check-form" style="margin-top:12px">
-        <input type="hidden" name="name" value="{{ current_user.name if current_user.is_authenticated else 'Guest' }}">
-        <input type="hidden" name="phone" value="{{ current_user.phone if current_user.is_authenticated else '50000000' }}">
-        <input type="hidden" name="address" value="West Bay">
-        <input type="hidden" name="city" value="Doha">
-        <button class="common-btn check-submit" type="submit" style="background:#be923b;color:#420e15">Pay with Sadad · {{ total|qar }}</button>
-      </form>
-      <form method="post" action="{{ url_for('checkout') }}" class="check-form" style="margin-top:12px">
-        <input type="hidden" name="name" value="{{ current_user.name if current_user.is_authenticated else 'Guest' }}">
-        <input type="hidden" name="phone" value="50000000">
-        <input type="hidden" name="address" value="West Bay">
-        <input type="hidden" name="city" value="Doha">
-        <input type="hidden" name="payment_method" value="cod">
-        <button class="common-bd-btn check-submit" type="submit">Cash on delivery</button>
-      </form>
+
+        <h2>Payment method</h2>
+        <label class="pay-opt"><input type="radio" name="payment_method" value="cod" required> Cash on delivery</label>
+        <label class="pay-opt"><input type="radio" name="payment_method" value="sadad"> Sadad Gateway (sandbox)</label>
+        <label class="pay-opt"><input type="radio" name="payment_method" value="skipcash"> SkipCash Gateway (sandbox)</label>
+        <button class="common-btn check-submit" type="submit">Continue · {{ total|qar }}</button>
+        {% if not current_user.is_authenticated %}
+        <p class="muted">Sign in is required to place the order.</p>
+        {% endif %}
       </div>
       <aside class="check-summary">
         <h2>Your bag</h2>
         {% for r in rows %}
-        <div class="check-line"><img src="{{ r.product.image }}" alt=""><div><p>{{ r.product.name }}</p><span>× {{ r.qty }}</span></div><strong>{{ r.line|qar }}</strong></div>
+        <div class="check-line">
+          <img src="{{ r.product.image }}" alt="">
+          <div><p>{{ r.product.name }}</p><span>× {{ r.qty }}</span></div>
+          <strong>{{ r.line|qar }}</strong>
+        </div>
         {% endfor %}
         <div class="check-totals">
           <p>Subtotal <span>{{ subtotal|qar }}</span></p>
           <p>Shipping <span>{{ shipping|qar }}</span></p>
+          {% if discount %}<p>Discount <span>-{{ discount|qar }}</span></p>{% endif %}
           <p class="grand">Total <span>{{ total|qar }}</span></p>
         </div>
       </aside>
-    </div>
+    </form>
   </div>
 </section>
 {% endblock %}
