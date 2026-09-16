@@ -17,6 +17,11 @@ class _LoginManager(LoginManager):
             install_i18n(app)
         except Exception:
             pass
+        try:
+            from newsletter import install_newsletter
+            install_newsletter(app)
+        except Exception:
+            pass
 
 
 login_manager = _LoginManager()
