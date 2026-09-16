@@ -4,29 +4,55 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Login | 11-11</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Georgia&display=swap" rel="stylesheet">
 <style>
-body{margin:0;font-family:Arial,sans-serif;background:#f6f3ee;color:#420e15}
-.wrap{max-width:420px;margin:8vh auto;padding:28px;background:#fff;border:1px solid #e7dcc8}
-h2{margin:0 0 8px}
-.muted{color:#7a5a3a;font-size:14px;line-height:1.4}
-label{display:block;margin:12px 0 4px;font-size:13px}
-input{width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #d9c7a8}
-button{margin-top:16px;width:100%;padding:12px;border:0;background:#420e15;color:#fff;font-weight:700;cursor:pointer}
-a{color:#be923b}
+:root{--navy:#420e15;--gold:#be923b;--canvas:#f6f3ee}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--canvas);color:#1a1a1a}
+.top{background:#fff;border-bottom:1px solid #eee;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.top img{height:72px;width:auto;display:block}
+.top a{color:var(--navy);text-decoration:none;font-weight:600}
+.hero{min-height:calc(100vh - 160px);display:grid;place-items:center;padding:32px 16px;background:
+  linear-gradient(90deg,#f6efe4 0%,#f6efe4 45%,transparent 75%),
+  #f6efe4 url('https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1400&q=80') right center/cover no-repeat}
+.card{width:min(440px,100%);background:#fff;border:1px solid #eadfce;border-radius:16px;padding:28px;box-shadow:0 12px 32px rgba(66,14,21,.08)}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.brand img{height:56px}
+h1{margin:0 0 6px;font-size:28px;color:var(--navy);font-family:Georgia,serif}
+.muted{color:#7a5a3a;font-size:14px;line-height:1.45;margin:0 0 18px}
+label{display:block;margin:12px 0 6px;font-size:13px;font-weight:600;color:var(--navy)}
+input{width:100%;padding:12px 14px;border:1px solid #d9c7a8;border-radius:10px;font-size:15px}
+button{margin-top:18px;width:100%;padding:13px;border:0;border-radius:10px;background:var(--navy);color:#fff;font-weight:700;cursor:pointer}
+button:hover{background:#5a1a22}
+.links{display:flex;justify-content:space-between;margin-top:16px;font-size:14px}
+.links a{color:var(--gold);text-decoration:none;font-weight:600}
+.foot{background:#1a0c0f;color:#f6f3ee;text-align:center;padding:16px;font-size:13px}
 </style>
 </head>
 <body>
-<div class="wrap">
-<h2>Login</h2>
-<p class="muted">Demo: demo@1111.local / demo123<br>Admin: admin@1111.local / admin123</p>
-<form method="post" action="/login">
-<label>Email</label>
-<input type="email" name="email" value="demo@1111.local" required>
-<label>Password</label>
-<input type="password" name="password" value="demo123" required>
-<button type="submit">Sign in</button>
-</form>
-<p class="muted" style="margin-top:16px"><a href="/">Back to store</a></p>
-</div>
+<header class="top">
+  <a href="/"><img src="/static/img/logo.svg" alt="11:11 eleven-eleven"></a>
+  <a href="/">Back to store</a>
+</header>
+<main class="hero">
+  <div class="card">
+    <div class="brand"><img src="/static/img/logo.svg" alt=""></div>
+    <h1>Sign in</h1>
+    <p class="muted">Use your 11-11 account to shop, track orders and save a wishlist.</p>
+    <form method="post" action="/login">
+      <label>Email</label>
+      <input type="email" name="email" value="demo@1111.local" required>
+      <label>Password</label>
+      <input type="password" name="password" value="demo123" required>
+      <button type="submit">Sign in</button>
+    </form>
+    <div class="links">
+      <a href="/user/signup">Create account</a>
+      <a href="/">Continue shopping</a>
+    </div>
+    <p class="muted" style="margin-top:18px">Demo: demo@1111.local / demo123<br>Admin: admin@1111.local / admin123</p>
+  </div>
+</main>
+<footer class="foot">&copy; 11-11 Qatar</footer>
 </body>
 </html>
