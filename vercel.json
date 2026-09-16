@@ -5,8 +5,8 @@
     { "src": "api/auth.py", "use": "@vercel/python" }
   ],
   "routes": [
-    { "src": "/login", "dest": "api/auth.py" },
-    { "src": "/user/login", "dest": "api/auth.py" },
+    { "src": "/login", "methods": ["POST"], "dest": "api/auth.py" },
+    { "src": "/user/login", "methods": ["POST"], "dest": "api/auth.py" },
     { "src": "/(.*)", "dest": "app.py" }
   ]
 }

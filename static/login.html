@@ -3,42 +3,40 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-store">
 <title>Login | 11-11</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Georgia&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/style.css">
+<link rel="stylesheet" href="/static/css/brand.css">
+<link rel="stylesheet" href="/static/css/amazon.css">
 <style>
-:root{--navy:#420e15;--gold:#be923b;--canvas:#f6f3ee}
-*{box-sizing:border-box}
-body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--canvas);color:#1a1a1a}
-.top{background:#fff;border-bottom:1px solid #eee;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
-.top img{height:72px;width:auto;display:block}
-.top a{color:var(--navy);text-decoration:none;font-weight:600}
-.hero{min-height:calc(100vh - 160px);display:grid;place-items:center;padding:32px 16px;background:
-  linear-gradient(90deg,#f6efe4 0%,#f6efe4 45%,transparent 75%),
-  #f6efe4 url('https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1400&q=80') right center/cover no-repeat}
-.card{width:min(440px,100%);background:#fff;border:1px solid #eadfce;border-radius:16px;padding:28px;box-shadow:0 12px 32px rgba(66,14,21,.08)}
-.brand{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.brand img{height:56px}
-h1{margin:0 0 6px;font-size:28px;color:var(--navy);font-family:Georgia,serif}
-.muted{color:#7a5a3a;font-size:14px;line-height:1.45;margin:0 0 18px}
-label{display:block;margin:12px 0 6px;font-size:13px;font-weight:600;color:var(--navy)}
-input{width:100%;padding:12px 14px;border:1px solid #d9c7a8;border-radius:10px;font-size:15px}
-button{margin-top:18px;width:100%;padding:13px;border:0;border-radius:10px;background:var(--navy);color:#fff;font-weight:700;cursor:pointer}
-button:hover{background:#5a1a22}
-.links{display:flex;justify-content:space-between;margin-top:16px;font-size:14px}
-.links a{color:var(--gold);text-decoration:none;font-weight:600}
-.foot{background:#1a0c0f;color:#f6f3ee;text-align:center;padding:16px;font-size:13px}
+.auth-wrap{min-height:62vh;display:grid;place-items:center;padding:48px 16px;background:#f6efe4}
+.auth-card{width:min(440px,100%);background:#fff;border:1px solid #eadfce;border-radius:16px;padding:28px}
+.auth-card img.auth-logo{height:72px;width:auto;display:block;margin:0 auto 12px}
+.auth-card h1{text-align:center;color:#420e15;font-family:Georgia,serif;margin:0 0 8px}
+.auth-card .muted{text-align:center;color:#7a5a3a}
+.auth-card label{display:block;margin:12px 0 6px;color:#420e15;font-weight:600}
+.auth-card input{width:100%;padding:12px;border:1px solid #d9c7a8;border-radius:10px}
+.auth-card button{margin-top:16px;width:100%;padding:12px;border:0;border-radius:10px;background:#420e15;color:#fff;font-weight:700}
+.mini-head{background:#fff;border-bottom:1px solid #eee;padding:12px 24px;display:flex;align-items:center;justify-content:space-between}
+.mini-head img{height:76px}
+.mini-head a{color:#420e15;font-weight:700;text-decoration:none}
+.mini-bar{background:#420e15;color:#fff;padding:8px 24px;font-size:13px}
+.mini-foot{background:#1a0c0f;color:#f6f3ee;padding:28px 24px 16px}
+.mini-foot img{height:64px;background:#fff;border-radius:8px;padding:6px}
 </style>
 </head>
 <body>
-<header class="top">
-  <a href="/"><img src="/static/img/logo.svg" alt="11:11 eleven-eleven"></a>
+<header class="mini-head">
+  <a href="/"><img src="/static/img/logo.svg?v=3" alt="11:11 eleven-eleven"></a>
   <a href="/">Back to store</a>
 </header>
-<main class="hero">
-  <div class="card">
-    <div class="brand"><img src="/static/img/logo.svg" alt=""></div>
+<div class="mini-bar">11-11 — electronics, fashion and home in Qatar</div>
+<main class="auth-wrap">
+  <div class="auth-card">
+    <img class="auth-logo" src="/static/img/logo.svg?v=3" alt="11:11">
     <h1>Sign in</h1>
-    <p class="muted">Use your 11-11 account to shop, track orders and save a wishlist.</p>
+    <p class="muted">Same account you use on the 11-11 store.</p>
     <form method="post" action="/login">
       <label>Email</label>
       <input type="email" name="email" value="demo@1111.local" required>
@@ -46,13 +44,12 @@ button:hover{background:#5a1a22}
       <input type="password" name="password" value="demo123" required>
       <button type="submit">Sign in</button>
     </form>
-    <div class="links">
-      <a href="/user/signup">Create account</a>
-      <a href="/">Continue shopping</a>
-    </div>
-    <p class="muted" style="margin-top:18px">Demo: demo@1111.local / demo123<br>Admin: admin@1111.local / admin123</p>
+    <p class="muted" style="margin-top:16px"><a href="/user/signup" style="color:#be923b">Create account</a></p>
   </div>
 </main>
-<footer class="foot">&copy; 11-11 Qatar</footer>
+<footer class="mini-foot">
+  <img src="/static/img/logo-light.svg?v=3" alt="11-11">
+  <p>&copy; 11-11 Qatar</p>
+</footer>
 </body>
 </html>
