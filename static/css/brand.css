@@ -1,29 +1,12 @@
+@import url('pages.css');
 .cookie-bar{
   position:fixed;left:50%;bottom:16px;transform:translateX(-50%);
   background:#ffe566;color:#1a1a1a;border-radius:10px;z-index:200;
   padding:10px 14px;width:max-content;max-width:calc(100% - 24px);
 }
 .header-card{overflow:visible;background:#fff}
-.header-row{
-  grid-template-columns:220px 1fr auto !important;
-  align-items:center;gap:16px;padding:10px 0;
-}
-.header-logo{
-  display:flex;flex-direction:column;justify-content:center;
-  line-height:1;text-decoration:none;min-width:180px;
-}
 .header-logo img{display:none}
-.logo-mark{
-  font-family:Georgia,"Times New Roman",serif;
-  font-size:34px;font-weight:700;color:#420e15;letter-spacing:1px;
-}
+.logo-mark{font-family:Georgia,serif;font-size:34px;font-weight:700;color:#420e15}
 .logo-mark span{color:#be923b}
-.logo-sub{
-  font-family:Georgia,"Times New Roman",serif;
-  font-size:11px;letter-spacing:3px;color:#be923b;text-transform:lowercase;
-  margin-top:2px;
-}
-.ftr-logo-link{display:flex;flex-direction:column;text-decoration:none;margin-bottom:12px}
-.ftr-logo-link img{display:none}
+.logo-sub{font-size:11px;letter-spacing:3px;color:#be923b}
 .ftr-logo-link .logo-mark{color:#fff}
-.ftr-logo-link .logo-sub{color:#be923b}
