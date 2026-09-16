@@ -1,45 +1,17 @@
-import base64
-import hashlib
 import json
 import os
 import secrets
-import string
 from datetime import datetime
-from urllib.parse import quote
 from urllib.request import Request, urlopen
 
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
-
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from cryptography.hazmat.primitives import padding
 
 API = os.environ.get("SADAD_API", "https://api.sadadqatar.com/api-v4")
 MERCHANT_ID = os.environ.get("SADAD_MERCHANT_ID", os.environ.get("SADAD_ID", ""))
 SECRET = os.environ.get("SADAD_SECRET", os.environ.get("SADAD_SECRET_KEY", ""))
 DOMAIN = os.environ.get("SADAD_DOMAIN", "elevenelven.vercel.app")
 CHECKOUT_URL = os.environ.get("SADAD_CHECKOUT_URL", "https://sadadqa.com/webpurchase")
-IV = b"@@@@&&&&####$$$$"
-
-
-def _aes_encrypt(text, key_str):
-    key = (key_str.encode("utf-8") + b"\0" * 16)[:16]
-    padder = padding.PKCS7(128).padder()
-    data = padder.update(text.encode("utf-8")) + padder.finalize()
-    cipher = Cipher(algorithms.AES(key), modes.CBC(IV))
-    enc = cipher.encryptor()
-    raw = enc.update(data) + enc.finalize()
-    return base64.b64encode(raw).decode()
-
-
-def local_checksum(post_data):
-    """SADAD PHP getChecksumFromString: json({postData, secretKey}) + |salt, SHA256, AES-128-CBC."""
-    payload = {"postData": post_data, "secretKey": SECRET}
-    raw = json.dumps(payload, separators=(",", ":"), ensure_ascii=False)
-    salt = "".join(secrets.choice(string.ascii_letters + string.digits) for _ in range(4))
-    hashed = hashlib.sha256((raw + "|" + salt).encode("utf-8")).hexdigest() + salt
-    key = quote(SECRET, safe="") + str(MERCHANT_ID)
-    return _aes_encrypt(hashed, key)
 
 
 def api_checksum(fields):
@@ -52,11 +24,7 @@ def api_checksum(fields):
         "MOBILE_NO": fields["MOBILE_NO"],
         "EMAIL": fields["EMAIL"],
         "productdetail": [
-            {
-                "order_id": fields["ORDER_ID"],
-                "quantity": "1",
-                "amount": fields["TXN_AMOUNT"],
-            }
+            {"order_id": fields["ORDER_ID"], "quantity": "1", "amount": fields["TXN_AMOUNT"]}
         ],
         "txnDate": fields["txnDate"],
         "VERSION": "2.1",
@@ -73,7 +41,10 @@ def api_checksum(fields):
     )
     with urlopen(req, timeout=20) as resp:
         data = json.loads(resp.read().decode())
-    return data.get("checksum") or data.get("checksumhash")
+    checksum = data.get("checksum") or data.get("checksumhash")
+    if not checksum:
+        raise RuntimeError(data)
+    return checksum
 
 
 def install_sadad(app):
@@ -115,9 +86,7 @@ def install_sadad(app):
         db.session.add(order)
         db.session.flush()
         for p, q in rows:
-            db.session.add(
-                OrderItem(order_id=order.id, product_id=p.id, name=p.name, price=p.price, quantity=q, image=p.image)
-            )
+            db.session.add(OrderItem(order_id=order.id, product_id=p.id, name=p.name, price=p.price, quantity=q, image=p.image))
         CartItem.query.filter_by(user_id=current_user.id).delete()
         db.session.commit()
         callback = request.url_root.rstrip("/") + "/pay/sadad/return"
@@ -137,8 +106,9 @@ def install_sadad(app):
         }
         try:
             checksum = api_checksum(fields)
-        except Exception:
-            checksum = local_checksum(fields)
+        except Exception as exc:
+            flash("Sadad generateChecksum failed: %s" % exc, "danger")
+            return render_template("sadad_setup.html", order=order, domain=DOMAIN)
         return render_template(
             "sadad_redirect.html",
             action=CHECKOUT_URL,
@@ -160,5 +130,4 @@ def install_sadad(app):
             db.session.commit()
         if order:
             return redirect(url_for("order_thanks", order_number=order.order_number))
-        flash("Sadad callback received.", "info")
         return redirect(url_for("my_orders") if current_user.is_authenticated else url_for("index"))
