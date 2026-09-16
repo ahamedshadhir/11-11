@@ -1,3 +1,15 @@
+<div class="ftr-news">
+  <div class="container ftr-news-row">
+    <div>
+      <strong>Get 11-11 offers</strong>
+      <p>New deals in Doha. No spam.</p>
+    </div>
+    <form class="ftr-news-form" action="/newsletter" method="post">
+      <input type="email" name="email" placeholder="Email address" required>
+      <button class="common-btn" type="submit">Subscribe</button>
+    </form>
+  </div>
+</div>
 <footer class="footer">
   <div class="container ftr-top">
     <div class="ftr-brand">
@@ -5,7 +17,8 @@
         <span class="logo-mark">11<span>:</span>11</span>
         <span class="logo-sub">eleven-eleven</span>
       </a>
-      <p>Electronics, fashion and home delivered across Qatar.</p>
+      <p>Shop electronics, fashion and home in Qatar. Cash on delivery, Sadad and SkipCash.</p>
+      <p class="ftr-contact">Doha · hello@1111.local · +974 4000 1111</p>
     </div>
     <div class="ftr-col">
       <h5>Store</h5>
@@ -13,20 +26,22 @@
         <li><a href="{{ url_for('shop') }}">All products</a></li>
         <li><a href="{{ url_for('about') }}">Our story</a></li>
         <li><a href="/become-seller">Sell on 11-11</a></li>
+        <li><a href="{{ url_for('contact') }}">Become a partner</a></li>
       </ul>
     </div>
     <div class="ftr-col">
       <h5>Help</h5>
       <ul>
-        <li><a href="{{ url_for('contact') }}">Contact</a></li>
-        <li><a href="{{ url_for('track_order') }}">Track order</a></li>
+        <li><a href="{{ url_for('contact') }}">Contact us</a></li>
+        <li><a href="{{ url_for('track_order') }}">Track an order</a></li>
         <li><a href="{{ url_for('faq') }}">FAQ</a></li>
+        <li><a href="{{ url_for('returns') }}">Returns</a></li>
       </ul>
     </div>
     <div class="ftr-col">
       <h5>Shop</h5>
       <ul>
-        {% for cat in all_categories[:5] %}
+        {% for cat in all_categories[:6] %}
         <li><a href="{{ url_for('shop', category=cat.id) }}">{{ cat.name }}</a></li>
         {% endfor %}
       </ul>
@@ -34,14 +49,14 @@
     <div class="ftr-col">
       <h5>Legal</h5>
       <ul>
-        <li><a href="{{ url_for('privacy') }}">Privacy</a></li>
-        <li><a href="{{ url_for('terms') }}">Terms</a></li>
-        <li><a href="{{ url_for('returns') }}">Returns</a></li>
+        <li><a href="{{ url_for('privacy') }}">Privacy policy</a></li>
+        <li><a href="{{ url_for('terms') }}">Terms of use</a></li>
+        <li><a href="{{ url_for('returns') }}">Refund policy</a></li>
       </ul>
     </div>
   </div>
   <div class="container ftr-bottom">
-    <span>&copy; {{ year }} 11-11 Qatar</span>
-    <span>Prices in QAR</span>
+    <span>&copy; {{ year }} 11-11 Qatar. All rights reserved.</span>
+    <span class="ftr-pays">QAR · COD · Sadad · SkipCash</span>
   </div>
 </footer>
