@@ -1,62 +1,51 @@
-<div class="ftr-news">
-  <div class="container ftr-news-row">
+<div style="background:#be923b;color:#420e15">
+  <div class="container" style="display:flex;justify-content:space-between;align-items:center;gap:24px;padding:24px 0;flex-wrap:wrap">
     <div>
-      <strong>Get 11-11 offers</strong>
-      <p>New deals in Doha. No spam.</p>
+      <div style="font-size:22px;font-weight:800">Get 11-11 offers</div>
+      <div>New deals in Doha. No spam.</div>
     </div>
-    <form class="ftr-news-form" action="/newsletter" method="post">
-      <input type="email" name="email" placeholder="Email address" required>
-      <button class="common-btn" type="submit">Subscribe</button>
+    <form action="/newsletter" method="post" style="display:flex;gap:8px;min-width:280px;flex:1;max-width:460px">
+      <input type="email" name="email" placeholder="Email address" required style="flex:1;border:0;border-radius:10px;padding:12px 14px">
+      <button type="submit" class="common-btn">Subscribe</button>
     </form>
   </div>
 </div>
-<footer class="footer">
-  <div class="container ftr-top">
-    <div class="ftr-brand">
-      <a href="{{ url_for('index') }}" class="ftr-logo-link">
-        <span class="logo-mark">11<span>:</span>11</span>
-        <span class="logo-sub">eleven-eleven</span>
-      </a>
-      <p>Shop electronics, fashion and home in Qatar. Cash on delivery, Sadad and SkipCash.</p>
-      <p class="ftr-contact">Doha · hello@1111.local · +974 4000 1111</p>
+<footer style="background:#14080b;color:#f6f3ee">
+  <div class="container" style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1fr;gap:32px;padding:48px 0 36px">
+    <div>
+      <div style="font-family:Georgia,serif;font-size:40px;font-weight:700;line-height:1;color:#fff">11<span style="color:#be923b">:</span>11</div>
+      <div style="color:#be923b;letter-spacing:3px;font-size:11px;margin:8px 0 14px">eleven-eleven</div>
+      <p style="color:#d7c8b6;line-height:1.55;max-width:28ch;margin:0">Electronics, fashion and home in Qatar.</p>
+      <p style="color:#be923b;margin:12px 0 0;font-size:13px">Doha · +974 4000 1111</p>
     </div>
-    <div class="ftr-col">
-      <h5>Store</h5>
-      <ul>
-        <li><a href="{{ url_for('shop') }}">All products</a></li>
-        <li><a href="{{ url_for('about') }}">Our story</a></li>
-        <li><a href="/become-seller">Sell on 11-11</a></li>
-        <li><a href="{{ url_for('contact') }}">Become a partner</a></li>
-      </ul>
+    <div>
+      <div style="color:#be923b;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px">Store</div>
+      <p style="margin:0 0 8px"><a href="{{ url_for('shop') }}" style="color:#efe6da;text-decoration:none">All products</a></p>
+      <p style="margin:0 0 8px"><a href="{{ url_for('about') }}" style="color:#efe6da;text-decoration:none">Our story</a></p>
+      <p style="margin:0 0 8px"><a href="/become-seller" style="color:#efe6da;text-decoration:none">Sell on 11-11</a></p>
     </div>
-    <div class="ftr-col">
-      <h5>Help</h5>
-      <ul>
-        <li><a href="{{ url_for('contact') }}">Contact us</a></li>
-        <li><a href="{{ url_for('track_order') }}">Track an order</a></li>
-        <li><a href="{{ url_for('faq') }}">FAQ</a></li>
-        <li><a href="{{ url_for('returns') }}">Returns</a></li>
-      </ul>
+    <div>
+      <div style="color:#be923b;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px">Help</div>
+      <p style="margin:0 0 8px"><a href="{{ url_for('contact') }}" style="color:#efe6da;text-decoration:none">Contact</a></p>
+      <p style="margin:0 0 8px"><a href="{{ url_for('track_order') }}" style="color:#efe6da;text-decoration:none">Track order</a></p>
+      <p style="margin:0 0 8px"><a href="{{ url_for('faq') }}" style="color:#efe6da;text-decoration:none">FAQ</a></p>
+      <p style="margin:0 0 8px"><a href="{{ url_for('returns') }}" style="color:#efe6da;text-decoration:none">Returns</a></p>
     </div>
-    <div class="ftr-col">
-      <h5>Shop</h5>
-      <ul>
-        {% for cat in all_categories[:6] %}
-        <li><a href="{{ url_for('shop', category=cat.id) }}">{{ cat.name }}</a></li>
-        {% endfor %}
-      </ul>
+    <div>
+      <div style="color:#be923b;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px">Shop</div>
+      {% for cat in all_categories[:6] %}
+      <p style="margin:0 0 8px"><a href="{{ url_for('shop', category=cat.id) }}" style="color:#efe6da;text-decoration:none">{{ cat.name }}</a></p>
+      {% endfor %}
     </div>
-    <div class="ftr-col">
-      <h5>Legal</h5>
-      <ul>
-        <li><a href="{{ url_for('privacy') }}">Privacy policy</a></li>
-        <li><a href="{{ url_for('terms') }}">Terms of use</a></li>
-        <li><a href="{{ url_for('returns') }}">Refund policy</a></li>
-      </ul>
+    <div>
+      <div style="color:#be923b;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px">Legal</div>
+      <p style="margin:0 0 8px"><a href="{{ url_for('privacy') }}" style="color:#efe6da;text-decoration:none">Privacy</a></p>
+      <p style="margin:0 0 8px"><a href="{{ url_for('terms') }}" style="color:#efe6da;text-decoration:none">Terms</a></p>
+      <p style="margin:0 0 8px"><a href="{{ url_for('returns') }}" style="color:#efe6da;text-decoration:none">Returns</a></p>
     </div>
   </div>
-  <div class="container ftr-bottom">
-    <span>&copy; {{ year }} 11-11 Qatar. All rights reserved.</span>
-    <span class="ftr-pays">QAR · COD · Sadad · SkipCash</span>
+  <div class="container" style="border-top:1px solid #ffffff22;padding:16px 0 22px;display:flex;justify-content:space-between;color:#cbbba8;font-size:13px;flex-wrap:wrap;gap:8px">
+    <span>&copy; {{ year }} 11-11 Qatar</span>
+    <span style="color:#be923b;font-weight:700">QAR · COD · Sadad · SkipCash</span>
   </div>
 </footer>
