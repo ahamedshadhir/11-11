@@ -1,10 +1,5 @@
 @import url('pages.css');
-.cookie-bar{
-  position:fixed;left:50%;bottom:16px;transform:translateX(-50%);
-  background:#ffe566;color:#1a1a1a;border-radius:10px;z-index:200;
-  padding:10px 14px;width:max-content;max-width:calc(100% - 24px);
-}
-.header-card{overflow:visible;background:#fff}
+@import url('account.css');
 .header-logo img{display:none}
 .logo-mark{font-family:Georgia,serif;font-size:34px;font-weight:700;color:#420e15}
 .logo-mark span{color:#be923b}
