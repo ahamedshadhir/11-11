@@ -1,30 +1,29 @@
-.header-card{overflow:visible}
-.header-row{grid-template-columns:240px 1fr auto !important;gap:16px;align-items:center;padding:16px 0}
-.header-logo{display:flex;align-items:center;line-height:normal;overflow:visible;min-width:220px;padding-top:2px}
-.header-logo img{
-  width:auto !important;
-  max-width:220px;
-  height:84px !important;
-  min-height:0;
-  object-fit:contain;
-  object-position:center;
-  display:block;
-  background:#fff;
-  padding:0;
-  border-radius:10px;
-  filter:none !important;
+.cookie-bar{
+  position:fixed;left:50%;bottom:16px;transform:translateX(-50%);
+  background:#ffe566;color:#1a1a1a;border-radius:10px;z-index:200;
+  padding:10px 14px;width:max-content;max-width:calc(100% - 24px);
 }
-.ftr-logo-link{display:inline-block;margin-bottom:12px}
-.ftr-logo-link img{
-  width:168px;height:auto;display:block;
-  background:#fff;border-radius:10px;padding:8px;
-  filter:none !important;
+.header-card{overflow:visible;background:#fff}
+.header-row{
+  grid-template-columns:220px 1fr auto !important;
+  align-items:center;gap:16px;padding:10px 0;
 }
-.top-to-top{
-  position:fixed;right:18px;bottom:18px;z-index:80;
-  width:44px;height:44px;border:0;border-radius:50%;
-  background:#420e15;color:#fff;font-size:20px;cursor:pointer;
+.header-logo{
+  display:flex;flex-direction:column;justify-content:center;
+  line-height:1;text-decoration:none;min-width:180px;
 }
-.news-form{display:flex;gap:8px;margin-top:10px}
-.news-form input{flex:1;border:0;border-radius:8px;padding:10px}
-.news-form button{background:#be923b;color:#420e15;border:0;border-radius:8px;padding:10px 12px;font-weight:700}
+.header-logo img{display:none}
+.logo-mark{
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:34px;font-weight:700;color:#420e15;letter-spacing:1px;
+}
+.logo-mark span{color:#be923b}
+.logo-sub{
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:11px;letter-spacing:3px;color:#be923b;text-transform:lowercase;
+  margin-top:2px;
+}
+.ftr-logo-link{display:flex;flex-direction:column;text-decoration:none;margin-bottom:12px}
+.ftr-logo-link img{display:none}
+.ftr-logo-link .logo-mark{color:#fff}
+.ftr-logo-link .logo-sub{color:#be923b}

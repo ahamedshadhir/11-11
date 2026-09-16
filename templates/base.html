@@ -14,14 +14,15 @@
 </head>
 <body data-wish="{{ wishlist_ids|join(',') }}">
   <div class="cookie-bar" id="cookieBar">
-    {% if lang=='ar' %}نستخدم الكوكيز، راجع{% else %}We use cookies, check our{% endif %}
-    <a href="{{ url_for('privacy') }}">{% if lang=='ar' %}سياسة الخصوصية{% else %}Privacy Policies{% endif %}</a>.
+    {% if lang=='ar' %}نستخدم الكوكيز{% else %}We use cookies, check our{% endif %}
+    <a href="{{ url_for('privacy') }}">{% if lang=='ar' %}الخصوصية{% else %}Privacy Policies{% endif %}</a>.
     <button class="common-btn" id="cookieAccept" type="button">{% if lang=='ar' %}موافق{% else %}Agree{% endif %}</button>
   </div>
   <header class="header-card">
     <div class="container header-row">
       <a class="header-logo" href="{{ url_for('index') }}" aria-label="11:11 eleven-eleven">
-        <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="eleven-eleven" />
+        <span class="logo-mark">11<span>:</span>11</span>
+        <span class="logo-sub">eleven-eleven</span>
       </a>
       <div class="header-mid">
         <div class="deliver">
@@ -34,8 +35,8 @@
           </select>
         </div>
         <div class="search-wrap">
-          <form class="search-form" action="{{ url_for('shop') }}" method="get" autocomplete="off">
-            <input type="text" name="q" id="liveSearch" placeholder="{% if lang=='ar' %}ابحث عن منتجات...{% else %}Search for products...{% endif %}" value="{{ request.args.get('q','') }}" />
+          <form class="search-form" action="{{ url_for('shop') }}" method="get">
+            <input type="text" name="q" id="liveSearch" placeholder="{% if lang=='ar' %}ابحث...{% else %}Search for products...{% endif %}" value="{{ request.args.get('q','') }}" />
             <button type="submit">⌕</button>
           </form>
           <div class="search-suggest" id="searchSuggest"></div>
@@ -43,26 +44,17 @@
         <button class="cats-btn" type="button">{% if lang=='ar' %}كل الأقسام{% else %}All Categories{% endif %}</button>
       </div>
       <div class="header-rt">
-        <div class="lang-drop">
-          <select id="langSelect">
-            <option value="en" {% if lang!='ar' %}selected{% endif %}>English</option>
-            <option value="ar" {% if lang=='ar' %}selected{% endif %}>العربية</option>
-          </select>
-        </div>
-        <a class="icon-link mobile-only" id="openMenu" type="button">☰</a>
-        <a class="icon-link" href="{{ url_for('wishlist') }}">
-          ♡ <span class="wish-label">{% if lang=='ar' %}المفضلة{% else %}Wishlist{% endif %}</span>
-          <span class="badge" id="wishCount">{{ nav_wish_count }}</span>
-        </a>
-        <button class="icon-link" id="openCart" type="button">
-          🛒 {% if lang=='ar' %}السلة{% else %}Cart{% endif %}
-          <span class="badge cart-count" id="cartCount">{{ nav_cart_count }}</span>
-        </button>
+        <select id="langSelect">
+          <option value="en" {% if lang!='ar' %}selected{% endif %}>English</option>
+          <option value="ar" {% if lang=='ar' %}selected{% endif %}>العربية</option>
+        </select>
+        <a class="icon-link" href="{{ url_for('wishlist') }}">♡ {% if lang=='ar' %}المفضلة{% else %}Wishlist{% endif %} <span class="badge" id="wishCount">{{ nav_wish_count }}</span></a>
+        <button class="icon-link" id="openCart" type="button">🛒 {% if lang=='ar' %}السلة{% else %}Cart{% endif %} <span class="badge cart-count" id="cartCount">{{ nav_cart_count }}</span></button>
         {% if current_user.is_authenticated %}
-          {% if current_user.is_admin %}<a class="icon-link" href="{{ url_for('admin_home') }}">{% if lang=='ar' %}الإدارة{% else %}Admin{% endif %}</a>{% endif %}
+          {% if current_user.is_admin %}<a class="icon-link" href="{{ url_for('admin_home') }}">Admin</a>{% endif %}
           <a class="common-btn" href="{{ url_for('account') }}">{{ current_user.name.split()[0] }}</a>
         {% else %}
-          <a class="common-btn" href="/static/login.html">{% if lang=='ar' %}تسجيل الدخول{% else %}Login{% endif %}</a>
+          <a class="common-btn" href="{{ url_for('login') }}">{% if lang=='ar' %}تسجيل الدخول{% else %}Login{% endif %}</a>
         {% endif %}
       </div>
     </div>
@@ -77,79 +69,47 @@
   <main>{% block content %}{% endblock %}</main>
   <div class="overlay" id="overlay"></div>
   <aside class="drawer" id="cartDrawer">
-    <div class="drawer-head">
-      <h5>{% if lang=='ar' %}السلة{% else %}Cart{% endif %} (<span id="drawerCount">{{ nav_cart_count }}</span>)</h5>
-      <button type="button" id="closeCart">×</button>
-    </div>
+    <div class="drawer-head"><h5>{% if lang=='ar' %}السلة{% else %}Cart{% endif %} (<span id="drawerCount">{{ nav_cart_count }}</span>)</h5><button type="button" id="closeCart">×</button></div>
     <div class="drawer-body" id="drawerItems"></div>
     <div class="drawer-foot">
-      <p>{% if lang=='ar' %}الإجمالي{% else %}Total{% endif %} <strong id="drawerTotal">{{ nav_cart_total|qar }}</strong></p>
-      <div class="row-2">
-        <a class="common-bd-btn" href="{{ url_for('cart') }}">{% if lang=='ar' %}عرض السلة{% else %}View Cart{% endif %}</a>
-        <a class="common-btn" href="{{ url_for('checkout') }}">{% if lang=='ar' %}إتمام الطلب{% else %}Checkout{% endif %}</a>
-      </div>
+      <a class="common-bd-btn" href="{{ url_for('cart') }}">{% if lang=='ar' %}عرض السلة{% else %}View Cart{% endif %}</a>
+      <a class="common-btn" href="{{ url_for('checkout') }}">{% if lang=='ar' %}إتمام الطلب{% else %}Checkout{% endif %}</a>
     </div>
   </aside>
-  <aside class="drawer left" id="menuDrawer">
-    <div class="drawer-head"><h5>{% if lang=='ar' %}القائمة{% else %}Menu{% endif %}</h5><button type="button" id="closeMenu">×</button></div>
-    <div class="drawer-body">
-      <a href="{{ url_for('shop') }}">{% if lang=='ar' %}كل الأقسام{% else %}All Categories{% endif %}</a>
-      {% for cat in all_categories %}<a href="{{ url_for('shop', category=cat.id) }}" style="display:block;padding:8px 0">{{ cat.name }}</a>{% endfor %}
-    </div>
-  </aside>
-  <div class="toast-wrap" id="toasts"></div>
   <footer class="footer">
     <div class="container footer-grid">
       <div>
         <a href="{{ url_for('index') }}" class="ftr-logo-link">
-          <img src="{{ url_for('static', filename='img/logo-light.svg') }}" alt="eleven-eleven" />
+          <span class="logo-mark">11<span>:</span>11</span>
+          <span class="logo-sub">eleven-eleven</span>
         </a>
-        <p>{% if lang=='ar' %}وجهتك للإلكترونيات والأزياء والمنزل في قطر.{% else %}Your one-stop destination for quality products at unbeatable prices.{% endif %}</p>
-        <form class="news-form" method="post" action="/newsletter">
-          <input type="email" name="email" required placeholder="{% if lang=='ar' %}بريدك الإلكتروني{% else %}Email for offers{% endif %}">
-          <button type="submit">{% if lang=='ar' %}اشتراك{% else %}Join{% endif %}</button>
-        </form>
+        <p>{% if lang=='ar' %}وجهتك في قطر.{% else %}Quality products at unbeatable prices.{% endif %}</p>
       </div>
-      <div class="ftr-links">
-        <h5>{% if lang=='ar' %}من نحن{% else %}About Us{% endif %}</h5>
+      <div class="ftr-links"><h5>{% if lang=='ar' %}من نحن{% else %}About Us{% endif %}</h5>
         <ul>
           <li><a href="{{ url_for('about') }}">{% if lang=='ar' %}قصتنا{% else %}Our Story{% endif %}</a></li>
-          <li><a href="{{ url_for('faq') }}">{% if lang=='ar' %}الوظائف{% else %}Careers{% endif %}</a></li>
-          <li><a href="{{ url_for('blog') }}">{% if lang=='ar' %}المدونة{% else %}Blog{% endif %}</a></li>
-          <li><a class="text-yellow" href="{{ url_for('become_seller') }}">{% if lang=='ar' %}كن بائعاً{% else %}Become a Seller{% endif %}</a></li>
+          <li><a href="{{ url_for('become_seller') }}">{% if lang=='ar' %}كن بائعاً{% else %}Become a Seller{% endif %}</a></li>
         </ul>
       </div>
-      <div class="ftr-links">
-        <h5>{% if lang=='ar' %}خدمة العملاء{% else %}Customer Service{% endif %}</h5>
+      <div class="ftr-links"><h5>{% if lang=='ar' %}خدمة العملاء{% else %}Customer Service{% endif %}</h5>
         <ul>
           <li><a href="{{ url_for('contact') }}">{% if lang=='ar' %}اتصل بنا{% else %}Contact Us{% endif %}</a></li>
           <li><a href="{{ url_for('track_order') }}">{% if lang=='ar' %}تتبع الطلب{% else %}Track Order{% endif %}</a></li>
-          <li><a href="{{ url_for('returns') }}">{% if lang=='ar' %}المرجاعات{% else %}Returns{% endif %}</a></li>
-          <li><a href="{{ url_for('shipping_policy') }}">{% if lang=='ar' %}الشحن{% else %}Shipping Info{% endif %}</a></li>
           <li><a href="{{ url_for('faq') }}">FAQ</a></li>
         </ul>
       </div>
-      <div class="ftr-links">
-        <h5>{% if lang=='ar' %}الأقسام{% else %}Categories{% endif %}</h5>
-        <ul>
-          {% for cat in all_categories[:5] %}
-          <li><a href="{{ url_for('shop', category=cat.id) }}">{{ cat.name }}</a></li>
-          {% endfor %}
-        </ul>
+      <div class="ftr-links"><h5>{% if lang=='ar' %}الأقسام{% else %}Categories{% endif %}</h5>
+        <ul>{% for cat in all_categories[:5] %}<li><a href="{{ url_for('shop', category=cat.id) }}">{{ cat.name }}</a></li>{% endfor %}</ul>
       </div>
-      <div class="ftr-links">
-        <h5>{% if lang=='ar' %}قانوني{% else %}Legal{% endif %}</h5>
+      <div class="ftr-links"><h5>{% if lang=='ar' %}قانوني{% else %}Legal{% endif %}</h5>
         <ul>
-          <li><a href="{{ url_for('privacy') }}">{% if lang=='ar' %}الخصوصية{% else %}Privacy Policy{% endif %}</a></li>
-          <li><a href="{{ url_for('terms') }}">{% if lang=='ar' %}الشروط{% else %}Terms of Service{% endif %}</a></li>
-          <li><a href="{{ url_for('cookies') }}">{% if lang=='ar' %}الكوكيز{% else %}Cookie Policy{% endif %}</a></li>
-          <li><a href="{{ url_for('accessibility') }}">{% if lang=='ar' %}إمكانية الوصول{% else %}Accessibility{% endif %}</a></li>
+          <li><a href="{{ url_for('privacy') }}">{% if lang=='ar' %}الخصوصية{% else %}Privacy{% endif %}</a></li>
+          <li><a href="{{ url_for('terms') }}">{% if lang=='ar' %}الشروط{% else %}Terms{% endif %}</a></li>
         </ul>
       </div>
     </div>
     <div class="copyright"><div class="container">&copy; {{ year }} 11-11</div></div>
   </footer>
-  <button class="top-to-top" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Top">↑</button>
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
