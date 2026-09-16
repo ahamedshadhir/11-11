@@ -1,0 +1,12 @@
+.auth-wrap{min-height:60vh;display:grid;place-items:center;padding:48px 16px;background:#f6f3ee}
+.auth-card{width:min(440px,100%);background:#fff;border:1px solid #eadfce;border-radius:16px;padding:28px}
+.auth-card h2{margin:8px 0;color:#420e15;font-family:Georgia,serif}
+.auth-card label{display:block;margin:12px 0 6px;font-weight:600;color:#420e15}
+.auth-card input{width:100%;padding:12px;border:1px solid #d9c7a8;border-radius:10px;box-sizing:border-box}
+.auth-card button{margin-top:16px}
+.account-page{background:#f6f3ee;padding:32px 0 56px}
+.account-grid{display:grid;grid-template-columns:220px 1fr;gap:24px}
+.account-side,.account-panel{background:#fff;border:1px solid #eadfce;border-radius:16px;padding:20px}
+.account-side a{display:block;color:#420e15;text-decoration:none;padding:8px 0}
+.account-panel input{width:100%;max-width:420px;display:block;padding:10px;margin:0 0 12px;border:1px solid #d9c7a8;border-radius:8px}
+@media(max-width:800px){.account-grid{grid-template-columns:1fr}}

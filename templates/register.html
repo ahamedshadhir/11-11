@@ -1,19 +1,23 @@
 {% extends "base.html" %}
 {% block title %}Create account | 11-11{% endblock %}
 {% block content %}
-<div class="auth-card">
-  <h2>Create account</h2>
-  <form method="post">
-    <label>Full name</label>
-    <input type="text" name="name" required>
-    <label>Email</label>
-    <input type="email" name="email" required>
-    <label>Phone</label>
-    <input type="tel" name="phone">
-    <label>Password</label>
-    <input type="password" name="password" required minlength="6">
-    <button class="common-btn w-100 mt-3" type="submit">Register</button>
-  </form>
-  <p class="mt-3">Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
-</div>
+<section class="auth-wrap">
+  <div class="auth-card">
+    <span class="logo-mark">11<span>:</span>11</span>
+    <h2>Create account</h2>
+    <p class="muted">Shop, track orders and save a wishlist.</p>
+    <form method="post">
+      <label>Full name</label>
+      <input type="text" name="name" required>
+      <label>Email</label>
+      <input type="email" name="email" required>
+      <label>Phone</label>
+      <input type="tel" name="phone">
+      <label>Password</label>
+      <input type="password" name="password" required minlength="6">
+      <button class="common-btn w-100" type="submit">Create account</button>
+    </form>
+    <p class="muted">Already have an account? <a href="{{ url_for('login') }}">Sign in</a></p>
+  </div>
+</section>
 {% endblock %}

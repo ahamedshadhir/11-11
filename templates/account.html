@@ -1,23 +1,29 @@
 {% extends "base.html" %}
-{% block title %}Account | 11-11{% endblock %}
+{% block title %}My account | 11-11{% endblock %}
 {% block content %}
-<div class="container page-hero"><h2>My account</h2></div>
-<div class="container shop-layout" style="padding-bottom:48px">
-  <aside class="sidebar">
-    <a href="{{ url_for('account') }}" class="active">Profile</a>
-    <a href="{{ url_for('my_orders') }}">Orders</a>
-    <a href="{{ url_for('wishlist') }}">Wishlist</a>
-    {% if current_user.is_admin %}<a href="{{ url_for('admin_home') }}">Admin</a>{% endif %}
-    <a href="{{ url_for('logout') }}">Sign out</a>
-  </aside>
-  <form method="post" class="panel wide" style="margin:0">
-    <label>Name</label>
-    <input type="text" name="name" value="{{ current_user.name }}">
-    <label>Email</label>
-    <input type="email" value="{{ current_user.email }}" disabled>
-    <label>Phone</label>
-    <input type="tel" name="phone" value="{{ current_user.phone or '' }}">
-    <button class="common-btn mt-3" type="submit">Save</button>
-  </form>
-</div>
+<section class="account-page">
+  <div class="container account-grid">
+    <aside class="account-side">
+      <h3>{{ current_user.name }}</h3>
+      <p class="muted">{{ current_user.email }}</p>
+      <a href="{{ url_for('account') }}">Profile</a>
+      <a href="{{ url_for('my_orders') }}">Orders</a>
+      <a href="{{ url_for('wishlist') }}">Wishlist</a>
+      <a href="{{ url_for('cart') }}">Cart</a>
+      <a href="{{ url_for('logout') }}">Sign out</a>
+    </aside>
+    <div class="account-panel">
+      <h2>Profile</h2>
+      <form method="post">
+        <label>Name</label>
+        <input type="text" name="name" value="{{ current_user.name or '' }}">
+        <label>Email</label>
+        <input type="email" value="{{ current_user.email }}" disabled>
+        <label>Phone</label>
+        <input type="tel" name="phone" value="{{ current_user.phone or '' }}">
+        <button class="common-btn" type="submit">Save profile</button>
+      </form>
+    </div>
+  </div>
+</section>
 {% endblock %}

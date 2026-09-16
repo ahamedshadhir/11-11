@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Orders | 11-11{% endblock %}
+{% block content %}
+<section class="account-page">
+  <div class="container account-grid">
+    <aside class="account-side">
+      <h3>{{ current_user.name }}</h3>
+      <a href="{{ url_for('account') }}">Profile</a>
+      <a href="{{ url_for('my_orders') }}">Orders</a>
+      <a href="{{ url_for('logout') }}">Sign out</a>
+    </aside>
+    <div class="account-panel">
+      <h2>Orders</h2>
+      <table class="cart-table">
+        <thead><tr><th>Number</th><th>Total</th><th>Status</th></tr></thead>
+        <tbody>
+        {% for o in orders %}
+          <tr><td>{{ o.order_number }}</td><td>{{ o.total|qar }}</td><td>{{ o.status }}</td></tr>
+        {% else %}
+          <tr><td colspan="3">No orders yet.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}
