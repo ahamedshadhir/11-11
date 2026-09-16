@@ -1,20 +1,22 @@
 {% extends "base.html" %}
-{% block title %}Orders | 11-11{% endblock %}
+{% block title %}My orders | 11-11{% endblock %}
 {% block content %}
-<div class="container page-hero"><h2>My orders</h2></div>
-<div class="container" style="padding-bottom:48px">
-  {% for o in orders %}
-    <div class="panel wide">
-      <strong>{{ o.order_number }}</strong>
-      <span class="muted"> · {{ o.created_at.strftime('%Y-%m-%d %H:%M') }} · {{ o.status }} · {{ o.total|qar }}</span>
+<section class="account-page">
+  <div class="container">
+    <h1>My orders</h1>
+    {% for o in orders %}
+    <div class="account-panel" style="margin-bottom:16px">
+      <p><strong>{{ o.order_number }}</strong> · {{ o.status }} · {{ o.payment_method }} · {{ o.total|qar }}</p>
       <ul>
         {% for it in o.items %}
-          <li>{{ it.name }} × {{ it.quantity }} — {{ it.price|qar }}</li>
+          <li>{{ it.name }} × {{ it.quantity }}</li>
         {% endfor %}
       </ul>
+      <a href="{{ url_for('order_thanks', order_number=o.order_number) }}">View receipt</a>
     </div>
-  {% else %}
+    {% else %}
     <p>No orders yet.</p>
-  {% endfor %}
-</div>
+    {% endfor %}
+  </div>
+</section>
 {% endblock %}
