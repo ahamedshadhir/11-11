@@ -1,31 +1,26 @@
-{% extends "base.html" %}
-{% block title %}Products | Admin{% endblock %}
-{% block content %}
-{% from "_admin_nav.html" import admin_nav %}
-<div class="adm-wrap">
-{{ admin_nav('products') }}
-<div class="adm-main">
-  <h1>Products</h1>
-  <form method="post" class="adm-card grid-form">
-    <input name="name" placeholder="Name" required>
-    <input name="price" type="number" step="0.01" placeholder="QAR price" required>
-    <input name="stock" type="number" value="20">
-    <input name="image" placeholder="Image URL">
-    <select name="category_id"><option value="">Category</option>{% for c in categories %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}</select>
-    <button class="common-btn" type="submit">Add</button>
-  </form>
-  <table class="cart-table">
-    <thead><tr><th>Name</th><th>Price</th><th>Stock</th><th></th></tr></thead>
-    <tbody>
-    {% for p in products %}
-    <tr>
-      <td><form method="post" action="/admin/products/{{ p.id }}" class="row-form"><input name="name" value="{{ p.name }}"></td>
-      <td><input name="price" type="number" step="0.01" value="{{ p.price }}"></td>
-      <td><input name="stock" type="number" value="{{ p.stock }}"></td>
-      <td><button class="common-btn">Save</button> <button class="common-bd-btn" name="delete" value="1">Delete</button></form></td>
-    </tr>
-    {% endfor %}
-    </tbody>
-  </table>
-</div></div>
+{% extends "admin_base.html" %}
+{% block title %}Products | 11-11 Admin{% endblock %}
+{% block admin %}
+<h1>Products</h1>
+<form method="post" class="adm-card grid-form">
+  <input name="name" placeholder="Name" required>
+  <input name="price" type="number" step="0.01" placeholder="QAR" required>
+  <input name="stock" type="number" value="20">
+  <input name="image" placeholder="Image URL">
+  <select name="category_id"><option value="">Category</option>{% for c in categories %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}</select>
+  <button class="common-btn" type="submit">Add</button>
+</form>
+<table class="cart-table">
+  <thead><tr><th>Name</th><th>Price</th><th>Stock</th><th></th></tr></thead>
+  <tbody>
+  {% for p in products %}
+  <tr>
+    <td><form method="post" action="/admin/products/{{ p.id }}" class="row-form"><input name="name" value="{{ p.name }}"></td>
+    <td><input name="price" type="number" step="0.01" value="{{ p.price }}"></td>
+    <td><input name="stock" type="number" value="{{ p.stock }}"></td>
+    <td><button class="common-btn">Save</button> <button class="common-bd-btn" name="delete" value="1">Delete</button></form></td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
 {% endblock %}

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}11-11 Admin{% endblock %}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}" />
+</head>
+<body class="adm-body">
+  <aside class="adm-side">
+    <p class="adm-brand">11-11 <span>Admin</span></p>
+    <a href="/admin">Dashboard</a>
+    <a href="/admin/products">Products</a>
+    <a href="/admin/users">Users</a>
+    <a href="/admin/banners">Banners</a>
+    <a href="/admin/settings">Settings</a>
+    <hr>
+    <a href="/" target="_blank" rel="noopener">Open store</a>
+    <a href="{{ url_for('logout') }}">Log out</a>
+  </aside>
+  <main class="adm-main">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}{% for cat, msg in messages %}<p class="adm-flash">{{ msg }}</p>{% endfor %}{% endif %}
+    {% endwith %}
+    {% block admin %}{% endblock %}
+  </main>
+</body>
+</html>

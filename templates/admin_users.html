@@ -1,32 +1,25 @@
-{% extends "base.html" %}
-{% block title %}Users | Admin{% endblock %}
-{% block content %}
-{% from "_admin_nav.html" import admin_nav %}
-<div class="adm-wrap">
-  {{ admin_nav('users') }}
-  <div class="adm-main">
-    <h1>User management</h1>
-    <form method="post" class="adm-card grid-form">
-      <h3>Create user</h3>
-      <input name="name" placeholder="Name" required>
-      <input name="email" type="email" placeholder="Email" required>
-      <input name="password" placeholder="Password" value="changeme123">
-      <label><input type="checkbox" name="is_admin"> Admin</label>
-      <button class="common-btn" type="submit">Create</button>
-    </form>
-    <table class="cart-table">
-      <thead><tr><th>Name</th><th>Email</th><th>Admin</th><th></th></tr></thead>
-      <tbody>
-      {% for u in users %}
-        <tr>
-          <td><form method="post" action="{{ url_for('admin_user_save', uid=u.id) }}" class="row-form"><input name="name" value="{{ u.name }}"></td>
-          <td>{{ u.email }}</td>
-          <td><input type="checkbox" name="is_admin" {% if u.is_admin %}checked{% endif %}></td>
-          <td><input name="password" placeholder="New password"><button class="common-btn" type="submit">Save</button>{% if u.id != current_user.id %}<button class="common-bd-btn" name="delete" value="1">Delete</button>{% endif %}</form></td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
+{% extends "admin_base.html" %}
+{% block title %}Users | 11-11 Admin{% endblock %}
+{% block admin %}
+<h1>Users</h1>
+<form method="post" class="adm-card grid-form">
+  <input name="name" placeholder="Name" required>
+  <input name="email" type="email" placeholder="Email" required>
+  <input name="password" placeholder="Password" value="changeme123">
+  <label><input type="checkbox" name="is_admin"> Admin</label>
+  <button class="common-btn" type="submit">Create</button>
+</form>
+<table class="cart-table">
+  <thead><tr><th>Name</th><th>Email</th><th>Admin</th><th></th></tr></thead>
+  <tbody>
+  {% for u in users %}
+  <tr>
+    <td><form method="post" action="{{ url_for('admin_user_save', uid=u.id) }}" class="row-form"><input name="name" value="{{ u.name }}"></td>
+    <td>{{ u.email }}</td>
+    <td><input type="checkbox" name="is_admin" {% if u.is_admin %}checked{% endif %}></td>
+    <td><input name="password" placeholder="New password"><button class="common-btn">Save</button></form></td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
 {% endblock %}
