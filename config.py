@@ -43,7 +43,7 @@ class Config:
     REMEMBER_COOKIE_HTTPONLY = True
     ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "admin@1111.local")
     ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "admin123")
-    ITEMS_PER_PAGE = 12
+    ITEMS_PER_PAGE = 24
     CURRENCY = "QAR"
     STORE_NAME = "11-11"
     FLASH_SALE_END = "2026-09-30 12:56:00"
