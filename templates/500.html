@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Server error | 11-11{% endblock %}
+{% block content %}
+<section class="check-page"><div class="container" style="max-width:560px">
+  <div class="check-form">
+    <h1>Something went wrong</h1>
+    <p>Try again, or open the shop.</p>
+    <p><a class="common-btn" href="{{ url_for('index') }}">Home</a></p>
+  </div>
+</div></section>
+{% endblock %}

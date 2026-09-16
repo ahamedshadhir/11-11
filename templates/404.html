@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Page not found | 11-11{% endblock %}
+{% block content %}
+<section class="check-page"><div class="container" style="max-width:560px">
+  <div class="check-form">
+    <h1>Page not found</h1>
+    <p>That link is missing. Go back to the store.</p>
+    <p><a class="common-btn" href="{{ url_for('index') }}">Home</a>
+       <a class="common-bd-btn" href="{{ url_for('shop') }}">Shop</a></p>
+  </div>
+</div></section>
+{% endblock %}

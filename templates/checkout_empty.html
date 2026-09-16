@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Checkout | 11-11{% endblock %}
+{% block content %}
+<section class="check-page"><div class="container" style="max-width:560px">
+  <div class="check-form">
+    <h1>Your bag is empty</h1>
+    <p>Add a product before checkout.</p>
+    <p><a class="common-btn" href="{{ url_for('shop') }}">Shop now</a></p>
+  </div>
+</div></section>
+{% endblock %}
