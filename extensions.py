@@ -8,10 +8,11 @@ class _LoginManager(LoginManager):
     def init_app(self, app, add_context_processor=True):
         super().init_app(app, add_context_processor=add_context_processor)
         for mod, fn in (
-            ('admin_panel', 'register_admin'),
-            ('i18n', 'install_i18n'),
-            ('newsletter', 'install_newsletter'),
-            ('catalog', 'install_catalog'),
+            ("admin_panel", "register_admin"),
+            ("i18n", "install_i18n"),
+            ("newsletter", "install_newsletter"),
+            ("catalog", "install_catalog"),
+            ("skipcash", "install_skipcash"),
         ):
             try:
                 m = __import__(mod, fromlist=[fn])

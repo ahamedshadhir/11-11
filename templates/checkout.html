@@ -5,7 +5,8 @@
   <div class="container">
     <h1>Checkout</h1>
     <div class="check-grid">
-      <form method="post" class="check-form">
+      <div>
+      <form method="post" action="/pay/skipcash" class="check-form">
         <h2>Delivery</h2>
         <div class="check-2">
           <div>
@@ -14,11 +15,13 @@
           </div>
           <div>
             <label>Phone</label>
-            <input type="tel" name="phone" required value="{{ current_user.phone if current_user.is_authenticated else '' }}">
+            <input type="tel" name="phone" required value="{{ current_user.phone if current_user.is_authenticated else '50000000' }}">
           </div>
         </div>
+        <label>Email</label>
+        <input type="email" name="email" value="{{ current_user.email if current_user.is_authenticated else '' }}" placeholder="you@email.com">
         <label>Address</label>
-        <input type="text" name="address" required placeholder="Street, building, zone">
+        <input type="text" name="address" required placeholder="Street, building, zone" value="West Bay">
         <div class="check-2">
           <div>
             <label>City</label>
@@ -27,36 +30,38 @@
           <div>
             <label>Payment</label>
             <select name="payment_method">
+              <option value="skipcash">SkipCash (sandbox card)</option>
               <option value="cod">Cash on delivery</option>
-              <option value="card">Card on delivery</option>
             </select>
           </div>
         </div>
         <label>Order note</label>
         <textarea name="note" rows="3" placeholder="Optional instructions"></textarea>
-        <button class="common-btn check-submit" type="submit">Place order · {{ total|qar }}</button>
-        {% if not current_user.is_authenticated %}
-        <p class="muted">Sign in before the order is saved.</p>
-        {% endif %}
+        <button class="common-btn check-submit" type="submit">Pay with SkipCash · {{ total|qar }}</button>
+        <p class="muted">Sandbox cards: use SkipCash test cards. This is not live money.</p>
       </form>
+      <form method="post" action="{{ url_for('checkout') }}" class="check-form" style="margin-top:12px">
+        <input type="hidden" name="name" value="{{ current_user.name if current_user.is_authenticated else 'Guest' }}">
+        <input type="hidden" name="phone" value="{{ current_user.phone if current_user.is_authenticated else '50000000' }}">
+        <input type="hidden" name="address" value="West Bay">
+        <input type="hidden" name="city" value="Doha">
+        <input type="hidden" name="payment_method" value="cod">
+        <button class="common-bd-btn check-submit" type="submit">Place cash-on-delivery order</button>
+      </form>
+      </div>
       <aside class="check-summary">
         <h2>Your bag</h2>
         {% for r in rows %}
         <div class="check-line">
           <img src="{{ r.product.image }}" alt="">
-          <div>
-            <p>{{ r.product.name }}</p>
-            <span>× {{ r.qty }}</span>
-          </div>
+          <div><p>{{ r.product.name }}</p><span>× {{ r.qty }}</span></div>
           <strong>{{ r.line|qar }}</strong>
         </div>
-        {% else %}
-        <p class="muted">Your cart is empty.</p>
         {% endfor %}
         <div class="check-totals">
           <p>Subtotal <span>{{ subtotal|qar }}</span></p>
           <p>Shipping <span>{{ shipping|qar }}</span></p>
-          {% if discount %}<p>Discount ({{ coupon }}) <span>-{{ discount|qar }}</span></p>{% endif %}
+          {% if discount %}<p>Discount <span>-{{ discount|qar }}</span></p>{% endif %}
           <p class="grand">Total <span>{{ total|qar }}</span></p>
         </div>
       </aside>
