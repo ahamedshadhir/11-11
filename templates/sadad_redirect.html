@@ -1,15 +1,26 @@
 <!doctype html>
-<html><body>
-<p>Redirecting to Sadad…</p>
-<form id="sadad" method="post" action="{{ action }}">
-  <input type="hidden" name="merchant_id" value="{{ merchant_id }}">
-  <input type="hidden" name="ORDER_ID" value="{{ order_id }}">
-  <input type="hidden" name="TXN_AMOUNT" value="{{ amount }}">
-  <input type="hidden" name="CALLBACK_URL" value="{{ callback }}">
-  <input type="hidden" name="EMAIL" value="{{ email }}">
-  <input type="hidden" name="MOBILE_NO" value="{{ mobile }}">
-  <input type="hidden" name="CHECKSUMHASH" value="{{ checksum }}">
-  <input type="hidden" name="VERSION" value="2.1">
+<html>
+<head><meta charset="utf-8"><title>Redirecting to Sadad</title></head>
+<body>
+<p>Redirecting to Sadad Web Checkout…</p>
+<form action="{{ action }}" method="post" name="gosadad" id="sadad_payment_form">
+  <input type="hidden" name="merchant_id" value="{{ fields.merchant_id }}">
+  <input type="hidden" name="ORDER_ID" value="{{ fields.ORDER_ID }}">
+  <input type="hidden" name="WEBSITE" value="{{ fields.WEBSITE }}">
+  <input type="hidden" name="TXN_AMOUNT" value="{{ fields.TXN_AMOUNT }}">
+  <input type="hidden" name="CUST_ID" value="{{ fields.CUST_ID }}">
+  <input type="hidden" name="EMAIL" value="{{ fields.EMAIL }}">
+  <input type="hidden" name="MOBILE_NO" value="{{ fields.MOBILE_NO }}">
+  <input type="hidden" name="CALLBACK_URL" value="{{ fields.CALLBACK_URL }}">
+  <input type="hidden" name="txnDate" value="{{ fields.txnDate }}">
+  <input type="hidden" name="SADAD_WEBCHECKOUT_PAGE_LANGUAGE" value="{{ fields.SADAD_WEBCHECKOUT_PAGE_LANGUAGE }}">
+  <input type="hidden" name="productdetail[0][order_id]" value="{{ order_id }}">
+  <input type="hidden" name="productdetail[0][itemname]" value="{{ item_name }}">
+  <input type="hidden" name="productdetail[0][amount]" value="{{ amount }}">
+  <input type="hidden" name="productdetail[0][quantity]" value="{{ item_qty }}">
+  <input type="hidden" name="productdetail[0][type]" value="line_item">
+  <input type="hidden" name="checksumhash" value="{{ checksum }}">
 </form>
-<script>document.getElementById('sadad').submit()</script>
-</body></html>
+<script>document.gosadad.submit();</script>
+</body>
+</html>
