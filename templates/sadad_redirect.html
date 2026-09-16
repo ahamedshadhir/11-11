@@ -1,0 +1,15 @@
+<!doctype html>
+<html><body>
+<p>Redirecting to Sadad…</p>
+<form id="sadad" method="post" action="{{ action }}">
+  <input type="hidden" name="merchant_id" value="{{ merchant_id }}">
+  <input type="hidden" name="ORDER_ID" value="{{ order_id }}">
+  <input type="hidden" name="TXN_AMOUNT" value="{{ amount }}">
+  <input type="hidden" name="CALLBACK_URL" value="{{ callback }}">
+  <input type="hidden" name="EMAIL" value="{{ email }}">
+  <input type="hidden" name="MOBILE_NO" value="{{ mobile }}">
+  <input type="hidden" name="CHECKSUMHASH" value="{{ checksum }}">
+  <input type="hidden" name="VERSION" value="2.1">
+</form>
+<script>document.getElementById('sadad').submit()</script>
+</body></html>
