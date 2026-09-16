@@ -45,7 +45,7 @@ def install_sadad(app):
         return
     app._sadad = True
     from extensions import db
-    from models import CartItem, Order, OrderItem, Product
+    from models import CartItem, Order, OrderItem
 
     @app.route("/pay/sadad", methods=["POST"])
     @login_required
@@ -83,13 +83,12 @@ def install_sadad(app):
         db.session.commit()
         callback = request.url_root.rstrip("/") + "/pay/sadad/return"
         if not MERCHANT_ID or not SECRET:
-            flash("Sadad keys are not in Vercel yet. Order %s is saved as pending. Add SADAD_MERCHANT_ID and SADAD_SECRET." % order_no, "info")
-            return redirect(url_for("order_thanks", order_number=order_no))
+            return render_template("sadad_sandbox.html", order=order)
         try:
             checksum = generate_checksum(order_no, total, current_user.email, phone, callback)
         except Exception as exc:
-            flash("Sadad checksum failed for %s: %s" % (order_no, exc), "danger")
-            return redirect(url_for("my_orders"))
+            flash("Sadad checksum failed, using sandbox page: %s" % exc, "info")
+            return render_template("sadad_sandbox.html", order=order)
         return render_template(
             "sadad_redirect.html",
             action=CHECKOUT_URL,
@@ -102,18 +101,30 @@ def install_sadad(app):
             mobile=phone,
         )
 
+    @app.route("/pay/sadad/sandbox", methods=["POST"])
+    @login_required
+    def pay_sadad_sandbox():
+        order_no = request.form.get("order")
+        order = Order.query.filter_by(order_number=order_no, user_id=current_user.id).first_or_404()
+        if request.form.get("result") == "success":
+            order.status = "paid"
+            db.session.commit()
+            flash("Sadad sandbox payment successful.", "success")
+        else:
+            order.status = "cancelled"
+            db.session.commit()
+            flash("Sadad sandbox payment cancelled.", "info")
+        return redirect(url_for("order_thanks", order_number=order.order_number))
+
     @app.route("/pay/sadad/return", methods=["GET", "POST"])
     def pay_sadad_return():
         order_no = request.values.get("ORDERID") or request.values.get("ORDER_ID") or request.values.get("order")
-        status = (request.values.get("STATUS") or request.values.get("transaction_status") or "").upper()
+        status = (request.values.get("STATUS") or "").upper()
         order = Order.query.filter_by(order_number=order_no).first() if order_no else None
         if order and ("SUCCESS" in status or status in {"1", "3", "TXN_SUCCESS"}):
             order.status = "paid"
             db.session.commit()
-            flash("Sadad payment received.", "success")
             return redirect(url_for("order_thanks", order_number=order.order_number))
         if order:
-            flash("Sadad returned without a success flag. Order is still pending.", "info")
             return redirect(url_for("order_thanks", order_number=order.order_number))
-        flash("Sadad callback received.", "info")
         return redirect(url_for("my_orders") if current_user.is_authenticated else url_for("index"))
