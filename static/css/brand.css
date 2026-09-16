@@ -3,8 +3,8 @@
 @import url('checkout.css');
 @import url('member.css');
 @import url('pay.css');
+@import url('footer.css');
 .header-logo img{display:none}
 .logo-mark{font-family:Georgia,serif;font-size:34px;font-weight:700;color:#420e15}
 .logo-mark span{color:#be923b}
 .logo-sub{font-size:11px;letter-spacing:3px;color:#be923b}
-.ftr-logo-link .logo-mark{color:#fff}
