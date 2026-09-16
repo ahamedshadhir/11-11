@@ -13,6 +13,7 @@ class _LoginManager(LoginManager):
             ("newsletter", "install_newsletter"),
             ("catalog", "install_catalog"),
             ("skipcash", "install_skipcash"),
+            ("sadad", "install_sadad"),
         ):
             try:
                 m = __import__(mod, fromlist=[fn])
