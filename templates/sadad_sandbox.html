@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Sadad sandbox | 11-11{% endblock %}
+{% block content %}
+<section class="check-page">
+  <div class="container" style="max-width:560px">
+    <div class="check-form">
+      <p class="eyebrow">Sadad sandbox</p>
+      <h1>Pay order {{ order.order_number }}</h1>
+      <p>Amount <strong>{{ order.total|qar }}</strong></p>
+      <p class="muted">Merchant API keys are not connected yet, so this is the local sandbox page. Use official test cards when keys are added.</p>
+      <p>Mastercard <code>5123 4500 0000 0008</code> · any CVC · any expiry</p>
+      <form method="post" action="/pay/sadad/sandbox">
+        <input type="hidden" name="order" value="{{ order.order_number }}">
+        <label>Card number</label>
+        <input name="card" value="5123450000000008">
+        <label>Name on card</label>
+        <input name="holder" value="TEST USER">
+        <div class="check-2">
+          <div><label>Expiry</label><input name="exp" value="12/28"></div>
+          <div><label>CVC</label><input name="cvc" value="123"></div>
+        </div>
+        <button class="common-btn check-submit" type="submit" name="result" value="success">Pay with Sadad</button>
+        <button class="common-bd-btn check-submit" type="submit" name="result" value="fail">Cancel</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

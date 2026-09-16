@@ -14,6 +14,7 @@ class _LoginManager(LoginManager):
             ("catalog", "install_catalog"),
             ("skipcash", "install_skipcash"),
             ("sadad", "install_sadad"),
+            ("pay", "install_pay"),
         ):
             try:
                 m = __import__(mod, fromlist=[fn])
