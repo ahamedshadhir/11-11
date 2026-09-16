@@ -1,38 +1,30 @@
-.top-strip { display: none; }
-.header-row { grid-template-columns: 230px 1fr auto !important; gap: 18px; }
-.header-logo { display: flex; align-items: center; line-height: 0; min-width: 210px; }
-.header-logo img {
-  width: 210px !important;
-  max-width: 210px;
-  height: auto !important;
-  min-height: 78px;
-  display: block;
-  background: #fff;
-  padding: 4px 6px;
-  border-radius: 12px;
-  filter: none !important;
-  opacity: 1 !important;
+.header-card{overflow:visible}
+.header-row{grid-template-columns:240px 1fr auto !important;gap:16px;align-items:center;padding:16px 0}
+.header-logo{display:flex;align-items:center;line-height:normal;overflow:visible;min-width:220px;padding-top:2px}
+.header-logo img{
+  width:auto !important;
+  max-width:220px;
+  height:84px !important;
+  min-height:0;
+  object-fit:contain;
+  object-position:center;
+  display:block;
+  background:#fff;
+  padding:0;
+  border-radius:10px;
+  filter:none !important;
 }
-.ftr-logo-link { display: inline-block; margin-bottom: 10px; }
-.ftr-logo-link img { width: 160px; height: auto; display: block; filter: brightness(0) invert(1); }
-.banner-copy { display: block; }
-.cookie-bar {
-  position: fixed;
-  inset: auto 16px 16px 16px;
-  margin-inline: auto;
-  left: auto;
-  transform: none;
-  background: #f3e27a;
-  color: #1a1a1a;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0,0,0,.12);
-  z-index: 200;
-  width: min(640px, calc(100% - 32px));
-  max-width: calc(100% - 32px);
+.ftr-logo-link{display:inline-block;margin-bottom:12px}
+.ftr-logo-link img{
+  width:168px;height:auto;display:block;
+  background:#fff;border-radius:10px;padding:8px;
+  filter:none !important;
 }
-.cookie-bar a { color: #420e15; text-decoration: underline; }
-.cookie-bar .common-btn { background: #149157; border-color: #149157; color: #fff; padding: 8px 16px; border-radius: 8px; }
-@media (max-width: 800px) {
-  .header-row { grid-template-columns: 1fr !important; }
-  .header-logo img { width: 160px !important; min-height: 60px; }
+.top-to-top{
+  position:fixed;right:18px;bottom:18px;z-index:80;
+  width:44px;height:44px;border:0;border-radius:50%;
+  background:#420e15;color:#fff;font-size:20px;cursor:pointer;
 }
+.news-form{display:flex;gap:8px;margin-top:10px}
+.news-form input{flex:1;border:0;border-radius:8px;padding:10px}
+.news-form button{background:#be923b;color:#420e15;border:0;border-radius:8px;padding:10px 12px;font-weight:700}

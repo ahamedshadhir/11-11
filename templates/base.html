@@ -21,7 +21,7 @@
   <header class="header-card">
     <div class="container header-row">
       <a class="header-logo" href="{{ url_for('index') }}" aria-label="11:11 eleven-eleven">
-        <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="eleven-eleven" width="210" height="78" />
+        <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="eleven-eleven" />
       </a>
       <div class="header-mid">
         <div class="deliver">
@@ -36,7 +36,7 @@
         <div class="search-wrap">
           <form class="search-form" action="{{ url_for('shop') }}" method="get" autocomplete="off">
             <input type="text" name="q" id="liveSearch" placeholder="{% if lang=='ar' %}ابحث عن منتجات...{% else %}Search for products...{% endif %}" value="{{ request.args.get('q','') }}" />
-            <button type="submit" aria-label="Search">⌕</button>
+            <button type="submit">⌕</button>
           </form>
           <div class="search-suggest" id="searchSuggest"></div>
         </div>
@@ -50,18 +50,16 @@
           </select>
         </div>
         <a class="icon-link mobile-only" id="openMenu" type="button">☰</a>
-        <a class="icon-link" href="{{ url_for('wishlist') }}" title="Wishlist">
+        <a class="icon-link" href="{{ url_for('wishlist') }}">
           ♡ <span class="wish-label">{% if lang=='ar' %}المفضلة{% else %}Wishlist{% endif %}</span>
           <span class="badge" id="wishCount">{{ nav_wish_count }}</span>
         </a>
-        <button class="icon-link" id="openCart" type="button" title="Cart">
+        <button class="icon-link" id="openCart" type="button">
           🛒 {% if lang=='ar' %}السلة{% else %}Cart{% endif %}
           <span class="badge cart-count" id="cartCount">{{ nav_cart_count }}</span>
         </button>
         {% if current_user.is_authenticated %}
-          {% if current_user.is_admin %}
-          <a class="icon-link" href="{{ url_for('admin_home') }}">{% if lang=='ar' %}الإدارة{% else %}Admin{% endif %}</a>
-          {% endif %}
+          {% if current_user.is_admin %}<a class="icon-link" href="{{ url_for('admin_home') }}">{% if lang=='ar' %}الإدارة{% else %}Admin{% endif %}</a>{% endif %}
           <a class="common-btn" href="{{ url_for('account') }}">{{ current_user.name.split()[0] }}</a>
         {% else %}
           <a class="common-btn" href="/static/login.html">{% if lang=='ar' %}تسجيل الدخول{% else %}Login{% endif %}</a>
@@ -71,29 +69,17 @@
     <div class="mega">
       <div class="container mega-grid">
         {% for cat in all_categories %}
-        <div>
-          <h6><a href="{{ url_for('shop', category=cat.id) }}">{{ cat.name }}</a></h6>
-          <ul>
-            {% for sub in cat.subcategories %}
-            <li><a href="{{ url_for('shop', category=cat.id, sub_category_id=sub.id) }}">{{ sub.name }}</a></li>
-            {% endfor %}
-          </ul>
-        </div>
+        <div><h6><a href="{{ url_for('shop', category=cat.id) }}">{{ cat.name }}</a></h6></div>
         {% endfor %}
       </div>
     </div>
   </header>
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      {% for cat, msg in messages %}<div class="flash {{ cat }} container">{{ msg }}</div>{% endfor %}
-    {% endif %}
-  {% endwith %}
   <main>{% block content %}{% endblock %}</main>
   <div class="overlay" id="overlay"></div>
   <aside class="drawer" id="cartDrawer">
     <div class="drawer-head">
       <h5>{% if lang=='ar' %}السلة{% else %}Cart{% endif %} (<span id="drawerCount">{{ nav_cart_count }}</span>)</h5>
-      <button type="button" id="closeCart" aria-label="Close">×</button>
+      <button type="button" id="closeCart">×</button>
     </div>
     <div class="drawer-body" id="drawerItems"></div>
     <div class="drawer-foot">
@@ -105,15 +91,10 @@
     </div>
   </aside>
   <aside class="drawer left" id="menuDrawer">
-    <div class="drawer-head">
-      <h5>{% if lang=='ar' %}القائمة{% else %}Menu{% endif %}</h5>
-      <button type="button" id="closeMenu">×</button>
-    </div>
+    <div class="drawer-head"><h5>{% if lang=='ar' %}القائمة{% else %}Menu{% endif %}</h5><button type="button" id="closeMenu">×</button></div>
     <div class="drawer-body">
       <a href="{{ url_for('shop') }}">{% if lang=='ar' %}كل الأقسام{% else %}All Categories{% endif %}</a>
-      {% for cat in all_categories %}
-        <a href="{{ url_for('shop', category=cat.id) }}" style="display:block;padding:8px 0">{{ cat.name }}</a>
-      {% endfor %}
+      {% for cat in all_categories %}<a href="{{ url_for('shop', category=cat.id) }}" style="display:block;padding:8px 0">{{ cat.name }}</a>{% endfor %}
     </div>
   </aside>
   <div class="toast-wrap" id="toasts"></div>
@@ -121,16 +102,19 @@
     <div class="container footer-grid">
       <div>
         <a href="{{ url_for('index') }}" class="ftr-logo-link">
-          <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="eleven-eleven" width="140" />
+          <img src="{{ url_for('static', filename='img/logo-light.svg') }}" alt="eleven-eleven" />
         </a>
         <p>{% if lang=='ar' %}وجهتك للإلكترونيات والأزياء والمنزل في قطر.{% else %}Your one-stop destination for quality products at unbeatable prices.{% endif %}</p>
+        <form class="news-form" method="post" action="/newsletter">
+          <input type="email" name="email" required placeholder="{% if lang=='ar' %}بريدك الإلكتروني{% else %}Email for offers{% endif %}">
+          <button type="submit">{% if lang=='ar' %}اشتراك{% else %}Join{% endif %}</button>
+        </form>
       </div>
       <div class="ftr-links">
         <h5>{% if lang=='ar' %}من نحن{% else %}About Us{% endif %}</h5>
         <ul>
           <li><a href="{{ url_for('about') }}">{% if lang=='ar' %}قصتنا{% else %}Our Story{% endif %}</a></li>
           <li><a href="{{ url_for('faq') }}">{% if lang=='ar' %}الوظائف{% else %}Careers{% endif %}</a></li>
-          <li><a href="{{ url_for('contact') }}">{% if lang=='ar' %}الصحافة{% else %}Press{% endif %}</a></li>
           <li><a href="{{ url_for('blog') }}">{% if lang=='ar' %}المدونة{% else %}Blog{% endif %}</a></li>
           <li><a class="text-yellow" href="{{ url_for('become_seller') }}">{% if lang=='ar' %}كن بائعاً{% else %}Become a Seller{% endif %}</a></li>
         </ul>
@@ -142,7 +126,7 @@
           <li><a href="{{ url_for('track_order') }}">{% if lang=='ar' %}تتبع الطلب{% else %}Track Order{% endif %}</a></li>
           <li><a href="{{ url_for('returns') }}">{% if lang=='ar' %}المرجاعات{% else %}Returns{% endif %}</a></li>
           <li><a href="{{ url_for('shipping_policy') }}">{% if lang=='ar' %}الشحن{% else %}Shipping Info{% endif %}</a></li>
-          <li><a href="{{ url_for('faq') }}">{% if lang=='ar' %}الأسئلة الشائعة{% else %}FAQ{% endif %}</a></li>
+          <li><a href="{{ url_for('faq') }}">FAQ</a></li>
         </ul>
       </div>
       <div class="ftr-links">
@@ -163,10 +147,9 @@
         </ul>
       </div>
     </div>
-    <div class="copyright">
-      <div class="container">&copy; {{ year }} <a href="{{ url_for('index') }}">11-11</a> | {% if lang=='ar' %}جميع الحقوق محفوظة{% else %}All Rights Reserved{% endif %}</div>
-    </div>
+    <div class="copyright"><div class="container">&copy; {{ year }} 11-11</div></div>
   </footer>
+  <button class="top-to-top" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Top">↑</button>
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
