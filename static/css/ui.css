@@ -1,0 +1,71 @@
+/* Shared 11-11 UI — use on every page */
+body{background:#fff;color:#1c1416;font-family:Inter,system-ui,sans-serif}
+.container{width:min(1180px,calc(100% - 40px))}
+.header-card{background:#fff;border-bottom:0;box-shadow:0 1px 0 #eee}
+.header-row{
+  display:grid !important;
+  grid-template-columns:160px minmax(280px,1fr) auto !important;
+  gap:20px;align-items:center;padding:14px 0 12px;
+}
+.header-logo{display:flex;flex-direction:column;gap:0;line-height:1}
+.logo-mark{font-size:30px;font-weight:700;color:#420e15;letter-spacing:.5px}
+.logo-mark span{color:#c4a056}
+.logo-sub{font-size:10px;letter-spacing:2.4px;color:#c4a056;margin-top:3px}
+.deliver{min-width:90px}
+.deliver label{font-size:11px;color:#8a7a74;display:block}
+.deliver select{border:0;background:transparent;font-weight:700;color:#420e15;max-width:120px}
+.header-mid{display:flex;align-items:center;gap:10px}
+.search-wrap{flex:1}
+.search-form{display:flex;background:#f4f2ef;border-radius:10px;overflow:hidden;height:44px}
+.search-form input{border:0;background:transparent;flex:1;padding:0 14px;font-size:14px}
+.search-form button{width:44px;border:0;background:transparent;color:#420e15;font-size:16px}
+.cats-btn{height:44px;padding:0 16px;background:#420e15;color:#fff;border:0;border-radius:10px;font-weight:700;white-space:nowrap}
+.header-rt{display:flex;align-items:center;gap:12px}
+.header-rt select{height:44px;border:1px solid #eadfd3;border-radius:10px;padding:0 10px;background:#fff}
+.header-rt .icon-link{color:#420e15;text-decoration:none;font-size:13px;position:relative;padding-right:8px}
+.header-rt .badge{
+  position:absolute;top:-8px;right:-6px;background:#420e15;color:#fff;
+  min-width:16px;height:16px;border-radius:99px;font-size:10px;
+  display:inline-grid;place-items:center;padding:0 4px;
+}
+.header-rt .common-btn{height:44px;padding:0 18px;border-radius:10px;display:inline-flex;align-items:center}
+.mega{background:#420e15}
+.mega-grid{display:flex;gap:22px;padding:11px 0;overflow:auto}
+.mega a{color:#fff;font-size:13px;font-weight:600;text-decoration:none;white-space:nowrap}
+.mega h6{margin:0}
+.page-hero{padding:22px 0 8px}
+.breadcrumbs{color:#8a7a74;font-size:13px;margin-bottom:6px}
+.breadcrumbs a{color:#8a7a74;text-decoration:none}
+.page-hero h2{margin:0;font-size:32px;color:#1c1416}
+.shop-layout{display:grid;grid-template-columns:220px 1fr;gap:28px;align-items:start}
+.sidebar a{display:block;padding:7px 0;color:#3b2a2e;text-decoration:none}
+.sidebar a.active{color:#420e15;font-weight:700}
+.toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.product-grid,.deal-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.card{border:1px solid #efe7dc;border-radius:14px;overflow:hidden;background:#fff}
+.card-img img{width:100%;height:200px;object-fit:cover;display:block;background:#faf7f2}
+.card-body{padding:12px 14px 16px}
+.card-body h4{margin:0 0 6px;font-size:14px;font-weight:600}
+.card-body h4 a{color:#1c1416;text-decoration:none}
+.price{color:#420e15;font-weight:800}
+.product-hero{display:grid;grid-template-columns:1fr 1fr;gap:36px;padding:10px 0 40px}
+.product-hero img{width:100%;border-radius:16px;background:#faf7f2;object-fit:cover;max-height:520px}
+.banner-sec{background:#f6efe4}
+.banner-slide{min-height:360px !important;height:360px;display:flex !important;align-items:center;background:#efe4d4 center/cover no-repeat}
+.banner-copy{padding:0 7vw;max-width:560px}
+.banner-slide h3{font-size:48px;line-height:1;margin:0 0 12px}
+.category-list{display:grid;grid-template-columns:repeat(7,1fr);gap:12px}
+.category-card{border:1px solid #efe7dc;border-radius:14px;padding:16px 8px;text-align:center;text-decoration:none;color:#1c1416}
+.category-img{width:72px;height:72px;margin:0 auto 8px;border-radius:16px;overflow:hidden}
+.category-img img{width:100%;height:100%;object-fit:cover}
+footer.footer{background:#1a0c0f;color:#f3ebe3;margin-top:40px}
+footer.footer a{color:#f3ebe3}
+.footer-grid{display:grid;grid-template-columns:1.3fr repeat(4,1fr);gap:24px;padding:36px 0 20px}
+.copyright{border-top:1px solid #ffffff1f;padding:12px 0;opacity:.7}
+.cookie-bar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:#ffe566;color:#1a1a1a;z-index:80;border-radius:10px;padding:8px 12px}
+@media(max-width:1000px){
+  .header-row{grid-template-columns:1fr !important}
+  .shop-layout,.product-hero{grid-template-columns:1fr}
+  .product-grid,.deal-grid,.category-list{grid-template-columns:repeat(2,1fr)}
+  .deliver{display:none}
+}
