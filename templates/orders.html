@@ -15,8 +15,8 @@
       <a href="{{ url_for('order_thanks', order_number=o.order_number) }}">View receipt</a>
     </div>
     {% else %}
-    <p>No orders yet.</p>
-    {% endfor %}
+    <p>No orders yet. <a href="{{ url_for('shop') }}">Start shopping</a></p>
+    {% endif %}
   </div>
 </section>
 {% endblock %}

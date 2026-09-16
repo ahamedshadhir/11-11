@@ -3,17 +3,17 @@
 {% block content %}
 <section class="auth-wrap">
   <div class="auth-card">
-    <img class="auth-logo" src="{{ url_for('static', filename='img/logo.svg') }}" alt="11:11">
-    <h2>{% if lang=='ar' %}تسجيل الدخول{% else %}Sign in{% endif %}</h2>
-    <p class="muted">{% if lang=='ar' %}سجل الدخول للتسوق ومتابعة الطلب.{% else %}Use your 11-11 account to shop and track orders.{% endif %}</p>
+    <span class="logo-mark">11<span>:</span>11</span>
+    <h2>Sign in</h2>
+    <p class="muted">Use your 11-11 account to shop and track orders.</p>
     <form method="post" action="/login">
-      <label>{% if lang=='ar' %}البريد{% else %}Email{% endif %}</label>
+      <label>Email</label>
       <input type="email" name="email" required>
-      <label>{% if lang=='ar' %}كلمة المرور{% else %}Password{% endif %}</label>
+      <label>Password</label>
       <input type="password" name="password" required>
-      <button class="common-btn w-100 mt-3" type="submit">{% if lang=='ar' %}دخول{% else %}Sign in{% endif %}</button>
+      <button class="common-btn w-100" type="submit">Sign in</button>
     </form>
-    <p class="mt-3">{% if lang=='ar' %}جديد؟{% else %}New here?{% endif %} <a href="{{ url_for('register') }}">{% if lang=='ar' %}أنشئ حساباً{% else %}Create an account{% endif %}</a></p>
+    <p class="muted">New here? <a href="{{ url_for('register') }}">Create an account</a></p>
   </div>
 </section>
 {% endblock %}
