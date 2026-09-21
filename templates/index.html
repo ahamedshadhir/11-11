@@ -1,21 +1,20 @@
 {% extends "base.html" %}
-{% from "_macros.html" import product_card with context %}
 {% block title %}11-11{% endblock %}
 {% block content %}
 <section class="lp-hero">
   <div class="container lp-hero-inner">
     <div class="lp-copy">
       <p class="eyebrow">11-11 Qatar</p>
-      <h1>{{ t('hero_title') }}</h1>
-      <p>{{ t('hero_text') }}</p>
-      <a class="common-btn" href="{{ url_for('shop') }}">{{ t('shop_now') }}</a>
+      <h1>Up to 50% off selected items</h1>
+      <p>Electronics, fashion and home delivered in Qatar.</p>
+      <a class="common-btn" href="{{ url_for('shop') }}">Shop now</a>
     </div>
     <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1200&q=80" alt="">
   </div>
 </section>
 <section class="lp-section">
   <div class="container">
-    <h2>{{ t('shop_by_category') }}</h2>
+    <h2>Shop by category</h2>
     <div class="lp-cats">
       {% for c in all_categories %}
       <a class="lp-cat" href="{{ url_for('shop', category=c.id) }}">
@@ -28,17 +27,18 @@
 </section>
 <section class="lp-section alt">
   <div class="container">
-    <div class="lp-head"><h2>{{ t('deals') }}</h2></div>
+    <h2>Products</h2>
     <div class="product-grid">
-      {% for p in flash_products[:8] %}{{ product_card(p) }}{% endfor %}
-    </div>
-  </div>
-</section>
-<section class="lp-section">
-  <div class="container">
-    <div class="lp-head"><h2>{{ t('view_all') }}</h2></div>
-    <div class="product-grid">
-      {% for p in all_products[:12] %}{{ product_card(p) }}{% endfor %}
+      {% for p in (flash_products or all_products or [])[:16] %}
+      <article class="card">
+        <div class="card-img"><a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}"><img src="{{ p.image }}" alt="{{ p.name }}" loading="lazy"></a></div>
+        <div class="card-body">
+          <h4><a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}">{{ p.name }}</a></h4>
+          <p class="price">{{ p.price|qar }}</p>
+          <button class="common-btn w-100 mt-2" type="button" data-add="{{ p.id }}">Add to cart</button>
+        </div>
+      </article>
+      {% endfor %}
     </div>
   </div>
 </section>

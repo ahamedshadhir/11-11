@@ -1,17 +1,27 @@
 {% extends "base.html" %}
-{% from "_macros.html" import product_card with context %}
 {% block title %}Shop | 11-11{% endblock %}
 {% block content %}
-<section class="page-hero"><div class="container"><h2>{{ t('shop') }}</h2></div></section>
+<section class="page-hero"><div class="container"><h2>Shop</h2></div></section>
 <div class="container shop-layout" style="padding-bottom:48px">
   <aside>
-    <h4>{{ t('categories') }}</h4>
+    <h4>Categories</h4>
     {% for c in all_categories %}
     <p><a href="{{ url_for('shop', category=c.id) }}">{{ c.name }}</a></p>
     {% endfor %}
   </aside>
   <div class="product-grid">
-    {% for p in products %}{{ product_card(p) }}{% else %}<p>No products.</p>{% endfor %}
+    {% for p in products or [] %}
+    <article class="card">
+      <div class="card-img"><a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}"><img src="{{ p.image }}" alt="{{ p.name }}" loading="lazy"></a></div>
+      <div class="card-body">
+        <h4><a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}">{{ p.name }}</a></h4>
+        <p class="price">{{ p.price|qar }}</p>
+        <button class="common-btn w-100 mt-2" type="button" data-add="{{ p.id }}">Add to cart</button>
+      </div>
+    </article>
+    {% else %}
+    <p>No products.</p>
+    {% endfor %}
   </div>
 </div>
 {% endblock %}
