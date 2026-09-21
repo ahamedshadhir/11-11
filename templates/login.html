@@ -8,13 +8,14 @@
     <a class="oauth-btn google" href="/auth/google">Continue with Google</a>
     <a class="oauth-btn apple" href="/auth/apple">Continue with Apple</a>
     <p class="muted" style="text-align:center;margin:14px 0">or use email</p>
-    <form method="post" action="/login">
+    <form method="post" action="{{ url_for('login') }}">
       <label>Email</label>
       <input type="email" name="email" required>
       <label>Password</label>
       <input type="password" name="password" required>
       <button class="common-btn w-100" type="submit">Sign in</button>
     </form>
+    <p class="muted">Demo: demo@1111.local / demo123</p>
     <p class="muted"><a href="{{ url_for('register') }}">Create an account</a></p>
   </div>
 </section>

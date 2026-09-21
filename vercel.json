@@ -2,13 +2,10 @@
   "version": 2,
   "builds": [
     { "src": "static/**", "use": "@vercel/static" },
-    { "src": "app.py", "use": "@vercel/python" },
-    { "src": "api/auth.py", "use": "@vercel/python" }
+    { "src": "app.py", "use": "@vercel/python" }
   ],
   "routes": [
     { "src": "/static/(.*)", "headers": { "cache-control": "public, max-age=86400, immutable" }, "dest": "/static/$1" },
-    { "src": "/login", "methods": ["POST"], "dest": "api/auth.py" },
-    { "src": "/user/login", "methods": ["POST"], "dest": "api/auth.py" },
     { "src": "/(.*)", "dest": "app.py" }
   ]
 }
