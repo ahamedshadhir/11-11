@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Invoice {{ order.order_number }} | 11-11{% endblock %}
 {% block content %}
+{% set lines = order.items if order.items is defined else [] %}
 <section class="inv-page">
   <div class="inv" id="receipt">
     <div class="inv-top">
@@ -20,18 +21,18 @@
         <h3>Bill to</h3>
         <p>{{ order.shipping_name }}</p>
         <p>{{ order.shipping_phone }}</p>
-        <p>{{ order.shipping_address }}, {{ order.shipping_city }}</p>
+        <p>{{ order.shipping_address }}{% if order.shipping_city %}, {{ order.shipping_city }}{% endif %}</p>
       </div>
       <div>
         <h3>Payment</h3>
         <p>{{ order.payment_method }}</p>
-        <p>Status: {{ order.status }}</p>
+        <p>{{ order.status }}</p>
       </div>
     </div>
     <table class="inv-table">
       <thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead>
       <tbody>
-      {% for it in order.items %}
+      {% for it in lines %}
         <tr>
           <td>{{ it.name }}</td>
           <td>{{ it.quantity }}</td>

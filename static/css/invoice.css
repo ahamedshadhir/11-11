@@ -11,5 +11,4 @@
 .inv-totals p{display:flex;justify-content:space-between;margin:6px 0}
 .inv-totals .grand{font-size:20px;font-weight:800;color:#420e15}
 .inv-actions{display:flex;gap:10px;margin-top:24px}
-@media print{.header-card,.mega,.footer,.ftr-news,.inv-actions,.member-bar{display:none!important}.inv{border:0;box-shadow:none}}
-@media(max-width:700px){.inv-top,.inv-grid{grid-template-columns:1fr;display:grid}}
+@media print{.header-card,.mega,.footer,.ftr-news,.inv-actions{display:none!important}.inv{border:0}}
