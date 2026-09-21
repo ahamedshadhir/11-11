@@ -1,19 +1,18 @@
 {% extends "base.html" %}
-{% block title %}Login | 11-11{% endblock %}
+{% block title %}{{ t('login') }} | 11-11{% endblock %}
 {% block content %}
 <section class="auth-wrap">
   <div class="auth-card">
     <span class="logo-mark">11<span>:</span>11</span>
-    <h2>Sign in</h2>
-    <p class="muted">Use your 11-11 account to shop and track orders.</p>
+    <h2>{{ t('sign_in') }}</h2>
     <form method="post" action="/login">
-      <label>Email</label>
+      <label>{% if lang=='ar' %}البريد{% else %}Email{% endif %}</label>
       <input type="email" name="email" required>
-      <label>Password</label>
+      <label>{% if lang=='ar' %}كلمة المرور{% else %}Password{% endif %}</label>
       <input type="password" name="password" required>
-      <button class="common-btn w-100" type="submit">Sign in</button>
+      <button class="common-btn w-100" type="submit">{{ t('sign_in') }}</button>
     </form>
-    <p class="muted">New here? <a href="{{ url_for('register') }}">Create an account</a></p>
+    <p class="muted"><a href="{{ url_for('register') }}">{{ t('create') }}</a></p>
   </div>
 </section>
 {% endblock %}
