@@ -32,11 +32,7 @@ def install_aliases(app):
             from catalog import _load
             return _load()[:limit]
         except Exception:
-            try:
-                from models import Product
-                return Product.query.order_by(Product.id.desc()).limit(limit).all()
-            except Exception:
-                return []
+            return []
 
     def demo_user(email, name):
         from extensions import db
@@ -61,20 +57,25 @@ def install_aliases(app):
     def _safe_pages():
         try:
             path = request.path or "/"
+            if path == "/auth/google":
+                demo_user("google.demo@1111.local", "Google Demo")
+                flash("Signed in with Google (demo).", "success")
+                return redirect(url_for("account"))
+            if path == "/auth/apple":
+                demo_user("apple.demo@1111.local", "Apple Demo")
+                flash("Signed in with Apple (demo).", "success")
+                return redirect(url_for("account"))
             if request.method == "GET" and path == "/checkout":
-                try:
-                    from flask_login import current_user
-                    from models import CartItem
+                from flask_login import current_user
+                from models import CartItem
 
-                    has = False
-                    if getattr(current_user, "is_authenticated", False):
-                        has = CartItem.query.filter_by(user_id=current_user.id).first() is not None
-                    if not has:
-                        cart = session.get("cart") or {}
-                        has = any(int(v) > 0 for v in cart.values()) if cart else False
-                    if not has:
-                        return render_template("checkout_empty.html")
-                except Exception:
+                has = False
+                if getattr(current_user, "is_authenticated", False):
+                    has = CartItem.query.filter_by(user_id=current_user.id).first() is not None
+                if not has:
+                    cart = session.get("cart") or {}
+                    has = any(int(v) > 0 for v in cart.values()) if cart else False
+                if not has:
                     return render_template("checkout_empty.html")
             if request.method != "GET":
                 return None
@@ -95,6 +96,7 @@ def install_aliases(app):
                 category_id = request.args.get("category") or request.args.get("category_id")
                 if q or category_id:
                     from models import Product
+
                     query = Product.query
                     if category_id:
                         query = query.filter_by(category_id=int(category_id))
@@ -105,26 +107,6 @@ def install_aliases(app):
         except Exception:
             return None
         return None
-
-    @app.route("/auth/google")
-    def auth_google_demo():
-        try:
-            demo_user("google.demo@1111.local", "Google Demo")
-            flash("Signed in with Google (demo).", "success")
-            return redirect(url_for("account"))
-        except Exception:
-            flash("Google demo login failed.", "danger")
-            return redirect(url_for("login"))
-
-    @app.route("/auth/apple")
-    def auth_apple_demo():
-        try:
-            demo_user("apple.demo@1111.local", "Apple Demo")
-            flash("Signed in with Apple (demo).", "success")
-            return redirect(url_for("account"))
-        except Exception:
-            flash("Apple demo login failed.", "danger")
-            return redirect(url_for("login"))
 
     @app.route("/become-seller")
     @app.route("/seller")
