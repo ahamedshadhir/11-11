@@ -7,6 +7,18 @@ def install_aliases(app):
         return
     app._aliases = True
 
+    @app.context_processor
+    def inject_t():
+        lang = session.get("lang", "en")
+        try:
+            from i18n import translate
+            def t(key):
+                return translate(key, lang)
+        except Exception:
+            def t(key):
+                return key
+        return {"t": t, "lang": lang}
+
     @app.route("/become-seller")
     @app.route("/seller")
     def become_seller_alias():
