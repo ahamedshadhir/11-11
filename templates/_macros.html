@@ -1,3 +1,11 @@
+{% macro stars(rating, count=None) %}
+  <div class="stars">
+    {% set r = rating or 0 %}
+    {% for i in range(1,6) %}{% if r >= i %}★{% else %}☆{% endif %}{% endfor %}
+    {% if count is not none %}<span class="grey-star">({{ count }})</span>{% endif %}
+  </div>
+{% endmacro %}
+
 {% macro product_card(p) %}
   <article class="card">
     <div class="card-img">

@@ -17,7 +17,7 @@ def _load():
     _CACHE["t"] = now
     groups = {}
     for p in items:
-        groups.setdefault(p.category_id, []).append(p)
+        groups.setdefault(getattr(p, "category_id", None), []).append(p)
     _CACHE["by_cat"] = groups
     return items
 
@@ -27,7 +27,8 @@ def suggest_for(pid=None, limit=4):
     if not items:
         return []
     current = next((p for p in items if p.id == pid), None)
-    pool = list(_CACHE["by_cat"].get(getattr(current, "category_id", None), items))
+    cat = getattr(current, "category_id", None) if current else None
+    pool = list(_CACHE["by_cat"].get(cat, items))
     out = [p for p in pool if p.id != pid][:limit]
     if len(out) < limit:
         extra = [p for p in items if p.id != pid and p not in out]
@@ -40,20 +41,33 @@ def install_catalog(app):
         return
     app._catalog = True
 
+    @app.template_filter("arname")
+    def arname(name):
+        try:
+            from i18n import local_name
+            return local_name(name, session.get("lang", "en"))
+        except Exception:
+            return name or ""
+
     @app.context_processor
     def inject_catalog():
         items = _load()
         last = session.get("last_pid")
-        return {
-            "all_products": items[:24],
-            "ai_picks": suggest_for(last, 4),
-        }
+        picks = []
+        try:
+            picks = suggest_for(last, 4)
+        except Exception:
+            picks = items[:4]
+        return {"all_products": items[:24], "ai_picks": picks}
 
     @app.before_request
     def remember_product():
-        pid = (request.view_args or {}).get("pid")
-        if pid:
-            session["last_pid"] = pid
+        try:
+            pid = (request.view_args or {}).get("pid")
+            if pid:
+                session["last_pid"] = pid
+        except Exception:
+            pass
 
     @app.route("/api/suggest")
     def api_suggest():
@@ -62,12 +76,3 @@ def install_catalog(app):
         for p in suggest_for(pid, 6):
             data.append({"id": p.id, "name": p.name, "price": p.price, "image": p.image, "slug": p.slug})
         return {"items": data}
-
-    @app.after_request
-    def static_speed(resp):
-        path = request.path or ""
-        if path.startswith("/static/"):
-            resp.headers["Cache-Control"] = "public, max-age=86400, immutable"
-        elif request.method == "GET" and path in ("/", "/shop", "/shop/product/index"):
-            resp.headers["Cache-Control"] = "public, max-age=60"
-        return resp
