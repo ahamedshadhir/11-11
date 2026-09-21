@@ -9,7 +9,9 @@
 {% macro product_card(p) %}
   <article class="card">
     <div class="card-img">
-      <a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}"><img src="{{ p.image }}" alt="{{ p.name }}" loading="lazy" width="400" height="400"></a>
+      <a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}">
+        <img src="{{ p.image }}" alt="{{ p.name }}" loading="lazy" width="400" height="400" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=80'">
+      </a>
     </div>
     <div class="card-body">
       <h4><a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}">{{ p.name }}</a></h4>
