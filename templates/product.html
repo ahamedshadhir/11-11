@@ -1,69 +1,24 @@
 {% extends "base.html" %}
-{% from "_macros.html" import product_card, stars %}
+{% from "_macros.html" import product_card, stars with context %}
 {% block title %}{{ product.name }} | 11-11{% endblock %}
 {% block content %}
 <div class="container page-hero">
-  <div class="breadcrumbs">
-    <a href="{{ url_for('index') }}">Home</a> /
-    {% if product.category %}<a href="{{ url_for('shop', category=product.category.id) }}">{{ product.category.name }}</a> /{% endif %}
-    {{ product.name }}
-  </div>
+  <div class="breadcrumbs"><a href="{{ url_for('index') }}">Home</a> / {{ product.name }}</div>
 </div>
-<div class="container" style="padding-bottom:24px">
+<div class="container" style="padding-bottom:48px">
   <div class="product-hero">
     <img src="{{ product.image }}" alt="{{ product.name }}">
     <div>
-      {% if product.discount_percent %}<span class="discount-per" style="position:static">-{{ product.discount_percent }}%</span>{% endif %}
-      <h1 style="margin:8px 0">{{ product.name }}</h1>
+      <h1>{{ product.name }}</h1>
       {{ stars(product.rating, product.review_count) }}
-      <p class="price" style="font-size:24px">
-        {% if product.compare_at and product.compare_at > product.price %}<del>{{ product.compare_at|qar }}</del>{% endif %}
-        {{ product.price|qar }}
-      </p>
+      <p class="price" style="font-size:24px">{{ product.price|qar }}</p>
       <p>{{ product.description }}</p>
-      <p class="muted">{% if product.in_stock %}In stock ({{ product.stock }}){% else %}Out of stock{% endif %}
-        {% if product.brand %} · {{ product.brand.name }}{% endif %}
-      </p>
-      <div class="qty-row">
-        <div class="qty-step">
-          <button type="button" data-act="-">−</button>
-          <input type="number" name="qty" value="1" min="1" max="{{ product.stock or 1 }}">
-          <button type="button" data-act="+">+</button>
-        </div>
-        <button class="common-btn" type="button" data-add="{{ product.id }}" {% if not product.in_stock %}disabled{% endif %}>Add to cart</button>
-        <button class="common-bd-btn like-btn {% if product.id in wishlist_ids %}on{% endif %}" type="button" data-pid="{{ product.id }}" style="position:static">Wishlist</button>
-      </div>
+      <button class="common-btn" type="button" data-add="{{ product.id }}">{% if lang=='ar' %}أضف للسلة{% else %}Add to cart{% endif %}</button>
     </div>
   </div>
-  <div class="panel wide" style="margin-top:24px">
-    <h3>Reviews</h3>
-    {% for r in reviews %}
-      <div style="border-bottom:1px solid var(--line);padding:12px 0">
-        <strong>{{ r.user.name }}</strong> {{ stars(r.rating) }}
-        <p style="margin:4px 0 0">{{ r.comment }}</p>
-      </div>
-    {% else %}
-      <p class="muted">No reviews yet.</p>
-    {% endfor %}
-    {% if current_user.is_authenticated %}
-    <form method="post" action="{{ url_for('add_review', pid=product.id) }}" class="mt-3">
-      <label>Your rating</label>
-      <select name="rating">
-        {% for n in range(5,0,-1) %}<option value="{{ n }}">{{ n }} stars</option>{% endfor %}
-      </select>
-      <label>Comment</label>
-      <textarea name="comment" rows="3" placeholder="How was the product?"></textarea>
-      <button class="common-btn mt-3" type="submit">Submit review</button>
-    </form>
-    {% else %}
-      <p><a href="{{ url_for('login') }}">Log in</a> to leave a review.</p>
-    {% endif %}
-  </div>
   {% if related %}
-  <h3 style="margin:28px 0 12px">You may also like</h3>
-  <div class="product-grid">
-    {% for p in related %}{{ product_card(p) }}{% endfor %}
-  </div>
+  <h3 style="margin:28px 0 12px">{% if lang=='ar' %}قد يعجبك{% else %}You may also like{% endif %}</h3>
+  <div class="product-grid">{% for p in related %}{{ product_card(p) }}{% endfor %}</div>
   {% endif %}
 </div>
 {% endblock %}

@@ -1,17 +1,17 @@
 {% extends "base.html" %}
-{% from "_macros.html" import product_card %}
-{% block title %}{{ t('shop') }} | 11-11{% endblock %}
+{% from "_macros.html" import product_card with context %}
+{% block title %}Shop | 11-11{% endblock %}
 {% block content %}
 <section class="page-hero"><div class="container"><h2>{{ t('shop') }}</h2></div></section>
 <div class="container shop-layout" style="padding-bottom:48px">
   <aside>
     <h4>{{ t('categories') }}</h4>
     {% for c in all_categories %}
-    <p><a href="{{ url_for('shop', category=c.id) }}">{{ arname(c.name) if arname is defined else c.name }}</a></p>
+    <p><a href="{{ url_for('shop', category=c.id) }}">{{ c.name }}</a></p>
     {% endfor %}
   </aside>
   <div class="product-grid">
-    {% for p in products %}{{ product_card(p) }}{% else %}<p>{{ t('continue') }}</p>{% endfor %}
+    {% for p in products %}{{ product_card(p) }}{% else %}<p>No products.</p>{% endfor %}
   </div>
 </div>
 {% endblock %}

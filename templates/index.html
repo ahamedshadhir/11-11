@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import product_card %}
+{% from "_macros.html" import product_card with context %}
 {% block title %}11-11{% endblock %}
 {% block content %}
 <section class="lp-hero">
@@ -20,7 +20,7 @@
       {% for c in all_categories %}
       <a class="lp-cat" href="{{ url_for('shop', category=c.id) }}">
         <img src="{{ c.image }}" alt="{{ c.name }}" loading="lazy">
-        <span>{{ arname(c.name) if arname is defined else c.name }}</span>
+        <span>{{ c.name }}</span>
       </a>
       {% endfor %}
     </div>
@@ -30,7 +30,7 @@
   <div class="container">
     <div class="lp-head"><h2>{{ t('deals') }}</h2></div>
     <div class="product-grid">
-      {% for p in (flash_products or all_products)[:8] %}{{ product_card(p) }}{% endfor %}
+      {% for p in flash_products[:8] %}{{ product_card(p) }}{% endfor %}
     </div>
   </div>
 </section>
@@ -38,7 +38,7 @@
   <div class="container">
     <div class="lp-head"><h2>{{ t('view_all') }}</h2></div>
     <div class="product-grid">
-      {% for p in (all_products or flash_products)[:12] %}{{ product_card(p) }}{% endfor %}
+      {% for p in all_products[:12] %}{{ product_card(p) }}{% endfor %}
     </div>
   </div>
 </section>
