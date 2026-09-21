@@ -9,71 +9,79 @@ def install_aliases(app):
     @app.context_processor
     def inject_t():
         lang = session.get("lang", "en")
-        try:
-            from i18n import translate, local_name
 
-            def t(key):
+        def t(key):
+            try:
+                from i18n import translate
                 return translate(key, lang)
-
-            def arname(name):
-                return local_name(name, lang)
-        except Exception:
-
-            def t(key):
+            except Exception:
                 return key
 
-            def arname(name):
+        def arname(name):
+            try:
+                from i18n import local_name
+                return local_name(name, lang)
+            except Exception:
                 return name
 
         return {"t": t, "lang": lang, "arname": arname}
 
-    @app.template_filter("arname")
-    def arname_filter(name):
+    def products(limit=16):
         try:
-            from i18n import local_name
-            return local_name(name, session.get("lang", "en"))
+            from catalog import _load
+            return _load()[:limit]
         except Exception:
-            return name or ""
-
-    def _products(limit=16):
-        try:
-            from models import Product
-            return Product.query.order_by(Product.id.desc()).limit(limit).all()
-        except Exception:
-            return []
+            try:
+                from models import Product
+                return Product.query.order_by(Product.id.desc()).limit(limit).all()
+            except Exception:
+                return []
 
     @app.before_request
     def _safe_pages():
-        path = request.path or "/"
-        if request.method != "GET":
-            return None
-        if path == "/":
-            products = _products(16)
-            return render_template(
-                "index.html",
-                banners=[],
-                promos=[],
-                flash_products=products[:8],
-                bestsellers=products[:6],
-                recommended=products,
-                accessory_deals=products,
-            )
-        if path in ("/shop", "/shop/product/index"):
-            products = _products(48)
-            try:
-                from models import Product
+        try:
+            if request.method != "GET":
+                return None
+            path = request.path or "/"
+            if path == "/":
+                items = products(16)
+                return render_template(
+                    "index.html",
+                    banners=[],
+                    promos=[],
+                    flash_products=items[:8],
+                    bestsellers=items[:6],
+                    recommended=items,
+                    accessory_deals=items,
+                )
+            if path in ("/shop", "/shop/product/index"):
+                items = products(48)
                 q = (request.args.get("q") or "").strip()
                 category_id = request.args.get("category") or request.args.get("category_id")
-                query = Product.query
-                if category_id:
-                    query = query.filter_by(category_id=int(category_id))
-                if q:
-                    query = query.filter(Product.name.ilike("%" + q + "%"))
-                products = query.limit(48).all()
-            except Exception:
-                pass
-            return render_template("shop.html", products=products, q=request.args.get("q", ""))
+                if q or category_id:
+                    try:
+                        from models import Product
+                        query = Product.query
+                        if category_id:
+                            query = query.filter_by(category_id=int(category_id))
+                        if q:
+                            query = query.filter(Product.name.ilike("%" + q + "%"))
+                        items = query.limit(48).all()
+                    except Exception:
+                        pass
+                return render_template("shop.html", products=items, q=q)
+        except Exception:
+            return None
         return None
+
+    @app.after_request
+    def _cache_headers(resp):
+        path = request.path or ""
+        if path.startswith("/static/"):
+            resp.headers["Cache-Control"] = "public, max-age=86400"
+        elif request.method == "GET" and path in ("/", "/shop", "/shop/product/index"):
+            resp.headers["Cache-Control"] = "public, max-age=30"
+        return resp
 
     @app.route("/become-seller")
     @app.route("/seller")
