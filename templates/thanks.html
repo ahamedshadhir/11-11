@@ -1,30 +1,54 @@
 {% extends "base.html" %}
-{% block title %}Receipt {{ order.order_number }} | 11-11{% endblock %}
+{% block title %}Invoice {{ order.order_number }} | 11-11{% endblock %}
 {% block content %}
-<section class="check-page">
-  <div class="container" style="max-width:720px">
-    <div class="check-form" id="receipt">
-      <p class="eyebrow">11-11 Qatar</p>
-      <h1>Receipt</h1>
-      <p>Order <strong>{{ order.order_number }}</strong></p>
-      <p>Status: <strong>{{ order.status }}</strong> · {{ order.payment_method }}</p>
-      <p>Deliver to {{ order.shipping_name }}, {{ order.shipping_address }}, {{ order.shipping_city }}</p>
-      <p>Phone {{ order.shipping_phone }}</p>
-      <table class="cart-table">
-        <thead><tr><th>Item</th><th>Qty</th><th>Price</th></tr></thead>
-        <tbody>
-        {% for it in order.items %}
-          <tr><td>{{ it.name }}</td><td>{{ it.quantity }}</td><td>{{ it.price|qar }}</td></tr>
-        {% endfor %}
-        </tbody>
-      </table>
-      <p>Subtotal {{ order.subtotal|qar }}</p>
-      <p>Shipping {{ order.shipping|qar }}</p>
-      <p class="grand" style="font-size:20px;font-weight:800;color:#420e15">Total {{ order.total|qar }}</p>
-      <p>
-        <a class="common-btn" href="{{ url_for('my_orders') }}">My orders</a>
-        <button class="common-bd-btn" type="button" onclick="window.print()">Print receipt</button>
-      </p>
+<section class="inv-page">
+  <div class="inv" id="receipt">
+    <div class="inv-top">
+      <div>
+        <div class="logo-mark">11<span>:</span>11</div>
+        <div class="logo-sub">eleven-eleven</div>
+        <p>Doha, Qatar</p>
+      </div>
+      <div class="inv-meta">
+        <h1>Invoice</h1>
+        <p>{{ order.order_number }}</p>
+        <p>{{ order.status }} · {{ order.payment_method }}</p>
+      </div>
+    </div>
+    <div class="inv-grid">
+      <div>
+        <h3>Bill to</h3>
+        <p>{{ order.shipping_name }}</p>
+        <p>{{ order.shipping_phone }}</p>
+        <p>{{ order.shipping_address }}, {{ order.shipping_city }}</p>
+      </div>
+      <div>
+        <h3>Payment</h3>
+        <p>{{ order.payment_method }}</p>
+        <p>Status: {{ order.status }}</p>
+      </div>
+    </div>
+    <table class="inv-table">
+      <thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead>
+      <tbody>
+      {% for it in order.items %}
+        <tr>
+          <td>{{ it.name }}</td>
+          <td>{{ it.quantity }}</td>
+          <td>{{ it.price|qar }}</td>
+          <td>{{ (it.price * it.quantity)|qar }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <div class="inv-totals">
+      <p>Subtotal <span>{{ order.subtotal|qar }}</span></p>
+      <p>Shipping <span>{{ order.shipping|qar }}</span></p>
+      <p class="grand">Total <span>{{ order.total|qar }}</span></p>
+    </div>
+    <div class="inv-actions">
+      <button class="common-btn" type="button" onclick="window.print()">Print / Save PDF</button>
+      <a class="common-bd-btn" href="{{ url_for('my_orders') }}">My orders</a>
     </div>
   </div>
 </section>

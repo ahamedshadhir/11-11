@@ -15,6 +15,7 @@ class _LoginManager(LoginManager):
             ("skipcash", "install_skipcash"),
             ("sadad", "install_sadad"),
             ("pay", "install_pay"),
+            ("oauth", "install_oauth"),
             ("aliases", "install_aliases"),
         ):
             try:
