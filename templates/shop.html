@@ -6,9 +6,12 @@
 <div class="container shop-layout" style="padding-bottom:48px">
   <aside>
     <h4>{{ t('categories') }}</h4>
-    <a href="{{ url_for('shop') }}">{{ t('view_all') }}</a>
-    {% for c in all_categories %}<p><a href="{{ url_for('shop', category=c.id) }}">{{ c.name|arname }}</a></p>{% endfor %}
+    {% for c in all_categories %}
+    <p><a href="{{ url_for('shop', category=c.id) }}">{{ arname(c.name) if arname is defined else c.name }}</a></p>
+    {% endfor %}
   </aside>
-  <div class="product-grid">{% for p in products %}{{ product_card(p) }}{% else %}<p>{{ t('empty_cart') }}</p>{% endfor %}</div>
+  <div class="product-grid">
+    {% for p in products %}{{ product_card(p) }}{% else %}<p>{{ t('continue') }}</p>{% endfor %}
+  </div>
 </div>
 {% endblock %}
