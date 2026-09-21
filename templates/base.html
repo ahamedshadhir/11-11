@@ -21,11 +21,11 @@
       </a>
       <div class="header-mid">
         <div class="deliver">
-          <label>{% if lang=='ar' %}التوصيل إلى{% else %}Deliver to{% endif %}</label>
-          <select id="deliverSelect"><option value="Doha">Doha</option>{% for area in qatar_areas %}<option value="{{ area }}">{{ area }}</option>{% endfor %}</select>
+          <label>{{ t('deliver_to') }}</label>
+          <select id="deliverSelect"><option value="Doha">{{ 'الدوحة' if lang=='ar' else 'Doha' }}</option>{% for area in qatar_areas %}<option value="{{ area }}">{{ area }}</option>{% endfor %}</select>
         </div>
         <form class="search-form" action="{{ url_for('shop') }}" method="get">
-          <input name="q" id="liveSearch" placeholder="{% if lang=='ar' %}ابحث...{% else %}Search for products...{% endif %}" value="{{ request.args.get('q','') }}">
+          <input name="q" id="liveSearch" placeholder="{{ t('search') }}" value="{{ request.args.get('q','') }}">
           <button type="submit">⌕</button>
         </form>
       </div>
@@ -34,12 +34,12 @@
           <option value="en" {% if lang!='ar' %}selected{% endif %}>English</option>
           <option value="ar" {% if lang=='ar' %}selected{% endif %}>العربية</option>
         </select>
-        <a class="icon-link" href="{{ url_for('wishlist') }}">♡ Wishlist<span class="badge" id="wishCount">{{ nav_wish_count }}</span></a>
-        <button class="icon-link" id="openCart" type="button">🛒 Cart<span class="badge cart-count" id="cartCount">{{ nav_cart_count }}</span></button>
+        <a class="icon-link" href="{{ url_for('wishlist') }}">♡ {{ t('wishlist') }}<span class="badge" id="wishCount">{{ nav_wish_count }}</span></a>
+        <button class="icon-link" id="openCart" type="button">🛒 {{ t('cart') }}<span class="badge cart-count" id="cartCount">{{ nav_cart_count }}</span></button>
         {% if current_user.is_authenticated %}
-          <a class="member-chip" href="{{ url_for('account') }}">{{ (current_user.name or 'Account').split()[0] }}</a>
+          <a class="member-chip" href="{{ url_for('account') }}">{{ (current_user.name or t('login')).split()[0] }}</a>
         {% else %}
-          <a class="common-btn" href="{{ url_for('login') }}">Login</a>
+          <a class="common-btn" href="{{ url_for('login') }}">{{ t('login') }}</a>
         {% endif %}
       </div>
     </div>
@@ -49,9 +49,9 @@
   <main>{% block content %}{% endblock %}</main>
   <div class="overlay" id="overlay"></div>
   <aside class="drawer" id="cartDrawer">
-    <div class="drawer-head"><h5>Cart</h5><button type="button" id="closeCart">×</button></div>
+    <div class="drawer-head"><h5>{{ t('cart') }}</h5><button type="button" id="closeCart">×</button></div>
     <div class="drawer-body" id="drawerItems"></div>
-    <div class="drawer-foot"><a class="common-bd-btn" href="{{ url_for('cart') }}">View Cart</a><a class="common-btn" href="{{ url_for('checkout') }}">Checkout</a></div>
+    <div class="drawer-foot"><a class="common-bd-btn" href="{{ url_for('cart') }}">{{ t('view_cart') }}</a><a class="common-btn" href="{{ url_for('checkout') }}">{{ t('checkout') }}</a></div>
   </aside>
   {% include "_footer.html" %}
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>

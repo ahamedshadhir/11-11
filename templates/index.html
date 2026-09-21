@@ -1,22 +1,21 @@
 {% extends "base.html" %}
 {% from "_macros.html" import product_card %}
-{% block title %}11-11 | Shop electronics, fashion & home{% endblock %}
+{% block title %}11-11{% endblock %}
 {% block content %}
 <section class="lp-hero">
   <div class="container lp-hero-inner">
     <div class="lp-copy">
       <p class="eyebrow">11-11 Qatar</p>
-      <h1>Up to 50% off<br>selected items</h1>
-      <p>Electronics, fashion and home delivered in Qatar.</p>
-      <a class="common-btn" href="{{ url_for('shop') }}">Shop now</a>
+      <h1>{{ t('hero_title') }}</h1>
+      <p>{{ t('hero_text') }}</p>
+      <a class="common-btn" href="{{ url_for('shop') }}">{{ t('shop_now') }}</a>
     </div>
     <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1200&q=80" alt="">
   </div>
 </section>
-
 <section class="lp-section">
   <div class="container">
-    <h2>Shop by category</h2>
+    <h2>{{ t('shop_by_category') }}</h2>
     <div class="lp-cats">
       {% for c in all_categories %}
       <a class="lp-cat" href="{{ url_for('shop', category=c.id) }}">
@@ -27,24 +26,22 @@
     </div>
   </div>
 </section>
-
 <section class="lp-section alt">
   <div class="container">
     <div class="lp-head">
-      <h2>Deals of the day</h2>
-      <span>Use FLASH10</span>
+      <h2>{{ t('deals') }}</h2>
+      <span>FLASH10</span>
     </div>
     <div class="product-grid">
       {% for p in flash_products[:8] %}{{ product_card(p) }}{% endfor %}
     </div>
   </div>
 </section>
-
 <section class="lp-section">
   <div class="container">
     <div class="lp-head">
-      <h2>All products</h2>
-      <a href="{{ url_for('shop') }}">View shop</a>
+      <h2>{{ t('view_all') }}</h2>
+      <a href="{{ url_for('shop') }}">{{ t('view_all') }}</a>
     </div>
     <div class="product-grid">
       {% for p in all_products[:16] %}{{ product_card(p) }}{% endfor %}

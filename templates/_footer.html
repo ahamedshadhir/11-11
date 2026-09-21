@@ -1,52 +1,46 @@
-<!-- footer layout locked -->
 <div style="background:#be923b;color:#420e15">
   <div class="container" style="display:flex;justify-content:space-between;align-items:center;gap:24px;padding:24px 0;flex-wrap:wrap">
     <div>
-      <div style="font-size:22px;font-weight:800">Get 11-11 offers</div>
-      <div>New deals in Doha. No spam.</div>
+      <div style="font-size:22px;font-weight:800">{% if lang=='ar' %}عروض 11-11{% else %}Get 11-11 offers{% endif %}</div>
+      <div>{% if lang=='ar' %}عروض جديدة في الدوحة{% else %}New deals in Doha. No spam.{% endif %}</div>
     </div>
     <form action="/newsletter" method="post" style="display:flex;gap:8px;min-width:280px;flex:1;max-width:460px">
-      <input type="email" name="email" placeholder="Email address" required style="flex:1;border:0;border-radius:10px;padding:12px 14px">
-      <button type="submit" class="common-btn">Subscribe</button>
+      <input type="email" name="email" placeholder="{% if lang=='ar' %}البريد{% else %}Email address{% endif %}" required style="flex:1;border:0;border-radius:10px;padding:12px 14px">
+      <button type="submit" class="common-btn">{% if lang=='ar' %}اشتراك{% else %}Subscribe{% endif %}</button>
     </form>
   </div>
 </div>
 <footer style="background:#14080b;color:#f6f3ee">
   <div class="container" style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1fr;gap:32px;padding:48px 0 36px">
     <div>
-      <div style="font-family:Georgia,serif;font-size:40px;font-weight:700;line-height:1;color:#fff">11<span style="color:#be923b">:</span>11</div>
+      <div style="font-family:Georgia,serif;font-size:40px;font-weight:700;color:#fff">11<span style="color:#be923b">:</span>11</div>
       <div style="color:#be923b;letter-spacing:3px;font-size:11px;margin:8px 0 14px">eleven-eleven</div>
-      <p style="color:#d7c8b6;line-height:1.55;max-width:28ch;margin:0">Electronics, fashion and home in Qatar.</p>
-      <p style="color:#be923b;margin:12px 0 0;font-size:13px">Doha · +974 4000 1111</p>
+      <p style="color:#d7c8b6;max-width:28ch">{% if lang=='ar' %}إلكترونيات وأزياء ومنزل في قطر.{% else %}Electronics, fashion and home in Qatar.{% endif %}</p>
     </div>
     <div>
-      <div style="color:#be923b;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px">Store</div>
-      <p style="margin:0 0 8px"><a href="{{ url_for('shop') }}" style="color:#efe6da;text-decoration:none">All products</a></p>
-      <p style="margin:0 0 8px"><a href="{{ url_for('about') }}" style="color:#efe6da;text-decoration:none">Our story</a></p>
-      <p style="margin:0 0 8px"><a href="/become-seller" style="color:#efe6da;text-decoration:none">Sell on 11-11</a></p>
+      <div style="color:#be923b;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px">{{ t('about') }}</div>
+      <p><a href="{{ url_for('shop') }}" style="color:#efe6da;text-decoration:none">{{ t('view_all') }}</a></p>
+      <p><a href="{{ url_for('about') }}" style="color:#efe6da;text-decoration:none">{{ t('about') }}</a></p>
     </div>
     <div>
-      <div style="color:#be923b;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px">Help</div>
-      <p style="margin:0 0 8px"><a href="{{ url_for('contact') }}" style="color:#efe6da;text-decoration:none">Contact</a></p>
-      <p style="margin:0 0 8px"><a href="{{ url_for('track_order') }}" style="color:#efe6da;text-decoration:none">Track order</a></p>
-      <p style="margin:0 0 8px"><a href="{{ url_for('faq') }}" style="color:#efe6da;text-decoration:none">FAQ</a></p>
-      <p style="margin:0 0 8px"><a href="{{ url_for('returns') }}" style="color:#efe6da;text-decoration:none">Returns</a></p>
+      <div style="color:#be923b;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px">{{ t('service') }}</div>
+      <p><a href="{{ url_for('contact') }}" style="color:#efe6da;text-decoration:none">{% if lang=='ar' %}اتصل بنا{% else %}Contact{% endif %}</a></p>
+      <p><a href="{{ url_for('faq') }}" style="color:#efe6da;text-decoration:none">FAQ</a></p>
     </div>
     <div>
-      <div style="color:#be923b;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px">Shop</div>
+      <div style="color:#be923b;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px">{{ t('categories') }}</div>
       {% for cat in all_categories[:6] %}
-      <p style="margin:0 0 8px"><a href="{{ url_for('shop', category=cat.id) }}" style="color:#efe6da;text-decoration:none">{{ cat.name }}</a></p>
+      <p><a href="{{ url_for('shop', category=cat.id) }}" style="color:#efe6da;text-decoration:none">{{ cat.name }}</a></p>
       {% endfor %}
     </div>
     <div>
-      <div style="color:#be923b;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px">Legal</div>
-      <p style="margin:0 0 8px"><a href="{{ url_for('privacy') }}" style="color:#efe6da;text-decoration:none">Privacy</a></p>
-      <p style="margin:0 0 8px"><a href="{{ url_for('terms') }}" style="color:#efe6da;text-decoration:none">Terms</a></p>
-      <p style="margin:0 0 8px"><a href="{{ url_for('returns') }}" style="color:#efe6da;text-decoration:none">Returns</a></p>
+      <div style="color:#be923b;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px">{{ t('legal') }}</div>
+      <p><a href="{{ url_for('privacy') }}" style="color:#efe6da;text-decoration:none">{{ t('privacy') }}</a></p>
+      <p><a href="{{ url_for('terms') }}" style="color:#efe6da;text-decoration:none">{% if lang=='ar' %}الشروط{% else %}Terms{% endif %}</a></p>
     </div>
   </div>
-  <div class="container" style="border-top:1px solid #ffffff22;padding:16px 0 22px;display:flex;justify-content:space-between;color:#cbbba8;font-size:13px;flex-wrap:wrap;gap:8px">
-    <span>&copy; {{ year }} 11-11 Qatar</span>
-    <span style="color:#be923b;font-weight:700">QAR · COD · Sadad · SkipCash</span>
+  <div class="container" style="border-top:1px solid #ffffff22;padding:16px 0 22px;display:flex;justify-content:space-between;color:#cbbba8">
+    <span>&copy; {{ year }} 11-11</span>
+    <span style="color:#be923b">QAR · COD · Sadad · SkipCash</span>
   </div>
 </footer>
