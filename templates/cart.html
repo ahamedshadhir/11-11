@@ -1,52 +1,33 @@
 {% extends "base.html" %}
-{% block title %}Cart | 11-11{% endblock %}
+{% block title %}{{ t('cart') }} | 11-11{% endblock %}
 {% block content %}
-<div class="container page-hero"><h2>Your cart</h2></div>
+<div class="container page-hero"><h2>{{ t('cart') }}</h2></div>
 <div class="container" style="padding-bottom:48px">
   {% if not rows %}
-    <div class="panel text-center">
-      <p>Your cart is empty.</p>
-      <a class="common-btn" href="{{ url_for('shop') }}">Continue shopping</a>
-    </div>
+    <div class="panel text-center"><p>{{ t('empty_cart') }}</p><a class="common-btn" href="{{ url_for('shop') }}">{{ t('continue') }}</a></div>
   {% else %}
   <div class="shop-layout">
-    <div>
-      <table class="cart-table">
-        <thead><tr><th>Product</th><th>Price</th><th>Qty</th><th>Total</th><th></th></tr></thead>
-        <tbody>
-        {% for r in rows %}
-          <tr>
-            <td style="display:flex;gap:10px;align-items:center">
-              <img src="{{ r.product.image }}" alt="">
-              <a href="{{ url_for('product_detail', pid=r.product.id, slug=r.product.slug) }}">{{ r.product.name }}</a>
-            </td>
-            <td>{{ r.product.price|qar }}</td>
-            <td>
-              <div class="qty-step" data-pid="{{ r.product.id }}">
-                <button type="button" data-act="-">−</button>
-                <input value="{{ r.qty }}" readonly>
-                <button type="button" data-act="+">+</button>
-              </div>
-            </td>
-            <td data-line-total="{{ r.product.id }}">{{ r.line|qar }}</td>
-            <td><button class="mini-remove" type="button" data-remove="{{ r.product.id }}">Remove</button></td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-    </div>
+    <table class="cart-table">
+      <thead><tr><th>{{ t('product') }}</th><th>{{ t('price') }}</th><th>{{ t('qty') }}</th><th>{{ t('total') }}</th><th></th></tr></thead>
+      <tbody>
+      {% for r in rows %}
+        <tr>
+          <td style="display:flex;gap:10px;align-items:center"><img src="{{ r.product.image }}" alt=""><a href="{{ url_for('product_detail', pid=r.product.id, slug=r.product.slug) }}">{{ r.product.name }}</a></td>
+          <td>{{ r.product.price|qar }}</td>
+          <td><div class="qty-step" data-pid="{{ r.product.id }}"><button type="button" data-act="-">−</button><input value="{{ r.qty }}" readonly><button type="button" data-act="+">+</button></div></td>
+          <td>{{ r.line|qar }}</td>
+          <td><button class="mini-remove" type="button" data-remove="{{ r.product.id }}">{{ t('remove') }}</button></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
     <aside class="totals">
-      <h3>Summary</h3>
-      <p>Subtotal <strong id="pageCartSub" style="float:right">{{ subtotal|qar }}</strong></p>
-      <p>Shipping <strong id="pageCartShip" style="float:right">{{ shipping|qar }}</strong></p>
-      <p>Discount <strong id="pageCartDisc" style="float:right">{{ (discount or 0)|qar }}</strong></p>
-      <p>Total <strong id="pageCartTotal" style="float:right">{{ total|qar }}</strong></p>
-      <p class="muted">Free delivery on orders over QAR 200. Code <b>FLASH10</b> = 10% off.</p>
-      <form id="couponForm" class="mt-2">
-        <input type="text" name="code" placeholder="Coupon code" value="{{ coupon or '' }}">
-        <button class="common-bd-btn w-100 mt-2" type="submit">Apply coupon</button>
-      </form>
-      <a class="common-btn w-100 mt-3" href="{{ url_for('checkout') }}">Checkout</a>
+      <h3>{{ t('summary') }}</h3>
+      <p>{{ t('subtotal') }} <strong style="float:right">{{ subtotal|qar }}</strong></p>
+      <p>{{ t('shipping') }} <strong style="float:right">{{ shipping|qar }}</strong></p>
+      <p>{{ t('discount') }} <strong style="float:right">{{ (discount or 0)|qar }}</strong></p>
+      <p>{{ t('total') }} <strong style="float:right">{{ total|qar }}</strong></p>
+      <a class="common-btn w-100 mt-3" href="{{ url_for('checkout') }}">{{ t('checkout') }}</a>
     </aside>
   </div>
   {% endif %}

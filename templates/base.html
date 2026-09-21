@@ -20,8 +20,7 @@
         <span class="logo-sub">eleven-eleven</span>
       </a>
       <div class="header-mid">
-        <div class="deliver">
-          <label>{{ t('deliver_to') }}</label>
+        <div class="deliver"><label>{{ t('deliver_to') }}</label>
           <select id="deliverSelect"><option value="Doha">{{ 'الدوحة' if lang=='ar' else 'Doha' }}</option>{% for area in qatar_areas %}<option value="{{ area }}">{{ area }}</option>{% endfor %}</select>
         </div>
         <form class="search-form" action="{{ url_for('shop') }}" method="get">
@@ -43,7 +42,7 @@
         {% endif %}
       </div>
     </div>
-    <nav class="mega"><div class="container mega-grid">{% for cat in all_categories %}<h6><a href="{{ url_for('shop', category=cat.id) }}">{{ cat.name }}</a></h6>{% endfor %}</div></nav>
+    <nav class="mega"><div class="container mega-grid">{% for cat in all_categories %}<h6><a href="{{ url_for('shop', category=cat.id) }}">{{ cat.name|arname }}</a></h6>{% endfor %}</div></nav>
   </header>
   {% include '_member.html' %}
   <main>{% block content %}{% endblock %}</main>

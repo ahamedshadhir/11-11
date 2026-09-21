@@ -19,8 +19,8 @@
     <div class="lp-cats">
       {% for c in all_categories %}
       <a class="lp-cat" href="{{ url_for('shop', category=c.id) }}">
-        <img src="{{ c.image }}" alt="{{ c.name }}">
-        <span>{{ c.name }}</span>
+        <img src="{{ c.image }}" alt="{{ c.name|arname }}">
+        <span>{{ c.name|arname }}</span>
       </a>
       {% endfor %}
     </div>
@@ -28,24 +28,14 @@
 </section>
 <section class="lp-section alt">
   <div class="container">
-    <div class="lp-head">
-      <h2>{{ t('deals') }}</h2>
-      <span>FLASH10</span>
-    </div>
-    <div class="product-grid">
-      {% for p in flash_products[:8] %}{{ product_card(p) }}{% endfor %}
-    </div>
+    <div class="lp-head"><h2>{{ t('deals') }}</h2><span>FLASH10</span></div>
+    <div class="product-grid">{% for p in flash_products[:8] %}{{ product_card(p) }}{% endfor %}</div>
   </div>
 </section>
 <section class="lp-section">
   <div class="container">
-    <div class="lp-head">
-      <h2>{{ t('view_all') }}</h2>
-      <a href="{{ url_for('shop') }}">{{ t('view_all') }}</a>
-    </div>
-    <div class="product-grid">
-      {% for p in all_products[:16] %}{{ product_card(p) }}{% endfor %}
-    </div>
+    <div class="lp-head"><h2>{{ t('view_all') }}</h2><a href="{{ url_for('shop') }}">{{ t('view_all') }}</a></div>
+    <div class="product-grid">{% for p in all_products[:16] %}{{ product_card(p) }}{% endfor %}</div>
   </div>
 </section>
 {% endblock %}
