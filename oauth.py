@@ -11,8 +11,6 @@ from werkzeug.security import generate_password_hash
 GOOGLE_ID = os.environ.get("GOOGLE_CLIENT_ID", "")
 GOOGLE_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "")
 APPLE_ID = os.environ.get("APPLE_CLIENT_ID", "")
-APPLE_TEAM = os.environ.get("APPLE_TEAM_ID", "")
-APPLE_KEY_ID = os.environ.get("APPLE_KEY_ID", "")
 
 
 def _root():
@@ -30,10 +28,10 @@ def _user_from_email(email, name):
     if user:
         return user
     user = User(
-        name=name or email.split("@")[0],
+        name=(name or email.split("@")[0])[:120],
         email=email,
         password_hash=generate_password_hash(secrets.token_urlsafe(24)),
-        role="customer",
+        is_admin=False,
     )
     db.session.add(user)
     db.session.commit()
@@ -57,7 +55,6 @@ def install_oauth(app):
             "response_type": "code",
             "scope": "openid email profile",
             "state": session["oauth_state"],
-            "access_type": "online",
             "prompt": "select_account",
         }
         return redirect("https://accounts.google.com/o/oauth2/v2/auth?" + urllib.parse.urlencode(params))
@@ -71,7 +68,7 @@ def install_oauth(app):
         if not code:
             flash("Google did not return a login code.", "danger")
             return redirect(url_for("login"))
-        data = urllib.parse.urlencode(
+        body = urllib.parse.urlencode(
             {
                 "code": code,
                 "client_id": GOOGLE_ID,
@@ -80,18 +77,17 @@ def install_oauth(app):
                 "grant_type": "authorization_code",
             }
         ).encode()
-        req = urllib.request.Request(
-            "https://oauth2.googleapis.com/token",
-            data=data,
-            headers={"Content-Type": "application/x-www-form-urlencoded"},
-        )
         try:
+            req = urllib.request.Request(
+                "https://oauth2.googleapis.com/token",
+                data=body,
+                headers={"Content-Type": "application/x-www-form-urlencoded"},
+            )
             with urllib.request.urlopen(req, timeout=20) as resp:
                 token = json.loads(resp.read().decode())
-            access = token.get("access_token")
             ureq = urllib.request.Request(
                 "https://www.googleapis.com/oauth2/v2/userinfo",
-                headers={"Authorization": "Bearer " + access},
+                headers={"Authorization": "Bearer " + token.get("access_token", "")},
             )
             with urllib.request.urlopen(ureq, timeout=20) as resp:
                 info = json.loads(resp.read().decode())
@@ -109,7 +105,7 @@ def install_oauth(app):
     @app.route("/auth/apple")
     def auth_apple():
         if not APPLE_ID:
-            flash("Add APPLE_CLIENT_ID (Services ID) in Vercel to enable Apple login.", "info")
+            flash("Add APPLE_CLIENT_ID in Vercel to enable Apple login.", "info")
             return redirect(url_for("login"))
         session["oauth_state"] = secrets.token_urlsafe(16)
         params = {
@@ -131,23 +127,23 @@ def install_oauth(app):
         email = ""
         name = request.values.get("user")
         try:
-            payload = token.split(".")[1]
-            pad = "=" * (-len(payload) % 4)
             import base64
 
+            payload = token.split(".")[1]
+            pad = "=" * (-len(payload) % 4)
             info = json.loads(base64.urlsafe_b64decode(payload + pad))
             email = info.get("email") or ""
         except Exception:
             email = ""
         if name:
             try:
-                name = json.loads(name).get("name", {})
-                name = ((name.get("firstName") or "") + " " + (name.get("lastName") or "")).strip()
+                parsed = json.loads(name).get("name", {})
+                name = ((parsed.get("firstName") or "") + " " + (parsed.get("lastName") or "")).strip()
             except Exception:
                 name = None
         user = _user_from_email(email, name)
         if not user:
-            flash("Apple did not share an email. Enable email scope in the Apple service.", "danger")
+            flash("Apple did not share an email.", "danger")
             return redirect(url_for("login"))
         login_user(user)
         flash("Signed in with Apple.", "success")
