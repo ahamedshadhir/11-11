@@ -1,6 +1,6 @@
 from flask import redirect
+from sqlalchemy import text
 
-# name + official packshot only — never mix
 ITEMS = [
     ("iPhone 13 Pro", "https://cdn.dummyjson.com/product-images/smartphones/iphone-13-pro/thumbnail.webp"),
     ("iPhone X", "https://cdn.dummyjson.com/product-images/smartphones/iphone-x/thumbnail.webp"),
@@ -40,10 +40,8 @@ ITEMS = [
     ("Nike Air Jordan 1", "https://cdn.dummyjson.com/product-images/mens-shoes/nike-air-jordan-1-red-and-black/thumbnail.webp"),
     ("Puma Future Rider", "https://cdn.dummyjson.com/product-images/mens-shoes/puma-future-rider-trainers/thumbnail.webp"),
     ("Sports Sneakers", "https://cdn.dummyjson.com/product-images/mens-shoes/sports-sneakers-off-white-red/thumbnail.webp"),
-    ("Nike Baseball Cleats", "https://cdn.dummyjson.com/product-images/mens-shoes/nike-baseball-cleats/thumbnail.webp"),
     ("Classic Sunglasses", "https://cdn.dummyjson.com/product-images/sunglasses/classic-sun-glasses/thumbnail.webp"),
     ("Black Sunglasses", "https://cdn.dummyjson.com/product-images/sunglasses/black-sun-glasses/thumbnail.webp"),
-    ("Green Black Glasses", "https://cdn.dummyjson.com/product-images/sunglasses/green-and-black-glasses/thumbnail.webp"),
     ("Prada Bag", "https://cdn.dummyjson.com/product-images/womens-bags/prada-women-bag/thumbnail.webp"),
     ("Leather Handbag", "https://cdn.dummyjson.com/product-images/womens-bags/heshe-women's-leather-bag/thumbnail.webp"),
     ("Black Handbag", "https://cdn.dummyjson.com/product-images/womens-bags/women-handbag-black/thumbnail.webp"),
@@ -52,36 +50,79 @@ ITEMS = [
     ("Oppo K1", "https://cdn.dummyjson.com/product-images/smartphones/oppo-k1/thumbnail.webp"),
     ("Realme C35", "https://cdn.dummyjson.com/product-images/smartphones/realme-c35/thumbnail.webp"),
     ("Vivo S1", "https://cdn.dummyjson.com/product-images/smartphones/vivo-s1/thumbnail.webp"),
+    ("Vivo V9", "https://cdn.dummyjson.com/product-images/smartphones/vivo-v9/thumbnail.webp"),
+    ("Realme X", "https://cdn.dummyjson.com/product-images/smartphones/realme-x/thumbnail.webp"),
 ]
+
+CATS = {
+    "computer": "https://cdn.dummyjson.com/product-images/laptops/apple-macbook-pro-14-inch-space-grey/thumbnail.webp",
+    "smart": "https://cdn.dummyjson.com/product-images/smartphones/iphone-13-pro/thumbnail.webp",
+    "head": "https://cdn.dummyjson.com/product-images/mobile-accessories/apple-airpods-max-silver/thumbnail.webp",
+    "access": "https://cdn.dummyjson.com/product-images/mobile-accessories/apple-iphone-charger/thumbnail.webp",
+    "camera": "https://cdn.dummyjson.com/product-images/mobile-accessories/monopod/thumbnail.webp",
+    "tv": "https://cdn.dummyjson.com/product-images/mobile-accessories/amazon-echo-plus/thumbnail.webp",
+    "fashion": "https://cdn.dummyjson.com/product-images/mens-shoes/nike-air-jordan-1-red-and-black/thumbnail.webp",
+}
+
+
+def _wipe_products():
+    from extensions import db
+    for tbl in ("cart_item", "order_item", "wishlist_item"):
+        try:
+            db.session.execute(text("DELETE FROM " + tbl))
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+    from models import Product
+    try:
+        Product.query.delete()
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        for p in Product.query.all():
+            db.session.delete(p)
+        db.session.commit()
 
 
 def apply_pack():
     from extensions import db
     from models import Product, Category
     from catalog import clear_catalog
+    _wipe_products()
     cat = Category.query.first()
     cat_id = cat.id if cat else None
-    rows = Product.query.order_by(Product.id).all()
     for i, (name, image) in enumerate(ITEMS):
-        if i < len(rows):
-            rows[i].name = name
-            rows[i].slug = "w50-%02d" % (i + 1)
-            rows[i].image = image
-            rows[i].description = name + " — official packshot."
-        else:
-            db.session.add(Product(
-                name=name,
-                slug="w50-%02d" % (i + 1),
-                description=name + " — official packshot.",
-                image=image,
-                price=float(99 + i * 41),
-                stock=50,
-                category_id=cat_id,
-            ))
-    extra = Product.query.filter(Product.slug.like("w50-%")).all() if False else []
+        db.session.add(Product(
+            name=name,
+            slug="w50-%02d" % (i + 1),
+            description=name,
+            image=image,
+            price=float(129 + i * 37),
+            stock=50,
+            category_id=cat_id,
+        ))
+    for c in Category.query.all():
+        key = (c.name or "").lower()
+        img = None
+        if "computer" in key or "laptop" in key:
+            img = CATS["computer"]
+        elif "smart" in key or "phone" in key:
+            img = CATS["smart"]
+        elif "head" in key:
+            img = CATS["head"]
+        elif "access" in key:
+            img = CATS["access"]
+        elif "camera" in key:
+            img = CATS["camera"]
+        elif "tv" in key or "home" in key:
+            img = CATS["tv"]
+        elif "fashion" in key:
+            img = CATS["fashion"]
+        if img:
+            c.image = img
     db.session.commit()
     clear_catalog()
-    return "matched"
+    return "reset"
 
 
 def install_catalog50(app):
@@ -93,8 +134,9 @@ def install_catalog50(app):
     def _load_pack():
         try:
             from models import Product
-            first = Product.query.order_by(Product.id).first()
-            if (not first) or first.name != ITEMS[0][0] or first.image != ITEMS[0][1]:
+            n = Product.query.filter(Product.slug.like("w50-%")).count()
+            junk = Product.query.filter(Product.name.in_(["HD Webcam", "Mechanical Keyboard", "Wireless Mouse"])).first()
+            if n < 40 or junk:
                 apply_pack()
         except Exception:
             try:
