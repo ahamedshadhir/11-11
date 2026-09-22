@@ -159,7 +159,7 @@ function Checkout() {
           <p className="mt-4 text-lg font-semibold">
             {t.total}: {qar(total)}
           </p>
-          <Button className="mt-6 w-full" type="submit">
+          <Button className="mt-6 w-full" variant="gold" type="submit">
             {pay === "skipcash" ? t.skipcashPay : t.placeOrder}
           </Button>
         </section>

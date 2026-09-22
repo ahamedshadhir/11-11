@@ -45,7 +45,7 @@ type Store = {
 };
 
 const defaultFlash: FlashSale = {
-  title: "Flash sale",
+  title: "Today's deals",
   discount: 20,
   active: true,
   productIds: PRODUCTS.slice(0, 8).map((p) => p.id),

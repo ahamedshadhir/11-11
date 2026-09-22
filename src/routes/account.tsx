@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { RedirectToSignIn } from "@/lib/auth/gates";
+import { RedirectToSignIn, UserButton } from "@/lib/auth/gates";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { Shell } from "@/components/layout";
 import { Button } from "@/components/ui/button";
@@ -51,6 +51,9 @@ function Account() {
           <p className="text-xs font-semibold uppercase tracking-widest text-gold">{t.profile}</p>
           <p className="mt-2 text-lg font-medium">{user.displayName ?? t.account}</p>
           <p className="text-sm text-muted">{user.primaryEmail}</p>
+          <div className="mt-4">
+            <UserButton />
+          </div>
         </section>
         <div className="mt-8 flex items-end justify-between">
           <h2 className="font-display text-xl font-semibold">{t.orders}</h2>

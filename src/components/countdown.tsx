@@ -25,9 +25,9 @@ export function Countdown({ endsAt }: { endsAt: number }) {
   return (
     <div className="flex items-end gap-2" aria-live="polite">
       <Box n={now === null ? "--" : pad(h)} label={t.hours} />
-      <span className="mb-2 font-display text-xl text-wine">:</span>
+      <span className="mb-2 font-display text-xl text-gold">:</span>
       <Box n={now === null ? "--" : pad(m)} label={t.minutes} />
-      <span className="mb-2 font-display text-xl text-wine">:</span>
+      <span className="mb-2 font-display text-xl text-gold">:</span>
       <Box n={now === null ? "--" : pad(s)} label={t.seconds} />
     </div>
   );
@@ -35,9 +35,9 @@ export function Countdown({ endsAt }: { endsAt: number }) {
 
 function Box({ n, label }: { n: string; label: string }) {
   return (
-    <div className="grid min-w-14 place-items-center rounded-md bg-wine px-3 py-2 text-cream">
+    <div className="grid min-w-14 place-items-center rounded-md bg-gold px-3 py-2 text-wine">
       <span className="font-display text-xl leading-none tabular-nums">{n}</span>
-      <span className="mt-1 text-[0.6rem] uppercase tracking-wider text-gold">{label}</span>
+      <span className="mt-1 text-xs uppercase tracking-wider text-wine/70">{label}</span>
     </div>
   );
 }

@@ -3,7 +3,7 @@ import { Countdown } from "@/components/countdown";
 import { Shell } from "@/components/layout";
 import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
-import { CATEGORIES, HERO_IMAGE, PRODUCTS } from "@/lib/catalog";
+import { CATEGORIES, HERO_IMAGE, PRODUCTS, byCategory } from "@/lib/catalog";
 import { COPY } from "@/lib/i18n";
 import { flashLive, useStore } from "@/lib/store";
 
@@ -17,25 +17,25 @@ function Home() {
   const deals = live
     ? PRODUCTS.filter((p) => flash.productIds.includes(p.id)).slice(0, 8)
     : PRODUCTS.slice(0, 8);
-  const fresh = PRODUCTS.filter((p) => !deals.some((d) => d.id === p.id)).slice(0, 8);
+  const fashion = byCategory("fashion").slice(0, 8);
+  const home = byCategory("home").slice(0, 8);
 
   return (
     <Shell>
-      <section className="bg-cream">
-        <div className="mx-auto grid max-w-6xl items-center gap-8 px-4 py-10 lg:grid-cols-2 lg:py-16">
+      <section className="bg-wine text-cream">
+        <div className="store-wrap grid items-center gap-6 py-5 lg:grid-cols-[1.1fr_0.9fr] lg:py-6">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">11-11 Qatar</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-gold">11-11 Qatar</p>
             {live ? (
               <>
-                <p className="mt-3 text-xs font-bold tracking-widest text-wine">{t.live}</p>
-                <h1 className="mt-1 font-display text-4xl font-semibold leading-tight tracking-tight text-ink lg:text-5xl">
+                <h1 className="mt-2 font-display text-4xl font-semibold leading-tight tracking-tight lg:text-5xl">
                   {flash.title} — {flash.discount}% off
                 </h1>
-                <p className="mt-4 max-w-md text-muted">{t.heroText}</p>
+                <p className="mt-4 max-w-md text-cream/80">{t.heroText}</p>
                 <div className="mt-6">
                   <Countdown endsAt={flash.endsAt} />
                 </div>
-                <Button asChild className="mt-6">
+                <Button asChild variant="gold" className="mt-6">
                   <Link to="/shop" search={{ flash: true }}>
                     {t.shopNow}
                   </Link>
@@ -43,18 +43,18 @@ function Home() {
               </>
             ) : (
               <>
-                <h1 className="mt-3 font-display text-4xl font-semibold leading-tight tracking-tight text-ink lg:text-5xl">
+                <h1 className="mt-2 font-display text-4xl font-semibold leading-tight tracking-tight lg:text-5xl">
                   {t.heroTitle}
                 </h1>
-                <p className="mt-4 max-w-md text-muted">{t.heroText}</p>
-                <Button asChild className="mt-6">
+                <p className="mt-4 max-w-md text-cream/80">{t.heroText}</p>
+                <Button asChild variant="gold" className="mt-6">
                   <Link to="/shop">{t.shopNow}</Link>
                 </Button>
               </>
             )}
           </div>
-          <div className="rounded-xl bg-card p-6 shadow-card">
-            <div className="packshot mx-auto h-72 lg:h-80">
+          <div className="rounded-md bg-card p-6">
+            <div className="packshot mx-auto h-48 lg:h-56">
               <img
                 src={HERO_IMAGE}
                 alt="AirPods Max Silver"
@@ -66,56 +66,69 @@ function Home() {
           </div>
         </div>
       </section>
-      <section className="mx-auto max-w-6xl px-4 py-12">
-        <div className="flex items-end justify-between gap-4">
-          <h2 className="font-display text-2xl font-semibold text-wine">{t.shopByCategory}</h2>
-          <Link to="/shop" className="text-sm text-gold">
-            {t.viewAll}
-          </Link>
-        </div>
-        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+
+      <section className="store-wrap -mt-8 pb-4">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           {CATEGORIES.map((c) => (
             <Link
               key={c.id}
               to="/shop"
               search={{ category: c.id }}
-              className="rounded-lg bg-card p-3 text-center shadow-card transition-[box-shadow] duration-150 hover:shadow-card-hover"
+              className="bg-card p-4 shadow-card transition-[box-shadow] duration-150 hover:shadow-card-hover"
             >
-              <span className="packshot h-28">
+              <h2 className="text-sm font-bold text-ink">{lang === "ar" ? c.nameAr : c.name}</h2>
+              <span className="packshot mt-3 h-28">
                 <img src={c.image} alt="" loading="lazy" />
               </span>
-              <span className="mt-2 block text-xs font-medium">
-                {lang === "ar" ? c.nameAr : c.name}
-              </span>
+              <span className="mt-3 block text-xs font-semibold text-wine">{t.seeMore}</span>
             </Link>
           ))}
         </div>
       </section>
-      <section className="bg-card/60 py-12">
-        <div className="mx-auto max-w-6xl px-4">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <h2 className="font-display text-2xl font-semibold text-wine">
-              {live ? t.deals : t.viewAll}
-            </h2>
-            {live ? <Countdown endsAt={flash.endsAt} /> : null}
-          </div>
-          <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-            {deals.map((p) => (
-              <ProductCard key={p.id} p={p} />
-            ))}
-          </div>
+
+      <section className="store-wrap py-8">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <h2 className="text-xl font-bold text-ink">{live ? t.deals : t.shop}</h2>
+          {live ? <Countdown endsAt={flash.endsAt} /> : null}
+        </div>
+        <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
+          {deals.map((p) => (
+            <ProductCard key={p.id} p={p} />
+          ))}
         </div>
       </section>
-      {fresh.length ? (
-        <section className="mx-auto max-w-6xl px-4 py-12">
-          <h2 className="font-display text-2xl font-semibold text-wine">{t.newIn}</h2>
-          <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-            {fresh.map((p) => (
-              <ProductCard key={p.id} p={p} />
-            ))}
-          </div>
-        </section>
-      ) : null}
+
+      <DepartmentRow title={lang === "ar" ? "أزياء" : "Fashion"} category="fashion" items={fashion} more={t.seeMore} />
+      <DepartmentRow title={lang === "ar" ? "المنزل والمطبخ" : "Home & Kitchen"} category="home" items={home} more={t.seeMore} />
     </Shell>
+  );
+}
+
+function DepartmentRow({
+  title,
+  category,
+  items,
+  more,
+}: {
+  title: string;
+  category: string;
+  items: typeof PRODUCTS;
+  more: string;
+}) {
+  if (!items.length) return null;
+  return (
+    <section className="store-wrap pb-10">
+      <div className="flex items-end justify-between gap-4">
+        <h2 className="text-xl font-bold text-ink">{title}</h2>
+        <Link to="/shop" search={{ category }} className="text-sm font-semibold text-wine hover:underline">
+          {more}
+        </Link>
+      </div>
+      <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
+        {items.map((p) => (
+          <ProductCard key={p.id} p={p} />
+        ))}
+      </div>
+    </section>
   );
 }

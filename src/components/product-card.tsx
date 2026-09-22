@@ -20,8 +20,8 @@ export function ProductCard({ p }: { p: Product }) {
   const loved = wish.includes(p.id);
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-xl bg-card shadow-card transition-[box-shadow] duration-150 hover:shadow-card-hover">
-      <Link to="/product/$slug" params={{ slug: p.slug }} className="relative block p-4">
+    <article className="group flex flex-col bg-card p-3 shadow-card transition-[box-shadow] duration-150 hover:shadow-card-hover">
+      <Link to="/product/$slug" params={{ slug: p.slug }} className="relative block">
         <span className="packshot aspect-square">
           <img
             src={p.image}
@@ -33,14 +33,14 @@ export function ProductCard({ p }: { p: Product }) {
           />
         </span>
         {onSale ? (
-          <span className="absolute start-3 top-3 rounded-full bg-gold px-2 py-0.5 text-xs font-bold text-wine">
+          <span className="absolute start-2 top-2 rounded-sm bg-gold px-1.5 py-0.5 text-xs font-bold text-wine">
             −{flash.discount}%
           </span>
         ) : null}
       </Link>
-      <div className="flex flex-1 flex-col gap-2 px-4 pb-4">
+      <div className="mt-2 flex flex-1 flex-col gap-1">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-medium leading-snug text-fg">
+          <h3 className="text-sm font-medium leading-snug text-wine hover:underline">
             <Link to="/product/$slug" params={{ slug: p.slug }}>
               {p.name}
             </Link>
@@ -56,18 +56,21 @@ export function ProductCard({ p }: { p: Product }) {
           </button>
         </div>
         <Stars value={p.rating} />
-        <p className="text-sm">
+        <p className="text-lg font-semibold text-fg">
           {onSale ? (
             <>
-              <s className="me-2 text-muted">{qar(p.price)}</s>
-              <span className="font-semibold text-wine">{qar(price)}</span>
+              <span className="text-wine">{qar(price)}</span>
+              <s className="ms-2 text-sm font-normal text-muted">{qar(p.price)}</s>
             </>
           ) : (
-            <span className="font-semibold">{qar(p.price)}</span>
+            qar(p.price)
           )}
         </p>
+        <p className="text-xs font-semibold text-wine">{t.nextDay}</p>
+        <p className="text-xs text-muted">{t.prime}</p>
         <Button
           className="mt-auto w-full"
+          variant="gold"
           type="button"
           onClick={() => {
             add(p.id);

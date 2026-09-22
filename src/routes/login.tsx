@@ -50,8 +50,8 @@ function Login() {
               name: ADMIN_NAME,
               callbackURL: "/admin",
             });
-            if (created.error && !alreadyExists(created.error.message)) {
-              throw new Error(created.error.message);
+            if (created.error && !alreadyExists(created.error.message ?? "")) {
+              throw new Error(created.error.message ?? "Could not sign in");
             }
             const again = await authClient.signIn.email({
               email: nextEmail,

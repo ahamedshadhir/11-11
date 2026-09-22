@@ -13,3 +13,13 @@ attachments
 .DS_Store
 .env
 .env.local
+.grok/skills
+.grok/references
+.grok/fonts
+.grok/*.png
+.grok/*.jpg
+.grok/*.html
+.grok/preview.pid
+.grok/status
+.node_modules.lock
+public/__grok/install

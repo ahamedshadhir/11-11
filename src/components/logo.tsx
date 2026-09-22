@@ -5,10 +5,12 @@ export function Logo({
   className,
   to = "/",
   invert = false,
+  compact = false,
 }: {
   className?: string;
   to?: string;
   invert?: boolean;
+  compact?: boolean;
 }) {
   return (
     <Link
@@ -18,15 +20,14 @@ export function Logo({
     >
       <span
         className={cn(
-          "font-display text-[1.85rem] font-semibold tracking-tight",
+          "font-display font-semibold tracking-tight",
+          compact ? "text-2xl" : "text-3xl",
           invert ? "text-cream" : "text-wine",
         )}
       >
         11<span className="text-gold">:</span>11
       </span>
-      <span className="mt-1 text-[0.5rem] font-semibold tracking-[0.22em] text-gold">
-        eleven-eleven
-      </span>
+      <span className="logo-word">eleven-eleven</span>
     </Link>
   );
 }

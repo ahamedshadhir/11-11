@@ -34,15 +34,21 @@ function Shop() {
   }, [q, category, flashOnly, live, flash.productIds, sort]);
 
   const heading =
-    flashOnly && live ? flash.title : q ? q : category
-      ? (lang === "ar" ? CATEGORIES.find((c) => c.id === category)?.nameAr : CATEGORIES.find((c) => c.id === category)?.name) ?? t.shop
-      : t.shop;
+    flashOnly && live
+      ? flash.title
+      : q
+        ? q
+        : category
+          ? (lang === "ar"
+              ? CATEGORIES.find((c) => c.id === category)?.nameAr
+              : CATEGORIES.find((c) => c.id === category)?.name) ?? t.shop
+          : t.shop;
 
   return (
     <Shell>
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-8 lg:grid-cols-[200px_1fr]">
-        <aside>
-          <h4 className="text-sm font-semibold">{t.categories}</h4>
+      <div className="store-wrap grid gap-8 py-6 lg:grid-cols-[220px_1fr]">
+        <aside className="lg:border-e lg:border-line lg:pe-6">
+          <h4 className="text-sm font-bold">{t.categories}</h4>
           <ul className="mt-3 space-y-1 text-sm">
             {live ? (
               <li>
@@ -74,11 +80,11 @@ function Shop() {
           </ul>
         </aside>
         <div>
-          <div className="flex flex-wrap items-end justify-between gap-3">
+          <div className="flex flex-wrap items-end justify-between gap-3 border-b border-line pb-3">
             <div>
-              <h1 className="font-display text-3xl font-semibold text-wine">{heading}</h1>
+              <h1 className="text-xl font-bold text-ink">{heading}</h1>
               <p className="mt-1 text-sm text-muted">
-                {items.length} {lang === "ar" ? "منتج" : "products"}
+                {items.length} {t.results}
               </p>
             </div>
             <label className="text-sm text-muted">
@@ -94,7 +100,7 @@ function Shop() {
               </select>
             </label>
           </div>
-          <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3">
+          <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4">
             {items.map((p) => (
               <ProductCard key={p.id} p={p} />
             ))}

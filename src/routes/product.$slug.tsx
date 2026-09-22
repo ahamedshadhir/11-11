@@ -55,7 +55,7 @@ function ProductPage() {
 
   return (
     <Shell>
-      <div className="mx-auto max-w-6xl px-4 py-8">
+      <div className="store-wrap py-6">
         <p className="text-sm text-muted">
           <Link to="/" className="hover:text-wine">
             {t.home}
@@ -67,9 +67,9 @@ function ProductPage() {
           {" / "}
           {product.name}
         </p>
-        <div className="mt-6 grid gap-10 lg:grid-cols-2">
-          <div className="rounded-xl bg-card p-8 shadow-card">
-            <div className="packshot mx-auto h-96">
+        <div className="mt-6 grid gap-8 lg:grid-cols-[1.1fr_1fr_280px]">
+          <div className="bg-card p-6 shadow-card">
+            <div className="packshot mx-auto h-80 lg:h-96">
               <img
                 src={product.imageHero}
                 alt={product.name}
@@ -80,54 +80,69 @@ function ProductPage() {
             </div>
           </div>
           <div>
-            <h1 className="font-display text-3xl font-semibold text-ink">{product.name}</h1>
-            <div className="mt-3">
+            <h1 className="text-2xl font-semibold leading-snug text-ink">{product.name}</h1>
+            <div className="mt-2">
               <Stars value={product.rating} count={reviews} />
             </div>
-            <p className="mt-4 text-lg">
+            <p className="mt-1 text-xs text-muted">{t.soldBy}</p>
+            <hr className="my-4 border-line" />
+            <p className="text-2xl font-semibold">
               {onSale ? (
                 <>
-                  <s className="me-2 text-muted">{qar(product.price)}</s>
-                  <span className="font-semibold text-wine">{qar(price)}</span>
+                  <span className="text-wine">{qar(price)}</span>
+                  <s className="ms-2 text-base font-normal text-muted">{qar(product.price)}</s>
                 </>
               ) : (
-                <span className="font-semibold">{qar(product.price)}</span>
+                qar(product.price)
               )}
             </p>
-            <p className="mt-4 max-w-prose text-muted">{product.description}</p>
-            <p className="mt-4 text-sm text-wine">
+            <p className="mt-4 max-w-prose text-sm text-muted">{product.description}</p>
+            <p className="mt-4 text-sm font-semibold text-wine">
               {t.inStock} · {product.stock} {t.left}
             </p>
             <p className="mt-2 flex items-center gap-2 text-sm text-muted">
               <Truck className="size-4" />
-              {t.deliverTo} {area}. {t.deliveryNote}
+              {t.deliverTo} {area}. {t.nextDay}.
             </p>
-            <div className="mt-6 flex flex-wrap items-center gap-3">
-              <QtyStepper value={qty} onChange={setQty} max={product.stock} />
-              <Button type="button" onClick={addBag}>
-                {t.addToCart}
-              </Button>
-              <Button
-                type="button"
-                variant="gold"
-                onClick={() => {
-                  addBag();
-                  void nav({ to: "/checkout" });
-                }}
-              >
-                {t.buyNow}
-              </Button>
-              <Button type="button" variant="outline" onClick={() => toggleWish(product.id)}>
-                <Heart className="size-4" fill={wish.includes(product.id) ? "currentColor" : "none"} />
-                {t.wishlist}
-              </Button>
-            </div>
           </div>
+          <aside className="h-fit border border-line bg-card p-4 shadow-card">
+            <p className="text-2xl font-semibold text-ink">{qar(price)}</p>
+            <p className="mt-2 text-sm font-semibold text-wine">{t.nextDay}</p>
+            <p className="mt-1 text-xs text-muted">
+              {t.deliverTo} {area}
+            </p>
+            <p className="mt-3 text-sm font-semibold text-wine">{t.inStock}</p>
+            <div className="mt-4">
+              <QtyStepper value={qty} onChange={setQty} max={product.stock} />
+            </div>
+            <Button
+              className="mt-4 w-full"
+              variant="gold"
+              type="button"
+              onClick={addBag}
+            >
+              {t.addToCart}
+            </Button>
+            <Button
+              className="mt-2 w-full"
+              type="button"
+              onClick={() => {
+                addBag();
+                void nav({ to: "/checkout" });
+              }}
+            >
+              {t.buyNow}
+            </Button>
+            <Button type="button" variant="outline" className="mt-2 w-full" onClick={() => toggleWish(product.id)}>
+              <Heart className="size-4" fill={wish.includes(product.id) ? "currentColor" : "none"} />
+              {t.wishlist}
+            </Button>
+          </aside>
         </div>
         {related.length ? (
           <div className="mt-14">
-            <h2 className="font-display text-xl font-semibold">{t.related}</h2>
-            <div className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
+            <h2 className="text-xl font-bold text-ink">{t.related}</h2>
+            <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
               {related.map((r) => (
                 <ProductCard key={r.id} p={r} />
               ))}

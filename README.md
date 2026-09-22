@@ -8,11 +8,12 @@ TanStack Start · React 19 · Tailwind v4 · Better Auth · Postgres (Neon in pr
 
 ## Features
 
-- 50 matching studio product photos
+- 87 matching studio product photos across 8 departments (4 phones)
+- Amazon-style store chrome (wine header, gold search, department tiles)
 - Flash sale with countdown
 - Cart, wishlist, COD + SkipCash checkout
 - English / العربية
-- Account + admin (flash sale)
+- Account + separate `/admin` console (no store header)
 - Sign in with Google, X, or email
 
 ## Local

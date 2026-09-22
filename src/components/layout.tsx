@@ -1,7 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { FormEvent, useEffect, useMemo, useState, type ReactNode } from "react";
-import { Heart, Search, ShoppingBag, UserRound } from "lucide-react";
-import { UserButton } from "@/lib/auth/gates";
+import { Heart, MapPin, Search, ShoppingCart } from "lucide-react";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { isAdminEmail } from "@/lib/admin";
 import { CATEGORIES, QATAR_AREAS, searchProducts } from "@/lib/catalog";
@@ -26,6 +25,7 @@ export function Shell({ children }: { children: ReactNode }) {
   const live = flashLive(flash);
   const count = ready ? cartCount(cart) : 0;
   const wishCount = ready ? wish.length : 0;
+  const firstName = user?.displayName?.split(" ")[0];
 
   useEffect(() => {
     const unsub = useStore.persist.onFinishHydration(() => setReady(true));
@@ -46,34 +46,46 @@ export function Shell({ children }: { children: ReactNode }) {
     void nav({ to: "/shop", search: { q: q.trim() || undefined } });
   }
 
+  function toTop() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
   return (
     <div className="min-h-screen bg-bg text-fg" dir={lang === "ar" ? "rtl" : "ltr"} lang={lang}>
       {live ? (
         <Link
           to="/shop"
           search={{ flash: true }}
-          className="block bg-wine py-2 text-center text-xs font-semibold tracking-wide text-gold"
+          className="block bg-gold py-1.5 text-center text-xs font-semibold tracking-wide text-wine"
         >
           {t.live} · {flash.title} — {flash.discount}% {lang === "ar" ? "خصم" : "off"}
         </Link>
       ) : null}
-      <header className="sticky top-0 z-40 border-b border-line bg-card/95 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3">
-          <Logo className="shrink-0" />
-          <form onSubmit={onSearch} className="relative hidden min-w-0 flex-1 items-center gap-3 md:flex">
-            <label className="hidden shrink-0 text-xs text-muted lg:block">
+
+      <header className="sticky top-0 z-40 bg-wine text-cream">
+        <div className="store-wrap flex items-center gap-3 py-2">
+          <Logo compact invert className="shrink-0 px-1" />
+
+          <label className="hidden min-w-24 shrink-0 cursor-pointer rounded-sm px-2 py-1 hover:outline hover:outline-1 hover:outline-gold sm:block">
+            <span className="flex items-center gap-1 text-xs text-gold">
+              <MapPin className="size-3.5" />
               {t.deliverTo}
-              <select
-                value={area}
-                onChange={(e) => setArea(e.target.value)}
-                className="ms-1 bg-transparent font-semibold text-wine outline-none"
-              >
-                {QATAR_AREAS.map((a) => (
-                  <option key={a}>{a}</option>
-                ))}
-              </select>
-            </label>
-            <div className="relative min-w-0 flex-1">
+            </span>
+            <select
+              value={area}
+              onChange={(e) => setArea(e.target.value)}
+              className="w-full bg-transparent text-sm font-bold text-cream outline-none"
+            >
+              {QATAR_AREAS.map((a) => (
+                <option key={a} className="text-ink">
+                  {a}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <form onSubmit={onSearch} className="relative hidden min-w-0 flex-1 md:block">
+            <div className="search-combo">
               <input
                 name="q"
                 value={q}
@@ -84,136 +96,137 @@ export function Shell({ children }: { children: ReactNode }) {
                 onFocus={() => setOpen(true)}
                 onBlur={() => setTimeout(() => setOpen(false), 180)}
                 placeholder={t.search}
-                className="field rounded-full bg-cream pe-12"
                 autoComplete="off"
               />
-              <button
-                type="submit"
-                className="absolute end-1 top-1 grid size-9 place-items-center rounded-full bg-wine text-cream"
-                aria-label={t.go}
-              >
-                <Search className="size-4" />
+              <button type="submit" aria-label={t.go}>
+                <Search className="size-5" />
               </button>
-              {open && suggestions.length > 0 ? (
-                <ul className="absolute inset-x-0 top-12 z-50 overflow-hidden rounded-xl bg-card shadow-pop">
-                  {suggestions.map((p) => (
-                    <li key={p.id}>
-                      <Link
-                        to="/product/$slug"
-                        params={{ slug: p.slug }}
-                        className="flex items-center gap-3 px-3 py-2 hover:bg-cream"
-                        onMouseDown={(e) => e.preventDefault()}
-                      >
-                        <img src={p.image} alt="" className="size-10 object-contain" />
-                        <span className="text-sm">{p.name}</span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
             </div>
+            {open && suggestions.length > 0 ? (
+              <ul className="absolute inset-x-0 top-12 z-50 overflow-hidden rounded-md bg-card text-fg shadow-pop">
+                {suggestions.map((p) => (
+                  <li key={p.id}>
+                    <Link
+                      to="/product/$slug"
+                      params={{ slug: p.slug }}
+                      className="flex items-center gap-3 px-3 py-2 hover:bg-cream"
+                      onMouseDown={(e) => e.preventDefault()}
+                    >
+                      <img src={p.image} alt="" className="size-10 object-contain" />
+                      <span className="text-sm">{p.name}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
           </form>
+
           <div className="ms-auto flex items-center gap-1 text-sm">
-            <div className="flex h-11 items-center gap-1 px-1 text-xs font-semibold" role="group" aria-label="Language">
-              <button
-                type="button"
-                onClick={() => setLang("en")}
-                className={lang === "en" ? "text-wine" : "text-muted"}
-              >
+            <div className="hidden h-11 items-center px-2 text-xs font-bold hover:outline hover:outline-1 hover:outline-gold sm:flex" role="group" aria-label="Language">
+              <button type="button" onClick={() => setLang("en")} className={lang === "en" ? "text-gold" : "text-cream/70"}>
                 EN
               </button>
-              <span className="text-line">/</span>
-              <button
-                type="button"
-                onClick={() => setLang("ar")}
-                className={lang === "ar" ? "text-wine" : "text-muted"}
-              >
+              <span className="mx-1 text-cream/40">|</span>
+              <button type="button" onClick={() => setLang("ar")} className={lang === "ar" ? "text-gold" : "text-cream/70"}>
                 AR
               </button>
             </div>
-            <Link to="/wishlist" className="relative grid size-11 place-items-center" aria-label={t.wishlist}>
+
+            <Link
+              to={user ? "/account" : "/login"}
+              className="hidden min-w-24 flex-col justify-center rounded-sm px-2 py-1 leading-tight hover:outline hover:outline-1 hover:outline-gold md:flex"
+            >
+              <span className="text-xs text-cream/80">
+                {user ? `${t.hello}, ${firstName ?? t.account}` : t.helloSignIn}
+              </span>
+              <span className="text-sm font-bold">{t.lists}</span>
+            </Link>
+
+            <Link
+              to={user ? "/account" : "/login"}
+              className="hidden flex-col justify-center rounded-sm px-2 py-1 leading-tight hover:outline hover:outline-1 hover:outline-gold lg:flex"
+            >
+              <span className="text-xs text-cream/80">{t.returns}</span>
+              <span className="text-sm font-bold">{t.orders}</span>
+            </Link>
+
+            {isPending ? null : user && isAdminEmail(user.primaryEmail) ? (
+              <Link
+                to="/admin"
+                className="hidden rounded-sm px-2 py-2 text-xs font-bold text-gold hover:outline hover:outline-1 hover:outline-gold lg:inline"
+              >
+                {t.admin}
+              </Link>
+            ) : null}
+
+            <Link to="/wishlist" className="relative grid size-11 place-items-center rounded-sm hover:outline hover:outline-1 hover:outline-gold" aria-label={t.wishlist}>
               <Heart className="size-5" />
               {wishCount > 0 ? <Badge n={wishCount} /> : null}
             </Link>
-            <Link to="/cart" className="relative grid size-11 place-items-center" aria-label={t.cart}>
-              <ShoppingBag className="size-5" />
-              {count > 0 ? <Badge n={count} /> : null}
+
+            <Link to="/cart" className="relative flex h-11 items-end gap-1 rounded-sm px-2 pb-1 hover:outline hover:outline-1 hover:outline-gold" aria-label={t.cart}>
+              <span className="relative">
+                <ShoppingCart className="size-7" />
+                <span className="absolute -top-1 inset-x-0 text-center text-sm font-bold text-gold">
+                  {count}
+                </span>
+              </span>
+              <span className="hidden pb-0.5 text-sm font-bold sm:inline">{t.cart}</span>
             </Link>
-            {isPending ? (
-              <div className="h-8 w-16 animate-pulse rounded-md bg-line" />
-            ) : user ? (
-              <div className="flex items-center gap-1">
-                {isAdminEmail(user.primaryEmail) ? (
-                  <Link to="/admin" className="hidden rounded-md px-2 text-xs font-semibold text-gold sm:inline">
-                    {t.admin}
-                  </Link>
-                ) : null}
-                <Link to="/account" className="grid size-11 place-items-center sm:hidden" aria-label={t.account}>
-                  <UserRound className="size-5" />
-                </Link>
-                <div className="hidden sm:block">
-                  <UserButton />
-                </div>
-              </div>
-            ) : (
-              <Link
-                to="/login"
-                className="rounded-md bg-wine px-3 py-2 font-semibold text-cream"
-              >
-                {t.login}
-              </Link>
-            )}
           </div>
         </div>
-        <form onSubmit={onSearch} className="px-4 pb-3 md:hidden">
-          <div className="relative">
-            <input
-              name="q"
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder={t.search}
-              className="field rounded-full bg-cream pe-12"
-            />
-            <button
-              type="submit"
-              className="absolute end-1 top-1 grid size-9 place-items-center rounded-full bg-wine text-cream"
-              aria-label={t.go}
-            >
-              <Search className="size-4" />
+
+        <form onSubmit={onSearch} className="px-4 pb-2 md:hidden">
+          <div className="search-combo">
+            <input name="q" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.search} />
+            <button type="submit" aria-label={t.go}>
+              <Search className="size-5" />
             </button>
           </div>
         </form>
-        <nav className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 pb-3 text-sm">
-          <Link
-            to="/shop"
-            className="whitespace-nowrap rounded-full px-3 py-2 hover:bg-cream"
-          >
-            {t.all}
-          </Link>
-          {live ? (
-            <Link
-              to="/shop"
-              search={{ flash: true }}
-              className="whitespace-nowrap rounded-full px-3 py-2 font-semibold text-gold hover:bg-cream"
-            >
-              {t.flash}
+
+        <nav className="bg-ink">
+          <div className="store-wrap flex gap-1 overflow-x-auto py-1.5 text-sm">
+            <Link to="/shop" className="whitespace-nowrap rounded-sm px-2 py-1.5 font-semibold hover:outline hover:outline-1 hover:outline-gold">
+              {t.all}
             </Link>
-          ) : null}
-          {CATEGORIES.map((c) => (
-            <Link
-              key={c.id}
-              to="/shop"
-              search={{ category: c.id }}
-              className="whitespace-nowrap rounded-full px-3 py-2 hover:bg-cream"
-            >
-              {lang === "ar" ? c.nameAr : c.name}
+            {live ? (
+              <Link
+                to="/shop"
+                search={{ flash: true }}
+                className="whitespace-nowrap rounded-sm px-2 py-1.5 font-semibold text-gold hover:outline hover:outline-1 hover:outline-gold"
+              >
+                {t.flash}
+              </Link>
+            ) : null}
+            {CATEGORIES.map((c) => (
+              <Link
+                key={c.id}
+                to="/shop"
+                search={{ category: c.id }}
+                className="whitespace-nowrap rounded-sm px-2 py-1.5 hover:outline hover:outline-1 hover:outline-gold"
+              >
+                {lang === "ar" ? c.nameAr : c.name}
+              </Link>
+            ))}
+            <Link to="/faq" className="ms-auto hidden whitespace-nowrap rounded-sm px-2 py-1.5 text-gold lg:inline">
+              {t.service}
             </Link>
-          ))}
+          </div>
         </nav>
       </header>
+
       <main>{children}</main>
-      <footer className="mt-16 bg-ink text-cream">
-        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:grid-cols-2 lg:grid-cols-5">
+
+      <button
+        type="button"
+        onClick={toTop}
+        className="mt-10 block w-full bg-wine py-3 text-center text-sm font-semibold text-cream hover:bg-ink"
+      >
+        {t.backToTop}
+      </button>
+      <footer className="bg-ink text-cream">
+        <div className="store-wrap grid gap-8 py-12 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <Logo invert />
             <p className="mt-4 max-w-[28ch] text-sm text-gold/80">{t.tagline}</p>
@@ -225,23 +238,21 @@ export function Shell({ children }: { children: ReactNode }) {
           <FooterCol title={t.service}>
             <Link to="/contact">{t.contact}</Link>
             <Link to="/faq">{t.faq}</Link>
+            <Link to="/account">{t.orders}</Link>
           </FooterCol>
           <FooterCol title={t.categories}>
-            {CATEGORIES.slice(0, 5).map((c) => (
+            {CATEGORIES.map((c) => (
               <Link key={c.id} to="/shop" search={{ category: c.id }}>
                 {lang === "ar" ? c.nameAr : c.name}
               </Link>
             ))}
           </FooterCol>
-          <FooterCol title={t.legal}>
-            <Link to="/privacy">{t.privacy}</Link>
-            <Link to="/terms">{t.terms}</Link>
-            {user ? <Link to="/admin">{t.admin}</Link> : null}
-          </FooterCol>
         </div>
-        <div className="mx-auto flex max-w-6xl justify-between border-t border-cream/10 px-4 py-4 text-sm text-gold/80">
-          <span>© {new Date().getFullYear()} 11-11</span>
-          <span>QAR · COD · SkipCash</span>
+        <div className="border-t border-cream/10">
+          <div className="store-wrap flex flex-wrap items-center justify-between gap-3 py-4 text-sm text-gold/80">
+            <span>© {new Date().getFullYear()} 11-11 · <Link to="/privacy">{t.privacy}</Link> · <Link to="/terms">{t.terms}</Link></span>
+            <span>QAR · COD · SkipCash</span>
+          </div>
         </div>
       </footer>
     </div>
@@ -250,7 +261,7 @@ export function Shell({ children }: { children: ReactNode }) {
 
 function Badge({ n }: { n: number }) {
   return (
-    <span className="absolute end-1 top-1 grid min-w-4 place-items-center rounded-full bg-wine px-1 text-[0.6rem] font-bold text-cream">
+    <span className="absolute end-1 top-1 grid min-w-4 place-items-center rounded-full bg-gold px-1 text-xs font-bold text-wine">
       {n}
     </span>
   );
