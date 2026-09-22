@@ -1,63 +1,55 @@
 <!DOCTYPE html>
-<html lang="{{ lang }}" dir="ltr">
+<html lang="{{ lang }}" dir="{{ 'rtl' if lang=='ar' else 'ltr' }}">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light only" />
-  <meta name="theme-color" content="#420e15" />
   <title>{% block title %}11-11{% endblock %}</title>
   <link rel="icon" href="{{ url_for('static', filename='img/favicon.svg') }}" type="image/svg+xml" />
-  <style>
-    :root{color-scheme:light only}
-    html,body{margin:0;background:#f6f3ee;color:#420e15}
-    body{display:block}
-    main{display:block;background:#f6f3ee}
-    .mega,.overlay{display:none!important}
-    .m-top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:#fff}
-    .m-top .logo{font:700 28px Georgia,serif;color:#420e15;text-decoration:none}
-    .m-top .logo span{color:#be923b}
-    .m-acts{display:flex;gap:8px;align-items:center}
-    .m-acts a{display:inline-block;padding:8px 12px;border-radius:999px;text-decoration:none;font:600 13px system-ui,sans-serif}
-    .m-acts .ghost{border:1px solid #420e15;color:#420e15}
-    .m-acts .solid{background:#420e15;color:#fff}
-    .m-search{display:flex;padding:0 14px 10px;background:#fff;gap:8px}
-    .m-search input{flex:1;border:1px solid #eadfce;border-radius:12px;padding:10px 12px;font-size:16px}
-    .m-search button{border:0;background:#420e15;color:#fff;border-radius:12px;padding:10px 14px}
-    .catbar{display:flex;gap:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;background:#420e15;padding:10px 14px}
-    .catbar a{color:#fff;text-decoration:none;white-space:nowrap;font:600 13px system-ui,sans-serif}
-    .sale-banner{display:block;background:#be923b;color:#420e15;text-align:center;padding:8px;font-weight:700;text-decoration:none}
-    @media(min-width:901px){
-      .m-search{padding-bottom:12px}
-    }
-  </style>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/brand.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/ui.css') }}" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/rtl.css') }}" />
 </head>
 <body>
-  {% if live_sale and request.endpoint not in ['login','register'] %}
+  {% if live_sale %}
   <a class="sale-banner" href="{{ url_for('shop', flash=1) }}">LIVE {{ live_sale.title }} — {{ live_sale.discount|int }}% off</a>
   {% endif %}
-  <header>
-    <div class="m-top">
-      <a class="logo" href="{{ url_for('index') }}">11<span>:</span>11</a>
-      <div class="m-acts">
-        <a class="ghost" href="{{ url_for('cart') }}">Cart</a>
+  <header class="header-card">
+    <div class="container header-row">
+      <a class="header-logo" href="{{ url_for('index') }}">
+        <span class="logo-mark">11<span>:</span>11</span>
+        <span class="logo-sub">eleven-eleven</span>
+      </a>
+      <div class="header-mid">
+        <div class="deliver"><label>{{ t('deliver_to') }}</label>
+          <select id="deliverSelect"><option value="Doha">Doha</option>{% for area in qatar_areas %}<option value="{{ area }}">{{ area }}</option>{% endfor %}</select>
+        </div>
+        <form class="search-form" action="{{ url_for('shop') }}" method="get">
+          <input name="q" id="liveSearch" placeholder="{{ t('search') }}" value="{{ request.args.get('q','') }}">
+          <button type="submit">Go</button>
+        </form>
+      </div>
+      <div class="header-rt">
+        <select id="langSelect">
+          <option value="en" {% if lang!='ar' %}selected{% endif %}>English</option>
+          <option value="ar" {% if lang=='ar' %}selected{% endif %}>العربية</option>
+        </select>
+        <a class="icon-link" href="{{ url_for('wishlist') }}">{{ t('wishlist') }}</a>
+        <a class="icon-link" href="{{ url_for('cart') }}">{{ t('cart') }} <span class="badge cart-count">{{ nav_cart_count }}</span></a>
         {% if current_user.is_authenticated %}
-        <a class="solid" href="{{ url_for('account') }}">Account</a>
+          <a class="member-chip" href="{{ url_for('account') }}">{{ (current_user.name or 'Account').split()[0] }}</a>
         {% else %}
-        <a class="solid" href="{{ url_for('login') }}">Login</a>
+          <a class="common-btn" href="{{ url_for('login') }}">{{ t('login') }}</a>
         {% endif %}
       </div>
     </div>
-    <form class="m-search" action="{{ url_for('shop') }}" method="get">
-      <input name="q" placeholder="Search 11-11" value="{{ request.args.get('q','') }}" enterkeyhint="search">
-      <button type="submit">Go</button>
-    </form>
-    <nav class="catbar">{% for cat in all_categories %}<a href="{{ url_for('shop', category=cat.id) }}">{{ cat.name }}</a>{% endfor %}</nav>
+    <nav class="catbar container" style="display:flex;gap:18px;overflow:auto;padding:8px 0">
+      {% for cat in all_categories %}<a href="{{ url_for('shop', category=cat.id) }}">{{ cat.name }}</a>{% endfor %}
+    </nav>
   </header>
   <main>{% block content %}{% endblock %}</main>
   {% include "_footer.html" %}
+  <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
 </body>
 </html>

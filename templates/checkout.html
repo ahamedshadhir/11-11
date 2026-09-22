@@ -8,16 +8,15 @@
       <div class="check-form">
         <h2>{{ t('delivery') }}</h2>
         <div class="check-2">
-          <div><label>{% if lang=='ar' %}الاسم{% else %}Full name{% endif %}</label><input type="text" name="name" required value="{{ current_user.name if current_user.is_authenticated else '' }}"></div>
-          <div><label>{% if lang=='ar' %}الهاتف{% else %}Phone{% endif %}</label><input type="tel" name="phone" required value="{{ current_user.phone if current_user.is_authenticated else '' }}"></div>
+          <div><label>Full name</label><input type="text" name="name" required value="{{ current_user.name if current_user.is_authenticated else '' }}"></div>
+          <div><label>Phone</label><input type="tel" name="phone" required value="{{ current_user.phone if current_user.is_authenticated else '' }}"></div>
         </div>
-        <label>{% if lang=='ar' %}البريد{% else %}Email{% endif %}</label>
+        <label>Email</label>
         <input type="email" name="email" value="{{ current_user.email if current_user.is_authenticated else '' }}">
-        <label>{% if lang=='ar' %}العنوان{% else %}Address{% endif %}</label>
+        <label>Address</label>
         <input type="text" name="address" required>
         <label>{{ t('payment') }}</label>
-        <label class="pay-opt"><input type="radio" name="payment_method" value="cod" required> {{ t('cod') }}</label>
-        <label class="pay-opt"><input type="radio" name="payment_method" value="sadad"> Sadad</label>
+        <label class="pay-opt"><input type="radio" name="payment_method" value="cod" required checked> {{ t('cod') }}</label>
         <label class="pay-opt"><input type="radio" name="payment_method" value="skipcash"> SkipCash</label>
         <button class="common-btn check-submit" type="submit">{{ t('checkout') }} · {{ total|qar }}</button>
       </div>
