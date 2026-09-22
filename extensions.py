@@ -18,6 +18,7 @@ class _LoginManager(LoginManager):
             ("sadad", "install_sadad"),
             ("pay", "install_pay"),
             ("oauth", "install_oauth"),
+            ("mobile", "install_mobile"),
             ("aliases", "install_aliases"),
         ):
             try:

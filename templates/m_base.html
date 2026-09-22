@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light only" />
+  <meta name="theme-color" content="#420e15" />
+  <title>{% block title %}11-11{% endblock %}</title>
+  <style>
+    :root{color-scheme:light only}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Georgia,serif;background:#f6f3ee;color:#420e15}
+    .top{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:#fff}
+    .logo{font-size:28px;font-weight:700;color:#420e15;text-decoration:none}
+    .logo b{color:#be923b}
+    .acts{display:flex;gap:8px}
+    .acts a{padding:8px 12px;border-radius:999px;text-decoration:none;font:600 13px system-ui,sans-serif}
+    .ghost{border:1px solid #420e15;color:#420e15}
+    .solid{background:#420e15;color:#fff}
+    .search{display:flex;gap:8px;padding:0 14px 12px;background:#fff}
+    .search input{flex:1;border:1px solid #eadfce;border-radius:12px;padding:11px;font-size:16px}
+    .search button{border:0;background:#420e15;color:#fff;border-radius:12px;padding:11px 14px}
+    .cats{display:flex;gap:14px;overflow-x:auto;background:#420e15;padding:10px 14px;-webkit-overflow-scrolling:touch}
+    .cats a{color:#fff;text-decoration:none;white-space:nowrap;font:600 13px system-ui,sans-serif}
+    .hero{padding:22px 16px 8px}
+    .hero p{margin:0;color:#be923b;letter-spacing:.12em;font:700 11px system-ui,sans-serif}
+    .hero h1{margin:8px 0;font-size:32px}
+    .btn{display:inline-block;background:#420e15;color:#fff;text-decoration:none;padding:12px 18px;border-radius:12px;font:600 14px system-ui,sans-serif}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px 14px 40px}
+    .card{background:#fff;border-radius:14px;overflow:hidden;border:1px solid #eadfce}
+    .card img{width:100%;aspect-ratio:1;object-fit:contain;background:#fff}
+    .card h3{margin:0;padding:8px 10px 0;font-size:14px}
+    .card .price{padding:4px 10px 10px;color:#420e15;font:700 14px system-ui,sans-serif}
+    .foot{padding:20px 14px;background:#16080b;color:#f6f3ee;font:12px system-ui,sans-serif}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="top">
+      <a class="logo" href="/m">11<b>:</b>11</a>
+      <div class="acts">
+        <a class="ghost" href="/cart">Cart</a>
+        <a class="solid" href="/login">Login</a>
+      </div>
+    </div>
+    <form class="search" action="/m/shop" method="get">
+      <input name="q" placeholder="Search 11-11" value="{{ request.args.get('q','') }}">
+      <button type="submit">Go</button>
+    </form>
+    <nav class="cats">{% for cat in all_categories %}<a href="/m/shop?category={{ cat.id }}">{{ cat.name }}</a>{% endfor %}</nav>
+  </header>
+  <main>{% block content %}{% endblock %}</main>
+  <footer class="foot">© 11-11 Qatar · <a href="/?desktop=1" style="color:#be923b">Desktop site</a></footer>
+</body>
+</html>

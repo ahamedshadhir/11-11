@@ -1,0 +1,24 @@
+{% extends "m_base.html" %}
+{% block title %}11-11{% endblock %}
+{% block content %}
+<section class="hero">
+  <p>11-11 QATAR</p>
+  {% if live_sale %}
+  <h1>{{ live_sale.title }} — {{ live_sale.discount|int }}% off</h1>
+  <a class="btn" href="/m/shop?flash=1">Shop the sale</a>
+  {% else %}
+  <h1>Up to 50% off selected items</h1>
+  <p style="color:#4a3a36;letter-spacing:0;font:16px Georgia,serif;margin:0 0 14px">Electronics, fashion and home delivered in Qatar.</p>
+  <a class="btn" href="/m/shop">Shop now</a>
+  {% endif %}
+</section>
+<section class="grid">
+  {% for p in (flash_products or products or all_products or [])[:10] %}
+  <a class="card" href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}">
+    <img src="{{ p.image }}" alt="{{ p.name }}">
+    <h3>{{ p.name }}</h3>
+    <div class="price">{{ p.price|qar }}</div>
+  </a>
+  {% endfor %}
+</section>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "m_base.html" %}
+{% block title %}Shop | 11-11{% endblock %}
+{% block content %}
+<section class="hero"><h1>Shop</h1></section>
+<section class="grid">
+  {% for p in products %}
+  <a class="card" href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}">
+    <img src="{{ p.image }}" alt="{{ p.name }}">
+    <h3>{{ p.name }}</h3>
+    <div class="price">{{ p.price|qar }}</div>
+  </a>
+  {% else %}<p style="padding:16px">No products.</p>{% endfor %}
+</section>
+{% endblock %}
