@@ -1,0 +1,4 @@
+.sale-banner{display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap;background:#be923b;color:#420e15;padding:10px 16px;text-decoration:none;font-weight:700;letter-spacing:.02em}
+.sale-banner strong{background:#420e15;color:#fff;padding:2px 8px;border-radius:999px;font-size:12px}
+.sale-banner em{font-style:normal;opacity:.8;font-weight:600}
+.sale-banner b{text-decoration:underline}

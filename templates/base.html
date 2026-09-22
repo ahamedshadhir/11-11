@@ -12,6 +12,14 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/rtl.css') }}" />
 </head>
 <body data-wish="{{ wishlist_ids|join(',') }}">
+  {% if live_sale %}
+  <a class="sale-banner" href="{{ url_for('shop') }}">
+    <strong>LIVE</strong>
+    <span>{{ live_sale.title }} — {{ live_sale.discount|int }}% off</span>
+    {% if live_sale.ends_at %}<em>Ends {{ live_sale.ends_at.strftime('%d %b %H:%M') }} UTC</em>{% endif %}
+    <b>Shop now</b>
+  </a>
+  {% endif %}
   <header class="header-card">
     <div class="container header-row">
       <a class="header-logo" href="{{ url_for('index') }}">
