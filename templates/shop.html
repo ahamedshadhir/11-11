@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% from "_price.html" import deal_price with context %}
 {% block title %}Shop | 11-11{% endblock %}
 {% block content %}
 <section class="page-hero"><div class="container"><h2>{% if live_sale and request.args.get('flash') %}{{ live_sale.title }}{% else %}Shop{% endif %}</h2></div></section>
@@ -15,11 +14,15 @@
   <div class="product-grid">
     {% for p in products %}
     <article class="card">
-      <div class="card-img"><a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}"><img src="{{ p.image|whitebg }}" alt="{{ p.name }}" loading="lazy"></a></div>
+      <div class="card-img">
+        <a href="/product/{{ p.id }}/{{ p.slug }}">
+          <img src="{{ p.image|imgcard }}" alt="{{ p.name }}" width="400" height="400" loading="lazy" decoding="async">
+        </a>
+      </div>
       <div class="card-body">
-        <h4><a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}">{{ p.name }}</a></h4>
-        {{ deal_price(p) }}
-        <button class="common-btn w-100 mt-2" type="button" data-add="{{ p.id }}">Add to cart</button>
+        <h4>{{ p.name }}</h4>
+        <p class="price">{{ p.price|qar }}</p>
+        <button class="common-btn" type="button" data-add="{{ p.id }}">Add to cart</button>
       </div>
     </article>
     {% else %}<p>No products.</p>{% endfor %}

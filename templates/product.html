@@ -1,16 +1,15 @@
 {% extends "base.html" %}
-{% from "_price.html" import deal_price with context %}
 {% block title %}{{ product.name }} | 11-11{% endblock %}
 {% block content %}
 <div class="container page-hero">
-  <div class="breadcrumbs"><a href="{{ url_for('index') }}">Home</a> / {{ product.name }}</div>
+  <div class="breadcrumbs"><a href="/">Home</a> / {{ product.name }}</div>
 </div>
 <div class="container" style="padding-bottom:48px">
   <div class="product-hero">
-    <img src="{{ product.image|whitebg }}" alt="{{ product.name }}">
+    <img src="{{ product.image|imghero }}" alt="{{ product.name }}" width="900" height="900" decoding="async">
     <div>
       <h1>{{ product.name }}</h1>
-      {{ deal_price(product) }}
+      <p class="price">{{ product.price|qar }}</p>
       <p>{{ product.description }}</p>
       <button class="common-btn" type="button" data-add="{{ product.id }}">Add to cart</button>
     </div>
