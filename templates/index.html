@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% from "_macros.html" import product_card %}
 {% block title %}11-11{% endblock %}
 {% block content %}
 <section class="lp-hero">
@@ -8,15 +7,15 @@
       {% if live_sale %}
       <p class="eyebrow">LIVE</p>
       <h1>{{ live_sale.title }} — {{ live_sale.discount|int }}% off</h1>
-      <a class="common-btn" href="{{ url_for('shop', flash=1) }}">Shop the sale</a>
+      <a class="common-btn" href="/shop?flash=1">Shop the sale</a>
       {% else %}
       <p class="eyebrow">11-11 Qatar</p>
       <h1>{{ t('hero_title') }}</h1>
       <p>{{ t('hero_text') }}</p>
-      <a class="common-btn" href="{{ url_for('shop') }}">{{ t('shop_now') }}</a>
+      <a class="common-btn" href="/shop">{{ t('shop_now') }}</a>
       {% endif %}
     </div>
-    <img src="https://images.weserv.nl/?url=images.unsplash.com/photo-1510557880182-3d4d3cba35a5&bg=ffffff&fit=contain&w=1200&h=900&we" alt="11-11 featured">
+    <img src="https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=1200&q=80" alt="">
   </div>
 </section>
 <section class="lp-section">
@@ -24,23 +23,29 @@
     <h2>{{ t('shop_by_category') }}</h2>
     <div class="lp-cats">
       {% for c in all_categories %}
-      <a class="lp-cat" href="{{ url_for('shop', category=c.id) }}">
-        <img src="{{ c.image|whitebg }}" alt="{{ c.name }}" loading="lazy">
-        <span>{{ arname(c.name) }}</span>
+      <a class="lp-cat" href="/shop?category={{ c.id }}">
+        <img src="{{ c.image }}" alt="{{ c.name }}" loading="lazy">
+        <span>{{ c.name }}</span>
       </a>
       {% endfor %}
     </div>
   </div>
 </section>
-<section class="lp-section alt" id="flash">
+<section class="lp-section alt">
   <div class="container">
-    {% if live_sale %}
-    <h2>{{ live_sale.title }} · {{ live_sale.discount|int }}% off</h2>
-    <div class="product-grid">{% for p in flash_products %}{{ product_card(p) }}{% endfor %}</div>
-    {% else %}
-    <h2>{{ t('view_all') }}</h2>
-    <div class="product-grid">{% for p in all_products[:8] %}{{ product_card(p) }}{% endfor %}</div>
-    {% endif %}
+    <h2>{{ live_sale.title if live_sale else t('view_all') }}</h2>
+    <div class="product-grid">
+      {% for p in (flash_products or all_products or [])[:8] %}
+      <article class="card">
+        <div class="card-img"><a href="/product/{{ p.id }}/{{ p.slug }}"><img src="{{ p.image }}" alt="{{ p.name }}"></a></div>
+        <div class="card-body">
+          <h4>{{ p.name }}</h4>
+          <p class="price">{{ p.price|qar }}</p>
+          <button class="common-btn" type="button" data-add="{{ p.id }}">Add to cart</button>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
   </div>
 </section>
 {% endblock %}

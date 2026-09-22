@@ -4,21 +4,21 @@
   <p class="ey">11-11 QATAR</p>
   {% if live_sale %}
   <h1>{{ live_sale.title }} — {{ live_sale.discount|int }}% off</h1>
-  <a class="btn" href="/m/shop?flash=1">{{ t('shop_now') }}</a>
+  <a class="btn" href="/m/shop?flash=1">Shop</a>
   {% else %}
   <h1>{{ t('hero_title') }}</h1>
   <p>{{ t('hero_text') }}</p>
-  <a class="btn" href="/m/shop">{{ t('shop_now') }}</a>
+  <a class="btn" href="/m/shop">Shop</a>
   {% endif %}
-  <img src="https://images.weserv.nl/?url=images.unsplash.com/photo-1510557880182-3d4d3cba35a5&bg=ffffff&fit=contain&w=800&h=800&we" alt="" style="width:100%;margin-top:16px;background:#fff;border-radius:16px;aspect-ratio:1;object-fit:contain">
+  <img src="https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=800&q=80" alt="" style="width:100%;margin-top:16px;background:#fff;border-radius:16px;object-fit:contain">
 </section>
 <section class="grid">
   {% for p in (flash_products or products or [])[:10] %}
   <article class="card">
-    <a href="/m/product/{{ p.id }}/{{ p.slug }}"><img src="{{ p.image|whitebg }}" alt="{{ p.name }}"></a>
-    <h3><a href="/m/product/{{ p.id }}/{{ p.slug }}" style="color:inherit;text-decoration:none">{{ p.name }}</a></h3>
+    <a href="/m/product/{{ p.id }}/{{ p.slug }}"><img src="{{ p.image }}" alt="{{ p.name }}"></a>
+    <h3>{{ p.name }}</h3>
     <div class="price">{{ p.price|qar }}</div>
-    <p style="padding:0 10px 12px"><button class="common-btn" type="button" data-add="{{ p.id }}">{{ t('add_to_cart') }}</button></p>
+    <p style="padding:0 10px 12px"><button class="common-btn" type="button" data-add="{{ p.id }}">Add</button></p>
   </article>
   {% endfor %}
 </section>
