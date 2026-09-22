@@ -13,20 +13,13 @@ def clear_catalog():
 
 
 def _load():
-    now = time.time()
-    if _CACHE["items"] and now - _CACHE["t"] < 300:
-        return _CACHE["items"]
     try:
         from models import Product
-        items = Product.query.order_by(Product.id.desc()).limit(24).all()
+        items = Product.query.order_by(Product.id.desc()).limit(50).all()
     except Exception:
         items = _CACHE["items"] or []
     _CACHE["items"] = items
-    _CACHE["t"] = now
-    groups = {}
-    for p in items:
-        groups.setdefault(getattr(p, "category_id", None), []).append(p)
-    _CACHE["by_cat"] = groups
+    _CACHE["t"] = time.time()
     return items
 
 
@@ -54,14 +47,7 @@ def sale_products(sale):
     if not sale:
         return []
     ids = set(sale.ids())
-    if not ids:
-        return []
     return [p for p in _load() if p.id in ids]
-
-
-def suggest_for(pid=None, limit=4):
-    items = _load()
-    return [p for p in items if p.id != pid][:limit]
 
 
 def install_catalog(app):
@@ -71,11 +57,7 @@ def install_catalog(app):
 
     @app.template_filter("arname")
     def arname(name):
-        try:
-            from i18n import local_name
-            return local_name(name, session.get("lang", "en"))
-        except Exception:
-            return name or ""
+        return name or ""
 
     @app.context_processor
     def inject_catalog():
@@ -87,15 +69,3 @@ def install_catalog(app):
             "ai_picks": [],
             "live_sale": sale,
         }
-
-    @app.after_request
-    def _cache_ok(resp):
-        if request.method == "GET" and resp.status_code == 200 and request.path.startswith("/static/"):
-            resp.headers["Cache-Control"] = "public, max-age=86400"
-        return resp
-
-    @app.route("/api/suggest")
-    def api_suggest():
-        pid = request.args.get("pid", type=int)
-        data = [{"id": p.id, "name": p.name, "price": p.price, "image": p.image, "slug": p.slug} for p in suggest_for(pid, 6)]
-        return {"items": data}

@@ -1,3 +1,4 @@
+from flask import redirect
 from images import white_url
 
 PHOTOS = [
@@ -37,8 +38,45 @@ NAMES = [
 ]
 
 
-def pack(photo):
-    return white_url("https://" + photo)
+def pack(i):
+    return "https://images.weserv.nl/?url=" + PHOTOS[i % len(PHOTOS)] + "&bg=ffffff&fit=contain&w=800&h=800"
+
+
+def apply_pack():
+    from extensions import db
+    from models import Product
+    from catalog import clear_catalog
+    from sqlalchemy import text
+    for tbl in ("cart_item", "order_item", "wishlist_item"):
+        try:
+            db.session.execute(text("DELETE FROM " + tbl))
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+    try:
+        Product.query.delete()
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        for p in Product.query.all():
+            p.image = pack(p.id or 0)
+        db.session.commit()
+        clear_catalog()
+        return "updated"
+    for i, name in enumerate(NAMES):
+        db.session.add(Product(
+            name=name,
+            slug="w50-%02d" % (i + 1),
+            description="Studio photo on white.",
+            image=pack(i),
+            price=float(89 + (i * 37) % 2400),
+            compare_at=float(169 + (i * 37) % 2400),
+            stock=50,
+            category_id=(i % 8) + 1,
+        ))
+    db.session.commit()
+    clear_catalog()
+    return "replaced"
 
 
 def install_catalog50(app):
@@ -48,43 +86,22 @@ def install_catalog50(app):
 
     @app.before_request
     def _load_pack():
-        if getattr(app, "_c50_done", False):
-            return
-        app._c50_done = True
         try:
-            from extensions import db
             from models import Product
-            from catalog import clear_catalog
             if Product.query.filter(Product.slug.like("w50-%")).count() >= 40:
                 return
-            try:
-                from models import CartItem
-                CartItem.query.delete()
-            except Exception:
-                pass
-            Product.query.delete()
-            for i, name in enumerate(NAMES):
-                photo = PHOTOS[i % len(PHOTOS)]
-                price = 89 + (i * 37) % 2400
-                db.session.add(Product(
-                    name=name,
-                    slug="w50-%02d" % (i + 1),
-                    description="Official 11-11 catalog. Studio photo on white.",
-                    image=pack(photo),
-                    price=float(price),
-                    compare_at=float(price + 80),
-                    stock=40 + i,
-                    sold=i,
-                    rating=4.2 + (i % 6) * 0.1,
-                    review_count=4 + i,
-                    is_featured=i < 8,
-                    category_id=(i % 8) + 1,
-                ))
-            db.session.commit()
-            clear_catalog()
+            apply_pack()
         except Exception:
             try:
                 from extensions import db
                 db.session.rollback()
             except Exception:
                 pass
+
+    @app.route("/__reseed")
+    def reseed_catalog():
+        try:
+            msg = apply_pack()
+        except Exception as e:
+            msg = str(e)
+        return redirect("/shop")
