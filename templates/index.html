@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_price.html" import deal_price with context %}
+{% from "_macros.html" import product_card %}
 {% block title %}11-11{% endblock %}
 {% block content %}
 <section class="lp-hero">
@@ -16,7 +16,7 @@
       <a class="common-btn" href="{{ url_for('shop') }}">{{ t('shop_now') }}</a>
       {% endif %}
     </div>
-    <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1200&q=80" alt="">
+    <img src="https://images.weserv.nl/?url=images.unsplash.com/photo-1510557880182-3d4d3cba35a5&bg=ffffff&fit=contain&w=1200&h=900&we" alt="11-11 featured">
   </div>
 </section>
 <section class="lp-section">
@@ -25,7 +25,7 @@
     <div class="lp-cats">
       {% for c in all_categories %}
       <a class="lp-cat" href="{{ url_for('shop', category=c.id) }}">
-        <img src="{{ c.image }}" alt="{{ c.name }}" loading="lazy">
+        <img src="{{ c.image|whitebg }}" alt="{{ c.name }}" loading="lazy">
         <span>{{ arname(c.name) }}</span>
       </a>
       {% endfor %}
@@ -36,32 +36,10 @@
   <div class="container">
     {% if live_sale %}
     <h2>{{ live_sale.title }} · {{ live_sale.discount|int }}% off</h2>
-    <div class="product-grid">
-      {% for p in flash_products %}
-      <article class="card">
-        <div class="card-img"><a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}"><img src="{{ p.image }}" alt="{{ p.name }}" loading="lazy"></a></div>
-        <div class="card-body">
-          <h4><a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}">{{ p.name }}</a></h4>
-          {{ deal_price(p) }}
-          <button class="common-btn w-100 mt-2" type="button" data-add="{{ p.id }}">{{ t('add_to_cart') }}</button>
-        </div>
-      </article>
-      {% else %}<p>No products were ticked for this sale.</p>{% endfor %}
-    </div>
+    <div class="product-grid">{% for p in flash_products %}{{ product_card(p) }}{% endfor %}</div>
     {% else %}
     <h2>{{ t('view_all') }}</h2>
-    <div class="product-grid">
-      {% for p in (all_products or [])[:12] %}
-      <article class="card">
-        <div class="card-img"><a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}"><img src="{{ p.image }}" alt="{{ p.name }}" loading="lazy"></a></div>
-        <div class="card-body">
-          <h4><a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}">{{ p.name }}</a></h4>
-          {{ deal_price(p) }}
-          <button class="common-btn w-100" type="button" data-add="{{ p.id }}">{{ t('add_to_cart') }}</button>
-        </div>
-      </article>
-      {% endfor %}
-    </div>
+    <div class="product-grid">{% for p in all_products[:8] %}{{ product_card(p) }}{% endfor %}</div>
     {% endif %}
   </div>
 </section>

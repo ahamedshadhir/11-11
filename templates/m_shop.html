@@ -5,7 +5,7 @@
 <section class="grid">
   {% for p in products %}
   <article class="card">
-    <a href="/m/product/{{ p.id }}/{{ p.slug }}"><img src="{{ p.image }}" alt="{{ p.name }}"></a>
+    <a href="/m/product/{{ p.id }}/{{ p.slug }}"><img src="{{ p.image|whitebg }}" alt="{{ p.name }}"></a>
     <h3>{{ p.name }}</h3>
     <div class="price">{{ p.price|qar }}</div>
     <p style="padding:0 10px 12px"><button class="common-btn" type="button" data-add="{{ p.id }}">{{ t('add_to_cart') }}</button></p>

@@ -10,11 +10,12 @@
   <p>{{ t('hero_text') }}</p>
   <a class="btn" href="/m/shop">{{ t('shop_now') }}</a>
   {% endif %}
+  <img src="https://images.weserv.nl/?url=images.unsplash.com/photo-1510557880182-3d4d3cba35a5&bg=ffffff&fit=contain&w=800&h=800&we" alt="" style="width:100%;margin-top:16px;background:#fff;border-radius:16px;aspect-ratio:1;object-fit:contain">
 </section>
 <section class="grid">
   {% for p in (flash_products or products or [])[:10] %}
   <article class="card">
-    <a href="/m/product/{{ p.id }}/{{ p.slug }}"><img src="{{ p.image }}" alt="{{ p.name }}"></a>
+    <a href="/m/product/{{ p.id }}/{{ p.slug }}"><img src="{{ p.image|whitebg }}" alt="{{ p.name }}"></a>
     <h3><a href="/m/product/{{ p.id }}/{{ p.slug }}" style="color:inherit;text-decoration:none">{{ p.name }}</a></h3>
     <div class="price">{{ p.price|qar }}</div>
     <p style="padding:0 10px 12px"><button class="common-btn" type="button" data-add="{{ p.id }}">{{ t('add_to_cart') }}</button></p>
