@@ -30,21 +30,11 @@ def register_admin(app):
             return None
 
     def _apply_sale(sale, on):
-        ids = sale.ids()
-        if ids:
-            rows = Product.query.filter(Product.id.in_(ids)).all()
-        else:
-            rows = Product.query.limit(12).all()
-        for p in rows:
-            p.is_flash = on
-        sale.active = on
-        if on and not sale.starts_at:
-            sale.starts_at = datetime.utcnow()
-        if on and not sale.ends_at:
-            sale.ends_at = datetime.utcnow() + timedelta(hours=24)
-        db.session.commit()
-        if on and sale.ends_at:
-            app.config["FLASH_SALE_END"] = sale.ends_at.isoformat()
+        from flash_sale import apply_sale
+        ok = apply_sale(sale, on)
+        if on and not ok:
+            flash("Select at least one product before starting the sale.", "info")
+        return ok
 
     @app.route("/admin/sales")
     @login_required
@@ -55,11 +45,7 @@ def register_admin(app):
             sales = FlashSale.query.order_by(FlashSale.id.desc()).all()
         except Exception:
             sales = []
-        return render_template(
-            "admin_sales.html",
-            sales=sales,
-            products=Product.query.order_by(Product.name).all(),
-        )
+        return render_template("admin_sales.html", sales=sales, products=Product.query.order_by(Product.name).all())
 
     @app.route("/admin/sales/create", methods=["POST"])
     @login_required
@@ -86,8 +72,8 @@ def register_admin(app):
         sale = db.session.get(FlashSale, sid) or abort(404)
         for other in FlashSale.query.filter(FlashSale.id != sid, FlashSale.active.is_(True)).all():
             _apply_sale(other, False)
-        _apply_sale(sale, True)
-        flash("Flash sale is live on the store.", "success")
+        if _apply_sale(sale, True):
+            flash("Flash sale is live. Only selected products are on deal.", "success")
         return redirect(url_for("admin_sales"))
 
     @app.route("/admin/sales/<int:sid>/stop", methods=["POST"])
@@ -135,26 +121,11 @@ def register_admin(app):
             name = (request.form.get("name") or "").strip()
             if name:
                 slug = name.lower().replace(" ", "-")[:200]
-                db.session.add(
-                    Product(
-                        name=name,
-                        slug=slug,
-                        description=request.form.get("description") or "",
-                        image=request.form.get("image") or "",
-                        price=float(request.form.get("price") or 0),
-                        stock=int(request.form.get("stock") or 0),
-                        category_id=int(request.form.get("category_id") or 0) or None,
-                        is_flash=bool(request.form.get("is_flash")),
-                    )
-                )
+                db.session.add(Product(name=name, slug=slug, description=request.form.get("description") or "", image=request.form.get("image") or "", price=float(request.form.get("price") or 0), stock=int(request.form.get("stock") or 0), category_id=int(request.form.get("category_id") or 0) or None, is_flash=bool(request.form.get("is_flash"))))
                 db.session.commit()
                 flash("Product added.", "success")
             return redirect(url_for("admin_products"))
-        return render_template(
-            "admin_products.html",
-            products=Product.query.order_by(Product.id.desc()).all(),
-            categories=Category.query.order_by(Category.name).all(),
-        )
+        return render_template("admin_products.html", products=Product.query.order_by(Product.id.desc()).all(), categories=Category.query.order_by(Category.name).all())
 
     @app.route("/admin/products/<int:pid>", methods=["POST"])
     @login_required
@@ -213,11 +184,7 @@ def register_admin(app):
             db.session.commit()
             flash("Banner saved.", "success")
             return redirect(url_for("admin_banners"))
-        return render_template(
-            "admin_banners.html",
-            banners=Banner.query.order_by(Banner.sort_order, Banner.id).all(),
-            promos=Promo.query.all(),
-        )
+        return render_template("admin_banners.html", banners=Banner.query.order_by(Banner.sort_order, Banner.id).all(), promos=Promo.query.all())
 
     @app.route("/admin/banners/<kind>/<int:bid>", methods=["POST"])
     @login_required
