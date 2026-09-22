@@ -1,22 +1,39 @@
 {% extends "base.html" %}
 {% block title %}Login | 11-11{% endblock %}
 {% block content %}
+<style>
+  .auth-wrap{min-height:60vh;display:flex;align-items:center;justify-content:center;padding:32px 16px}
+  .auth-card{width:min(420px,100%);background:#fff;border:1px solid #eadfce;border-radius:20px;padding:28px;box-shadow:0 12px 30px rgba(66,14,21,.06)}
+  .auth-card .brand{display:flex;flex-direction:column;align-items:center;margin-bottom:18px;text-decoration:none;color:#420e15}
+  .auth-card .mark{font:700 36px/1 Georgia,serif}
+  .auth-card .mark span{color:#be923b}
+  .auth-card .sub{margin-top:6px;font:600 10px system-ui,sans-serif;letter-spacing:2px;color:#be923b}
+  .auth-card h2{text-align:center;margin:0 0 16px}
+  .auth-card label{display:block;margin:12px 0 4px;font:600 13px system-ui,sans-serif}
+  .auth-card input{width:100%;padding:12px;border:1px solid #eadfce;border-radius:12px;font-size:16px}
+  .auth-card .oauth{display:block;text-align:center;border:1px solid #eadfce;border-radius:12px;padding:11px;margin:8px 0;text-decoration:none;color:#420e15;font:600 14px system-ui,sans-serif}
+  .auth-card button{width:100%;margin-top:14px;background:#420e15;color:#fff;border:0;border-radius:12px;padding:12px;font:700 15px system-ui,sans-serif}
+  .auth-card p{text-align:center}
+</style>
 <section class="auth-wrap">
   <div class="auth-card">
-    <span class="logo-mark">11<span>:</span>11</span>
+    <a class="brand" href="{{ url_for('index') }}">
+      <span class="mark">11<span>:</span>11</span>
+      <span class="sub">eleven-eleven</span>
+    </a>
     <h2>Sign in</h2>
-    <a class="oauth-btn google" href="/auth/google">Continue with Google</a>
-    <a class="oauth-btn apple" href="/auth/apple">Continue with Apple</a>
-    <p class="muted" style="text-align:center;margin:14px 0">or use email</p>
+    <a class="oauth" href="/auth/google">Continue with Google</a>
+    <a class="oauth" href="/auth/apple">Continue with Apple</a>
+    <p class="muted">or use email</p>
     <form method="post" action="{{ url_for('login') }}">
       <label>Email</label>
       <input type="email" name="email" required>
       <label>Password</label>
       <input type="password" name="password" required>
-      <button class="common-btn w-100" type="submit">Sign in</button>
+      <button type="submit">Sign in</button>
     </form>
     <p class="muted">Demo: demo@1111.local / demo123</p>
-    <p class="muted"><a href="{{ url_for('register') }}">Create an account</a></p>
+    <p><a href="{{ url_for('register') }}">Create an account</a></p>
   </div>
 </section>
 {% endblock %}

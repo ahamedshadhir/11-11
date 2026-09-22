@@ -1,13 +1,30 @@
 {% extends "m_base.html" %}
 {% block title %}Register | 11-11{% endblock %}
 {% block content %}
-<section class="pad">
+<style>
+  .box{margin:16px;background:#fff;border:1px solid #eadfce;border-radius:18px;padding:20px}
+  .box .brand{display:flex;flex-direction:column;align-items:center;margin-bottom:14px;text-decoration:none;color:#420e15}
+  .box .mark{font-size:34px;font-weight:700}
+  .box .mark b{color:#be923b}
+  .box .sub{margin-top:5px;font:600 9px system-ui,sans-serif;letter-spacing:2px;color:#be923b}
+  .box h1{text-align:center;font-size:22px}
+  .box label{display:block;margin:10px 0 4px;font:600 12px system-ui,sans-serif}
+  .box input{width:100%;padding:12px;border:1px solid #eadfce;border-radius:12px;font-size:16px}
+  .box button{width:100%;margin-top:14px;background:#420e15;color:#fff;border:0;border-radius:12px;padding:12px}
+  .box p{text-align:center}
+</style>
+<section class="box">
+  <a class="brand" href="/m">
+    <span class="mark">11<b>:</b>11</span>
+    <span class="sub">eleven-eleven</span>
+  </a>
   <h1>Create account</h1>
-  <form class="stack" method="post" action="{{ url_for('register') }}">
+  <form method="post" action="{{ url_for('register') }}">
     <label>Name</label><input name="name" required>
     <label>Email</label><input type="email" name="email" required>
-    <label>Password</label><input type="password" name="password" required>
-    <p><button class="common-btn" type="submit">Register</button></p>
+    <label>Password</label><input type="password" name="password" required minlength="6">
+    <button type="submit">Create account</button>
   </form>
+  <p><a href="/m/login">Sign in</a></p>
 </section>
 {% endblock %}
