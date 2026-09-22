@@ -1,0 +1,42 @@
+{% extends "admin_base.html" %}
+{% block title %}Sales | 11-11 Admin{% endblock %}
+{% block admin %}
+<h1>Flash & timed sales</h1>
+<p class="muted">Start a sale in two clicks: pick products, set the clock, press Start.</p>
+
+<form class="adm-card" method="post" action="{{ url_for('admin_sale_create') }}">
+  <h3>New campaign</h3>
+  <div class="grid-form">
+    <input name="title" value="Flash sale" required>
+    <input name="discount" type="number" min="1" max="80" value="10" title="Percent off">
+    <input name="starts_at" type="datetime-local">
+    <input name="ends_at" type="datetime-local">
+  </div>
+  <p>Products in this sale</p>
+  <div class="sale-picks">
+    {% for p in products %}
+    <label><input type="checkbox" name="product_id" value="{{ p.id }}"> {{ p.name }} · {{ p.price }} QAR</label>
+    {% endfor %}
+  </div>
+  <p><button class="common-btn" type="submit">Save campaign</button></p>
+</form>
+
+{% for s in sales %}
+<div class="adm-card">
+  <h3>{{ s.title }} {% if s.active %}<span class="sale-on">LIVE</span>{% endif %}</h3>
+  <p>{{ s.discount }}% off · {{ s.starts_at or 'now' }} → {{ s.ends_at or 'open' }}</p>
+  <p>Products: {{ s.ids()|length }}</p>
+  <form method="post" action="{{ url_for('admin_sale_start', sid=s.id) }}" style="display:inline">
+    <button class="common-btn" type="submit">Start now</button>
+  </form>
+  <form method="post" action="{{ url_for('admin_sale_stop', sid=s.id) }}" style="display:inline">
+    <button type="submit">Stop</button>
+  </form>
+  <form method="post" action="{{ url_for('admin_sale_delete', sid=s.id) }}" style="display:inline">
+    <button type="submit" name="delete" value="1">Delete</button>
+  </form>
+</div>
+{% else %}
+<p>No campaigns yet.</p>
+{% endfor %}
+{% endblock %}
