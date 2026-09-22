@@ -7,8 +7,9 @@ import { isAdminEmail } from "@/lib/admin";
 import { AdminShell, type AdminTab } from "@/components/admin-shell";
 import { Button } from "@/components/ui/button";
 import { CATEGORIES, PRODUCTS } from "@/lib/catalog";
-import { COPY } from "@/lib/i18n";
-import { flashLive, useStore, type FlashSale } from "@/lib/store";
+import { COPY, statusCopy } from "@/lib/i18n";
+import { listAllOrders } from "@/lib/orders";
+import { flashLive, useStore, type FlashSale, type Order } from "@/lib/store";
 import { qar } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin")({ component: Admin });
@@ -18,18 +19,29 @@ function Admin() {
   const lang = useStore((s) => s.lang);
   const flash = useStore((s) => s.flash);
   const setFlash = useStore((s) => s.setFlash);
-  const orders = useStore((s) => s.orders);
+  const localOrders = useStore((s) => s.orders);
   const t = COPY[lang];
   const [tab, setTab] = useState<AdminTab>("overview");
   const [draft, setDraft] = useState<FlashSale>(flash);
   const [q, setQ] = useState("");
+  const [remote, setRemote] = useState<Order[]>([]);
 
   useEffect(() => {
     setDraft(flash);
   }, [flash]);
 
+  useEffect(() => {
+    if (!user || !isAdminEmail(user.primaryEmail)) return;
+    void listAllOrders()
+      .then(setRemote)
+      .catch(() => setRemote([]));
+  }, [user]);
+
+  const orders = remote.length ? remote : localOrders;
   const live = flashLive(flash);
-  const revenue = orders.reduce((n, o) => n + o.total, 0);
+  const revenue = orders
+    .filter((o) => o.status === "paid" || o.status === "placed")
+    .reduce((n, o) => n + o.total, 0);
   const catalog = useMemo(() => {
     const s = q.trim().toLowerCase();
     if (!s) return PRODUCTS;
@@ -216,13 +228,31 @@ function Admin() {
                   <p className="font-medium">#{o.id}</p>
                   <p className="text-sm text-muted">{new Date(o.at).toLocaleString()}</p>
                 </div>
-                <p className="mt-1 text-sm">
-                  {o.name} · {o.phone} · {o.area}
+                <p className="mt-2 text-sm">
+                  {o.name} · {o.phone} · {o.area} · {statusCopy(o.status, t)}
                 </p>
                 <p className="text-sm text-muted">{o.address}</p>
                 <p className="mt-2 text-sm">
                   {o.pay === "cod" ? t.cod : t.skipcash} · {qar(o.total)}
                 </p>
+                <div className="mt-3 flex flex-wrap gap-4">
+                  <Link
+                    to="/receipt/$id"
+                    params={{ id: o.id }}
+                    className="inline-flex min-h-11 items-center text-sm font-semibold text-gold"
+                  >
+                    {t.viewReceipt}
+                  </Link>
+                  {o.pay === "skipcash" && o.status === "pending" ? (
+                    <Link
+                      to="/pay/skipcash"
+                      search={{ id: o.id }}
+                      className="inline-flex min-h-11 items-center text-sm font-semibold text-wine"
+                    >
+                      {t.completePayment}
+                    </Link>
+                  ) : null}
+                </div>
               </article>
             ))}
           </div>

@@ -6,16 +6,21 @@ import type { Lang } from "./i18n";
 
 export type CartLine = { id: string; qty: number };
 export type PayMethod = "cod" | "skipcash";
+export type OrderStatus = "pending" | "paid" | "placed" | "failed" | "canceled";
 export type Order = {
   id: string;
   at: number;
   name: string;
   phone: string;
+  email?: string;
   area: string;
   address: string;
   pay: PayMethod;
+  status: OrderStatus;
   total: number;
   lines: { id: string; name: string; qty: number; price: number }[];
+  skipcashId?: string;
+  payUrl?: string;
 };
 
 export type FlashSale = {
@@ -40,17 +45,46 @@ type Store = {
   remove: (id: string) => void;
   clearCart: () => void;
   toggleWish: (id: string) => void;
-  placeOrder: (o: Omit<Order, "id" | "at">) => Order;
+  rememberOrder: (order: Order) => void;
   setFlash: (flash: FlashSale) => void;
 };
 
-const defaultFlash: FlashSale = {
+export const defaultFlash: FlashSale = {
   title: "Today's deals",
   discount: 20,
   active: true,
   productIds: PRODUCTS.slice(0, 8).map((p) => p.id),
   endsAt: Date.UTC(2026, 11, 31, 17, 0, 0),
 };
+
+export function normalizeOrder(raw: Partial<Order> & { id: string }): Order {
+  const pay: PayMethod = raw.pay === "skipcash" ? "skipcash" : "cod";
+  const status: OrderStatus =
+    raw.status === "pending" ||
+    raw.status === "paid" ||
+    raw.status === "placed" ||
+    raw.status === "failed" ||
+    raw.status === "canceled"
+      ? raw.status
+      : pay === "skipcash"
+        ? "paid"
+        : "placed";
+  return {
+    id: raw.id,
+    at: Number(raw.at) || Date.now(),
+    name: String(raw.name ?? ""),
+    phone: String(raw.phone ?? ""),
+    email: raw.email ? String(raw.email) : undefined,
+    area: String(raw.area ?? ""),
+    address: String(raw.address ?? ""),
+    pay,
+    status,
+    total: Number(raw.total) || 0,
+    lines: Array.isArray(raw.lines) ? raw.lines : [],
+    skipcashId: raw.skipcashId ? String(raw.skipcashId) : undefined,
+    payUrl: raw.payUrl ? String(raw.payUrl) : undefined,
+  };
+}
 
 export const useStore = create<Store>()(
   persist(
@@ -85,10 +119,9 @@ export const useStore = create<Store>()(
           : [...get().wish, id];
         set({ wish });
       },
-      placeOrder: (o) => {
-        const order: Order = { ...o, id: `11-${Date.now().toString(36)}`, at: Date.now() };
-        set({ orders: [order, ...get().orders], cart: [] });
-        return order;
+      rememberOrder: (order) => {
+        const next = normalizeOrder(order);
+        set({ orders: [next, ...get().orders.filter((o) => o.id !== next.id)] });
       },
       setFlash: (flash) => set({ flash }),
     }),
@@ -102,7 +135,7 @@ export const useStore = create<Store>()(
           flash: { ...defaultFlash, ...(p.flash ?? {}) },
           cart: Array.isArray(p.cart) ? p.cart : current.cart,
           wish: Array.isArray(p.wish) ? p.wish : current.wish,
-          orders: Array.isArray(p.orders) ? p.orders : current.orders,
+          orders: Array.isArray(p.orders) ? p.orders.map((o) => normalizeOrder(o)) : current.orders,
         };
       },
     },
@@ -133,12 +166,16 @@ export function cartTotal(cart: CartLine[], flash: FlashSale) {
 }
 
 export function useHydrated() {
-  const [ready, setReady] = useState(() => useStore.persist.hasHydrated());
+  const [ready, setReady] = useState(false);
   useEffect(() => {
-    const unsub = useStore.persist.onFinishHydration(() => setReady(true));
-    if (useStore.persist.hasHydrated()) setReady(true);
+    const persist = useStore.persist;
+    if (!persist) {
+      setReady(true);
+      return;
+    }
+    const unsub = persist.onFinishHydration(() => setReady(true));
+    if (persist.hasHydrated()) setReady(true);
     return unsub;
   }, []);
   return ready;
 }
-

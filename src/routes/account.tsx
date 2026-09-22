@@ -4,7 +4,7 @@ import { RedirectToSignIn, UserButton } from "@/lib/auth/gates";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { Shell } from "@/components/layout";
 import { Button } from "@/components/ui/button";
-import { COPY } from "@/lib/i18n";
+import { COPY, statusCopy } from "@/lib/i18n";
 import { listOrders } from "@/lib/orders";
 import { useStore, type Order } from "@/lib/store";
 import { qar } from "@/lib/utils";
@@ -77,7 +77,7 @@ function Account() {
                   <p className="text-sm text-muted">{new Date(o.at).toLocaleString()}</p>
                 </div>
                 <p className="mt-1 text-sm">
-                  {o.pay === "cod" ? t.cod : t.skipcash} · {o.area}
+                  {o.pay === "cod" ? t.cod : t.skipcash} · {statusCopy(o.status, t)} · {o.area}
                 </p>
                 <ul className="mt-2 text-sm text-muted">
                   {o.lines.map((l) => (
@@ -87,6 +87,24 @@ function Account() {
                   ))}
                 </ul>
                 <p className="mt-2 font-semibold">{qar(o.total)}</p>
+                <div className="mt-3 flex flex-wrap items-center gap-4">
+                  <Link
+                    to="/receipt/$id"
+                    params={{ id: o.id }}
+                    className="inline-flex min-h-11 items-center text-sm font-semibold text-gold"
+                  >
+                    {t.viewReceipt}
+                  </Link>
+                  {o.pay === "skipcash" && o.status === "pending" ? (
+                    <Link
+                      to="/pay/skipcash"
+                      search={{ id: o.id }}
+                      className="inline-flex min-h-11 items-center text-sm font-semibold text-wine"
+                    >
+                      {t.completePayment}
+                    </Link>
+                  ) : null}
+                </div>
               </li>
             ))}
           </ul>

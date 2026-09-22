@@ -56,13 +56,13 @@ export function Shell({ children }: { children: ReactNode }) {
         <Link
           to="/shop"
           search={{ flash: true }}
-          className="block bg-gold py-1.5 text-center text-xs font-semibold tracking-wide text-wine"
+          className="no-print block bg-gold py-1.5 text-center text-xs font-semibold tracking-wide text-wine"
         >
           {t.live} · {flash.title} — {flash.discount}% {lang === "ar" ? "خصم" : "off"}
         </Link>
       ) : null}
 
-      <header className="sticky top-0 z-40 bg-wine text-cream">
+      <header className="no-print sticky top-0 z-40 bg-wine text-cream">
         <div className="store-wrap flex items-center gap-3 py-2">
           <Logo compact invert className="shrink-0 px-1" />
 
@@ -221,11 +221,11 @@ export function Shell({ children }: { children: ReactNode }) {
       <button
         type="button"
         onClick={toTop}
-        className="mt-10 block w-full bg-wine py-3 text-center text-sm font-semibold text-cream hover:bg-ink"
+        className="no-print mt-10 block w-full bg-wine py-3 text-center text-sm font-semibold text-cream hover:bg-ink"
       >
         {t.backToTop}
       </button>
-      <footer className="bg-ink text-cream">
+      <footer className="no-print bg-ink text-cream">
         <div className="store-wrap grid gap-8 py-12 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <Logo invert />

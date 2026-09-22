@@ -15,8 +15,8 @@ function Terms() {
         <h1 className="font-display text-3xl font-semibold text-wine">{t.terms}</h1>
         <p className="mt-4 text-muted">
           {ar
-            ? "الأسعار بالريال القطري. الطلبات تخضع للتوفر. الإرجاع خلال 30 يوماً للمنتجات غير المستخدمة. سكيبكاش في هذه التجربة يُحاكي التفويض ثم يؤكد الطلب محلياً."
-            : "Prices are in Qatari Riyal. Orders are subject to stock. Unused items can be returned within 30 days. SkipCash in this store authorizes a demo payment, then confirms the order locally."}
+            ? "الأسعار بالريال القطري. الطلبات تخضع للتوفر. الإرجاع خلال 30 يوماً للمنتجات غير المستخدمة. سكيبكاش بوابة دفع مرخّصة؛ يُحفظ الطلب في قاعدة البيانات قبل الدفع. الدفع عند الاستلام متاح في قطر."
+            : "Prices are in Qatari Riyal. Orders are subject to stock. Unused items can be returned within 30 days. SkipCash is a licensed payment gateway; every order is saved to the database before you pay. Cash on delivery is available across Qatar."}
         </p>
       </article>
     </Shell>

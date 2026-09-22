@@ -24,6 +24,10 @@ const QA = {
       a: "Yes. Every listing uses a matching studio packshot of that product on white — the name and the picture are the same piece.",
     },
     {
+      q: "How does SkipCash work?",
+      a: "Sign in, place the order, and we save it immediately. You then pay on SkipCash (or the in-store card page if SkipCash keys are not on this environment). Card numbers are never stored. Cash on delivery skips the card step.",
+    },
+    {
       q: "How do flash sales work?",
       a: "When a sale is live, the banner, countdown and strikethrough price apply only to the selected SKUs until the clock runs out.",
     },
@@ -44,6 +48,10 @@ const QA = {
     {
       q: "هل صور المنتجات مطابقة؟",
       a: "نعم. كل منتج يظهر بصورة استوديو مطابقة على خلفية بيضاء.",
+    },
+    {
+      q: "كيف يعمل سكيبكاش؟",
+      a: "سجّل الدخول وأكّد الطلب فيُحفظ فوراً، ثم ادفع عبر سكيبكاش. لا نحتفظ بأرقام البطاقات. الدفع عند الاستلام يتجاوز خطوة البطاقة.",
     },
     {
       q: "كيف يعمل العرض الخاطف؟",

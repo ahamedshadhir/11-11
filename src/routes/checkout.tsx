@@ -1,10 +1,12 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, Navigate, useNavigate } from "@tanstack/react-router";
 import { FormEvent, useState } from "react";
+import { toast } from "sonner";
+import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { Shell } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { PRODUCTS, QATAR_AREAS } from "@/lib/catalog";
 import { COPY } from "@/lib/i18n";
-import { saveOrder } from "@/lib/orders";
+import { checkoutOrder } from "@/lib/orders";
 import { cartTotal, salePrice, useHydrated, useStore, type PayMethod } from "@/lib/store";
 import { qar } from "@/lib/utils";
 
@@ -15,16 +17,17 @@ function Checkout() {
   const cart = useStore((s) => s.cart);
   const flash = useStore((s) => s.flash);
   const area = useStore((s) => s.area);
-  const placeOrder = useStore((s) => s.placeOrder);
+  const rememberOrder = useStore((s) => s.rememberOrder);
+  const clearCart = useStore((s) => s.clearCart);
   const t = COPY[lang];
   const nav = useNavigate();
+  const { user, isPending } = useCurrentUserState();
   const [pay, setPay] = useState<PayMethod>("cod");
-  const [sheet, setSheet] = useState(false);
   const [busy, setBusy] = useState(false);
   const ready = useHydrated();
   const total = cartTotal(cart, flash);
 
-  if (!ready) {
+  if (isPending || !ready) {
     return (
       <Shell>
         <div className="mx-auto max-w-5xl px-4 py-10">
@@ -32,6 +35,10 @@ function Checkout() {
         </div>
       </Shell>
     );
+  }
+
+  if (!user) {
+    return <Navigate to="/login" search={{ next: "/checkout" }} />;
   }
 
   if (cart.length === 0) {
@@ -47,63 +54,61 @@ function Checkout() {
     );
   }
 
-  function buildOrder(fd: FormData) {
-    const lines = cart
-      .map((l) => {
-        const p = PRODUCTS.find((x) => x.id === l.id);
-        if (!p) return null;
-        return { id: p.id, name: p.name, qty: l.qty, price: salePrice(p, flash) };
-      })
-      .filter((x): x is NonNullable<typeof x> => Boolean(x));
-    return placeOrder({
-      name: String(fd.get("name") || ""),
-      phone: String(fd.get("phone") || ""),
-      area: String(fd.get("area") || area),
-      address: String(fd.get("address") || ""),
-      pay,
-      total,
-      lines,
-    });
-  }
-
-  async function persist(order: ReturnType<typeof placeOrder>) {
-    try {
-      await saveOrder({ data: order });
-    } catch {
-      /* guest checkout still succeeds locally */
-    }
-    void nav({ to: "/thanks", search: { id: order.id } });
-  }
-
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (pay === "skipcash") {
-      setSheet(true);
-      return;
-    }
-    const order = buildOrder(new FormData(e.currentTarget));
-    await persist(order);
-  }
-
-  async function authorizeSkip() {
-    const form = document.getElementById("checkout-form") as HTMLFormElement | null;
-    if (!form) return;
+    if (busy) return;
+    const fd = new FormData(e.currentTarget);
     setBusy(true);
-    await new Promise((r) => setTimeout(r, 1100));
-    const order = buildOrder(new FormData(form));
-    await persist(order);
+    try {
+      const result = await checkoutOrder({
+        data: {
+          name: String(fd.get("name") || ""),
+          phone: String(fd.get("phone") || ""),
+          email: String(fd.get("email") || user?.primaryEmail || ""),
+          area: String(fd.get("area") || area),
+          address: String(fd.get("address") || ""),
+          pay,
+          lines: cart.map((l) => ({ id: l.id, qty: l.qty })),
+        },
+      });
+      rememberOrder(result.order);
+      clearCart();
+      if (result.warning) toast.message(result.warning);
+      if (result.mode === "skipcash" && result.payUrl) {
+        window.location.assign(result.payUrl);
+        return;
+      }
+      if (result.mode === "hosted") {
+        await nav({ to: "/pay/skipcash", search: { id: result.order.id } });
+        return;
+      }
+      await nav({ to: "/thanks", search: { id: result.order.id } });
+    } catch (err) {
+      setBusy(false);
+      toast.error(err instanceof Error && err.message ? err.message : t.orderSaveFailed);
+    }
   }
 
   return (
     <Shell>
-      <form id="checkout-form" onSubmit={onSubmit} className="mx-auto grid max-w-5xl gap-6 px-4 py-10 lg:grid-cols-2">
+      <form onSubmit={onSubmit} className="mx-auto grid max-w-5xl gap-6 px-4 py-10 lg:grid-cols-2">
         <section className="rounded-xl bg-card p-6 shadow-card">
           <h1 className="font-display text-2xl font-semibold text-wine">{t.checkout}</h1>
-          <p className="mt-2 text-sm text-muted">{t.guest}</p>
+          <p className="mt-2 text-sm text-muted">{t.signedInCheckout}</p>
           <div className="mt-4 grid gap-3">
             <label className="text-sm">
               {t.name}
-              <input required name="name" className="field mt-1" />
+              <input required name="name" defaultValue={user.displayName ?? ""} className="field mt-1" />
+            </label>
+            <label className="text-sm">
+              {t.email}
+              <input
+                required
+                name="email"
+                type="email"
+                defaultValue={user.primaryEmail ?? ""}
+                className="field mt-1"
+              />
             </label>
             <label className="text-sm">
               {t.phone}
@@ -159,32 +164,11 @@ function Checkout() {
           <p className="mt-4 text-lg font-semibold">
             {t.total}: {qar(total)}
           </p>
-          <Button className="mt-6 w-full" variant="gold" type="submit">
-            {pay === "skipcash" ? t.skipcashPay : t.placeOrder}
+          <Button className="mt-6 w-full" variant="gold" type="submit" disabled={busy}>
+            {busy ? t.savingOrder : pay === "skipcash" ? t.skipcashPay : t.placeOrder}
           </Button>
         </section>
       </form>
-      {sheet ? (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-ink/50 p-4">
-          <div className="w-full max-w-sm rounded-xl bg-card p-6 shadow-pop">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">SkipCash</p>
-            <h2 className="mt-2 font-display text-2xl text-wine">{t.skipcashPay}</h2>
-            <p className="mt-2 text-sm text-muted">{qar(total)} · 11-11 Doha</p>
-            <div className="mt-6 rounded-md bg-cream p-4 text-sm">
-              <p className="font-medium">{t.authorize}</p>
-              <p className="mt-1 text-muted">{t.paySkipHint}</p>
-            </div>
-            <div className="mt-6 flex gap-2">
-              <Button className="flex-1" type="button" disabled={busy} onClick={() => void authorizeSkip()}>
-                {busy ? t.paying : t.authorize}
-              </Button>
-              <Button variant="outline" type="button" disabled={busy} onClick={() => setSheet(false)}>
-                {t.cancel}
-              </Button>
-            </div>
-          </div>
-        </div>
-      ) : null}
     </Shell>
   );
 }

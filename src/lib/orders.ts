@@ -1,34 +1,67 @@
 import { createServerFn } from "@tanstack/react-start";
 import { authMiddleware } from "@/lib/auth/middleware";
-import { getSql } from "@/lib/db";
-import type { Order } from "./store";
+import { normalizeOrder, type Order, type PayMethod } from "@/lib/store";
 
-function parseOrder(payload: unknown): Order {
-  const raw = typeof payload === "string" ? JSON.parse(payload) : payload;
-  return raw as Order;
-}
+export type CheckoutInput = {
+  name: string;
+  phone: string;
+  email: string;
+  area: string;
+  address: string;
+  pay: PayMethod;
+  lines: { id: string; qty: number }[];
+};
 
-export const saveOrder = createServerFn({ method: "POST" })
+export type CheckoutResult = {
+  order: Order;
+  mode: "cod" | "hosted" | "skipcash";
+  payUrl: string | null;
+  warning?: string;
+};
+
+export const checkoutOrder = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
-  .validator((order: Order) => order)
+  .validator((input: CheckoutInput) => input)
   .handler(async ({ context, data }) => {
-    const sql = await getSql();
-    await sql`
-      insert into store_orders (id, user_id, payload)
-      values (${data.id}, ${context.userId}, ${JSON.stringify(data)})
-      on conflict (id) do update set payload = excluded.payload
-    `;
-    return { ok: true as const };
+    const { checkoutOrderForUser } = await import("./order-persist.server");
+    return checkoutOrderForUser(context.userId, data);
   });
 
 export const listOrders = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
   .handler(async ({ context }) => {
-    const sql = await getSql();
-    const rows = await sql<{ payload: unknown }>`
-      select payload from store_orders
-      where user_id = ${context.userId}
-      order by created_at desc
-    `;
-    return rows.map((r) => parseOrder(r.payload));
+    const { listOrdersForUser } = await import("./order-persist.server");
+    return listOrdersForUser(context.userId);
+  });
+
+export const getOrder = createServerFn({ method: "GET" })
+  .middleware([authMiddleware])
+  .validator((id: string) => id)
+  .handler(async ({ context, data }) => {
+    const { getOrderForUser } = await import("./order-persist.server");
+    const order = await getOrderForUser(context.userId, data);
+    return order ? normalizeOrder(order) : null;
+  });
+
+export const listAllOrders = createServerFn({ method: "GET" })
+  .middleware([authMiddleware])
+  .handler(async ({ context }) => {
+    const { listOrdersForAdmin } = await import("./order-persist.server");
+    return listOrdersForAdmin(context.userId);
+  });
+
+export const settleSkipCash = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .validator((input: { orderId: string; paymentId?: string }) => input)
+  .handler(async ({ context, data }) => {
+    const { settleSkipCashForUser } = await import("./order-persist.server");
+    return settleSkipCashForUser(context.userId, data.orderId, data.paymentId);
+  });
+
+export const confirmHostedPay = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .validator((orderId: string) => orderId)
+  .handler(async ({ context, data }) => {
+    const { confirmHostedPayForUser } = await import("./order-persist.server");
+    return confirmHostedPayForUser(context.userId, data);
   });

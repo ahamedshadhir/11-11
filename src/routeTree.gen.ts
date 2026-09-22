@@ -23,8 +23,11 @@ import { Route as ShopRouteImport } from './routes/shop'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ThanksRouteImport } from './routes/thanks'
 import { Route as WishlistRouteImport } from './routes/wishlist'
+import { Route as PaySkipcashRouteImport } from './routes/pay.skipcash'
 import { Route as ProductSlugRouteImport } from './routes/product.$slug'
+import { Route as ReceiptIdRouteImport } from './routes/receipt.$id'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ApiSkipcashWebhookRouteImport } from './routes/api/skipcash/webhook'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -96,14 +99,29 @@ const WishlistRoute = WishlistRouteImport.update({
   path: '/wishlist',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PaySkipcashRoute = PaySkipcashRouteImport.update({
+  id: '/pay/skipcash',
+  path: '/pay/skipcash',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProductSlugRoute = ProductSlugRouteImport.update({
   id: '/product/$slug',
   path: '/product/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReceiptIdRoute = ReceiptIdRouteImport.update({
+  id: '/receipt/$id',
+  path: '/receipt/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSkipcashWebhookRoute = ApiSkipcashWebhookRouteImport.update({
+  id: '/api/skipcash/webhook',
+  path: '/api/skipcash/webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -122,8 +140,11 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/thanks': typeof ThanksRoute
   '/wishlist': typeof WishlistRoute
+  '/pay/skipcash': typeof PaySkipcashRoute
   '/product/$slug': typeof ProductSlugRoute
+  '/receipt/$id': typeof ReceiptIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/skipcash/webhook': typeof ApiSkipcashWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -140,8 +161,11 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/thanks': typeof ThanksRoute
   '/wishlist': typeof WishlistRoute
+  '/pay/skipcash': typeof PaySkipcashRoute
   '/product/$slug': typeof ProductSlugRoute
+  '/receipt/$id': typeof ReceiptIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/skipcash/webhook': typeof ApiSkipcashWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -159,8 +183,11 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/thanks': typeof ThanksRoute
   '/wishlist': typeof WishlistRoute
+  '/pay/skipcash': typeof PaySkipcashRoute
   '/product/$slug': typeof ProductSlugRoute
+  '/receipt/$id': typeof ReceiptIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/skipcash/webhook': typeof ApiSkipcashWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -179,8 +206,11 @@ export interface FileRouteTypes {
     | '/terms'
     | '/thanks'
     | '/wishlist'
+    | '/pay/skipcash'
     | '/product/$slug'
+    | '/receipt/$id'
     | '/api/auth/$'
+    | '/api/skipcash/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -197,8 +227,11 @@ export interface FileRouteTypes {
     | '/terms'
     | '/thanks'
     | '/wishlist'
+    | '/pay/skipcash'
     | '/product/$slug'
+    | '/receipt/$id'
     | '/api/auth/$'
+    | '/api/skipcash/webhook'
   id:
     | '__root__'
     | '/'
@@ -215,8 +248,11 @@ export interface FileRouteTypes {
     | '/terms'
     | '/thanks'
     | '/wishlist'
+    | '/pay/skipcash'
     | '/product/$slug'
+    | '/receipt/$id'
     | '/api/auth/$'
+    | '/api/skipcash/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -234,8 +270,11 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   ThanksRoute: typeof ThanksRoute
   WishlistRoute: typeof WishlistRoute
+  PaySkipcashRoute: typeof PaySkipcashRoute
   ProductSlugRoute: typeof ProductSlugRoute
+  ReceiptIdRoute: typeof ReceiptIdRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiSkipcashWebhookRoute: typeof ApiSkipcashWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -338,6 +377,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WishlistRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pay/skipcash': {
+      id: '/pay/skipcash'
+      path: '/pay/skipcash'
+      fullPath: '/pay/skipcash'
+      preLoaderRoute: typeof PaySkipcashRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/product/$slug': {
       id: '/product/$slug'
       path: '/product/$slug'
@@ -345,11 +391,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/receipt/$id': {
+      id: '/receipt/$id'
+      path: '/receipt/$id'
+      fullPath: '/receipt/$id'
+      preLoaderRoute: typeof ReceiptIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
       fullPath: '/api/auth/$'
       preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/skipcash/webhook': {
+      id: '/api/skipcash/webhook'
+      path: '/api/skipcash/webhook'
+      fullPath: '/api/skipcash/webhook'
+      preLoaderRoute: typeof ApiSkipcashWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -370,8 +430,11 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   ThanksRoute: ThanksRoute,
   WishlistRoute: WishlistRoute,
+  PaySkipcashRoute: PaySkipcashRoute,
   ProductSlugRoute: ProductSlugRoute,
+  ReceiptIdRoute: ReceiptIdRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiSkipcashWebhookRoute: ApiSkipcashWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

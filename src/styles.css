@@ -123,6 +123,24 @@
   }
 }
 
+@media print {
+  @page {
+    margin: 12mm;
+  }
+  html,
+  body {
+    background: #fff !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .receipt-sheet {
+    max-width: none;
+    box-shadow: none;
+    border-radius: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation: none !important;

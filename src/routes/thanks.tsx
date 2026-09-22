@@ -1,9 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { Shell } from "@/components/layout";
+import { ReceiptActions, ReceiptPaper } from "@/components/receipt";
 import { Button } from "@/components/ui/button";
+import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { COPY } from "@/lib/i18n";
-import { useStore } from "@/lib/store";
-import { qar } from "@/lib/utils";
+import { getOrder } from "@/lib/orders";
+import { useHydrated, useStore, type Order } from "@/lib/store";
 
 export const Route = createFileRoute("/thanks")({
   validateSearch: (s: Record<string, unknown>) => ({
@@ -16,41 +19,62 @@ function Thanks() {
   const { id } = Route.useSearch();
   const lang = useStore((s) => s.lang);
   const orders = useStore((s) => s.orders);
+  const rememberOrder = useStore((s) => s.rememberOrder);
   const t = COPY[lang];
-  const order = orders.find((o) => o.id === id) ?? orders[0];
+  const ready = useHydrated();
+  const { user } = useCurrentUserState();
+  const [remote, setRemote] = useState<Order | null>(null);
+
+  useEffect(() => {
+    if (!id || !user) return;
+    void getOrder({ data: id })
+      .then((order) => {
+        setRemote(order);
+        if (order) rememberOrder(order);
+      })
+      .catch(() => setRemote(null));
+  }, [id, user]);
+
+  const order = (id ? orders.find((o) => o.id === id) : undefined) ?? remote ?? orders[0];
+  const heading =
+    order?.status === "pending"
+      ? t.orderAwaitingPay
+      : order?.status === "failed" || order?.status === "canceled"
+        ? t.paymentFailed
+        : t.orderOk;
 
   return (
     <Shell>
-      <div className="mx-auto max-w-lg px-4 py-16 text-center">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">11-11</p>
-        <h1 className="mt-3 font-display text-3xl font-semibold text-wine">{t.orderOk}</h1>
-        {order ? (
-          <div className="mt-6 rounded-xl bg-card p-6 text-start text-sm shadow-card">
-            <p>
-              #{order.id} · {order.pay === "cod" ? t.cod : t.skipcash}
-            </p>
-            <p className="mt-2">
-              {order.name} · {order.area}
-            </p>
-            <p className="mt-1 text-muted">{order.address}</p>
-            <p className="mt-4 font-semibold">{qar(order.total)}</p>
-            <ul className="mt-3 space-y-1 text-muted">
-              {order.lines.map((l) => (
-                <li key={l.id}>
-                  {l.name} × {l.qty}
-                </li>
-              ))}
-            </ul>
+      <div className="mx-auto max-w-2xl px-4 py-10">
+        <p className="no-print text-center text-xs font-semibold uppercase tracking-[0.2em] text-gold">11-11</p>
+        <h1 className="no-print mt-3 text-center font-display text-3xl font-semibold text-wine">{heading}</h1>
+        <p className="no-print mx-auto mt-2 max-w-md text-center text-sm text-muted">{t.receiptNote}</p>
+        {!ready ? (
+          <div className="mt-8 h-96 animate-pulse rounded-xl bg-line" />
+        ) : order ? (
+          <>
+            {order.status === "pending" && order.pay === "skipcash" ? (
+              <div className="no-print mt-6 text-center">
+                <Button asChild variant="gold">
+                  <Link to="/pay/skipcash" search={{ id: order.id }}>
+                    {t.completePayment}
+                  </Link>
+                </Button>
+              </div>
+            ) : null}
+            <div className="mt-8">
+              <ReceiptPaper order={order} lang={lang} />
+            </div>
+            <ReceiptActions orderId={order.id} lang={lang} />
+          </>
+        ) : (
+          <div className="mt-8 rounded-xl bg-card p-8 text-center shadow-card">
+            <p className="text-muted">{t.noReceipt}</p>
+            <Button asChild className="mt-4">
+              <Link to="/shop">{t.continue}</Link>
+            </Button>
           </div>
-        ) : null}
-        <div className="mt-8 flex justify-center gap-3">
-          <Button asChild>
-            <Link to="/shop">{t.continue}</Link>
-          </Button>
-          <Button asChild variant="outline">
-            <Link to="/account">{t.orders}</Link>
-          </Button>
-        </div>
+        )}
       </div>
     </Shell>
   );

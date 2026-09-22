@@ -7,9 +7,24 @@ import { Button } from "@/components/ui/button";
 import { COPY } from "@/lib/i18n";
 import { useStore } from "@/lib/store";
 
-export const Route = createFileRoute("/login")({ component: Login });
+function safeNext(raw: unknown) {
+  if (typeof raw !== "string") return "";
+  const next = raw.trim();
+  if (!next.startsWith("/") || next.startsWith("//") || next.startsWith("/\\")) return "";
+  if (next.includes("://") || next.includes("\\")) return "";
+  return next.slice(0, 200);
+}
+
+export const Route = createFileRoute("/login")({
+  validateSearch: (s: Record<string, unknown>) => {
+    const next = safeNext(s.next);
+    return next ? { next } : {};
+  },
+  component: Login,
+});
 
 function Login() {
+  const { next } = Route.useSearch();
   const lang = useStore((s) => s.lang);
   const t = COPY[lang];
   const [mode, setMode] = useState<"in" | "up">("in");
@@ -17,6 +32,11 @@ function Login() {
   const [busy, setBusy] = useState(false);
   const [email, setEmail] = useState(ADMIN_EMAIL);
   const [password, setPassword] = useState(ADMIN_PASSWORD);
+
+  function dest(nextEmail: string) {
+    if (next) return next;
+    return isAdmin(nextEmail) ? "/admin" : "/";
+  }
 
   async function onEmail(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -26,29 +46,29 @@ function Login() {
     const nextEmail = String(fd.get("email") || "").trim();
     const nextPassword = String(fd.get("password") || "");
     const name = String(fd.get("name") || ADMIN_NAME);
+    const callbackURL = dest(nextEmail);
     try {
       if (mode === "up") {
         const r = await authClient.signUp.email({
           email: nextEmail,
           password: nextPassword,
           name,
-          callbackURL: isAdmin(nextEmail) ? "/admin" : "/",
+          callbackURL,
         });
         if (r.error) throw new Error(r.error.message);
       } else {
         const r = await authClient.signIn.email({
           email: nextEmail,
           password: nextPassword,
-          callbackURL: isAdmin(nextEmail) ? "/admin" : "/",
+          callbackURL,
         });
         if (r.error) {
-          // First visit: the demo admin is created on the fly, then signed in.
           if (isAdmin(nextEmail) && nextPassword === ADMIN_PASSWORD) {
             const created = await authClient.signUp.email({
               email: nextEmail,
               password: nextPassword,
               name: ADMIN_NAME,
-              callbackURL: "/admin",
+              callbackURL,
             });
             if (created.error && !alreadyExists(created.error.message ?? "")) {
               throw new Error(created.error.message ?? "Could not sign in");
@@ -56,7 +76,7 @@ function Login() {
             const again = await authClient.signIn.email({
               email: nextEmail,
               password: nextPassword,
-              callbackURL: "/admin",
+              callbackURL,
             });
             if (again.error) throw new Error(again.error.message);
           } else {
@@ -64,7 +84,7 @@ function Login() {
           }
         }
       }
-      window.location.href = isAdmin(nextEmail) ? "/admin" : "/";
+      window.location.href = callbackURL;
     } catch (ex) {
       setBusy(false);
       setErr(ex instanceof Error ? ex.message : "Could not sign in");
@@ -90,7 +110,7 @@ function Login() {
               <button
                 key={p.providerId}
                 type="button"
-                onClick={() => signIn(p.providerId, { callbackURL: "/" })}
+                onClick={() => signIn(p.providerId, { callbackURL: next || "/" })}
                 className="h-11 w-full rounded-md border border-line text-sm font-medium hover:bg-cream"
               >
                 Continue with {p.label}

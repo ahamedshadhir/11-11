@@ -20,8 +20,8 @@ function Privacy() {
         </p>
         <p className="mt-3 text-muted">
           {ar
-            ? "السلة والمفضلة تُحفظ على جهازك. للدعم: support@1111.qa."
-            : "Cart and wishlist stay on your device unless you check out while signed in. Questions: support@1111.qa."}
+            ? "لا نخزّن أرقام البطاقات أو رموز الأمان. سكيبكاش يعالج الدفع على صفحته. السلة والمفضلة تُحفظ على جهازك. للدعم: support@1111.qa."
+            : "We never store card numbers or CVC codes. SkipCash processes the payment on its own page. Cart and wishlist stay on your device. Questions: support@1111.qa."}
         </p>
       </article>
     </Shell>
