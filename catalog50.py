@@ -1,5 +1,4 @@
 from flask import redirect
-from images import white_url
 
 PHOTOS = [
     "images.unsplash.com/photo-1510557880182-3d4d3cba35a5",
@@ -44,39 +43,29 @@ def pack(i):
 
 def apply_pack():
     from extensions import db
-    from models import Product
+    from models import Product, Category
     from catalog import clear_catalog
-    from sqlalchemy import text
-    for tbl in ("cart_item", "order_item", "wishlist_item"):
-        try:
-            db.session.execute(text("DELETE FROM " + tbl))
-            db.session.commit()
-        except Exception:
-            db.session.rollback()
-    try:
-        Product.query.delete()
-        db.session.commit()
-    except Exception:
-        db.session.rollback()
-        for p in Product.query.all():
-            p.image = pack(p.id or 0)
-        db.session.commit()
-        clear_catalog()
-        return "updated"
+    cat = Category.query.first()
+    cat_id = cat.id if cat else None
+    if Product.query.count() >= 40:
+        return "ok"
     for i, name in enumerate(NAMES):
+        slug = "w50-%02d" % (i + 1)
+        if Product.query.filter_by(slug=slug).first():
+            continue
         db.session.add(Product(
             name=name,
-            slug="w50-%02d" % (i + 1),
+            slug=slug,
             description="Studio photo on white.",
             image=pack(i),
             price=float(89 + (i * 37) % 2400),
             compare_at=float(169 + (i * 37) % 2400),
             stock=50,
-            category_id=(i % 8) + 1,
+            category_id=cat_id,
         ))
     db.session.commit()
     clear_catalog()
-    return "replaced"
+    return "seeded"
 
 
 def install_catalog50(app):
@@ -88,9 +77,8 @@ def install_catalog50(app):
     def _load_pack():
         try:
             from models import Product
-            if Product.query.filter(Product.slug.like("w50-%")).count() >= 40:
-                return
-            apply_pack()
+            if Product.query.count() < 20:
+                apply_pack()
         except Exception:
             try:
                 from extensions import db
@@ -101,7 +89,7 @@ def install_catalog50(app):
     @app.route("/__reseed")
     def reseed_catalog():
         try:
-            msg = apply_pack()
-        except Exception as e:
-            msg = str(e)
-        return redirect("/shop")
+            apply_pack()
+        except Exception:
+            pass
+        return redirect("/admin/products")
