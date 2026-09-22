@@ -68,7 +68,6 @@ def install_aliases(app):
             if request.method == "GET" and path == "/checkout":
                 from flask_login import current_user
                 from models import CartItem
-
                 has = False
                 if getattr(current_user, "is_authenticated", False):
                     has = CartItem.query.filter_by(user_id=current_user.id).first() is not None
@@ -82,20 +81,19 @@ def install_aliases(app):
             if path == "/":
                 items = products(16)
                 sale = None
+                deals = []
                 try:
-                    from catalog import current_sale, clear_catalog
-                    sale = current_sale()
+                    from catalog import current_sale, sale_products, clear_catalog
                     clear_catalog()
+                    sale = current_sale()
+                    deals = sale_products(sale)
                 except Exception:
-                    sale = None
-                flash_items = [p for p in items if getattr(p, "is_flash", False)] or items[:8]
+                    deals = []
                 return render_template(
                     "index.html",
-                    flash_products=flash_items,
+                    flash_products=deals,
                     live_sale=sale,
-                    bestsellers=items[:6],
-                    recommended=items,
-                    accessory_deals=items,
+                    all_products=items,
                     banners=[],
                     promos=[],
                 )
@@ -105,7 +103,6 @@ def install_aliases(app):
                 category_id = request.args.get("category") or request.args.get("category_id")
                 if q or category_id:
                     from models import Product
-
                     query = Product.query
                     if category_id:
                         query = query.filter_by(category_id=int(category_id))
