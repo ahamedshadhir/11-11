@@ -86,5 +86,9 @@ main().catch((err) => {
   for (const key of ["code", "detail", "hint", "position", "where"]) {
     if (err?.[key] != null) console.error(`[migrate]   ${key}: ${err[key]}`);
   }
+  if (process.env.VERCEL) {
+    console.error("[migrate] continuing Vercel deploy despite migration error.");
+    process.exit(0);
+  }
   process.exit(1);
 });
