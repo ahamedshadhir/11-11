@@ -1,19 +1,48 @@
 {% extends "m_base.html" %}
 {% block title %}Checkout | 11-11{% endblock %}
 {% block content %}
-<section class="pad">
-  <h1>{{ t('checkout') }}</h1>
-  {% if not rows %}<p>Your cart is empty.</p>
+<style>
+  .co{padding:16px 16px 32px}
+  .co h1{margin:0 0 16px;font-size:26px}
+  .co h2{margin:18px 0 10px;font-size:16px}
+  .box{background:#fff;border:1px solid #eadfce;border-radius:16px;padding:14px;margin:0 0 14px}
+  .box label{display:block;margin:10px 0 4px;font:600 12px system-ui,sans-serif;color:#6b5b52}
+  .box input[type=text],.box input[type=tel],.box input[type=email]{width:100%;padding:12px;border:1px solid #eadfce;border-radius:12px;font-size:16px}
+  .pay{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid #eadfce;border-radius:12px;margin:8px 0}
+  .item{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #f0e8dc;font:14px system-ui,sans-serif}
+  .tot{display:flex;justify-content:space-between;font:700 16px system-ui,sans-serif;padding-top:10px}
+  .go{width:100%;margin-top:12px;background:#420e15;color:#fff;border:0;border-radius:14px;padding:14px;font:700 16px system-ui,sans-serif}
+</style>
+<section class="co">
+  <h1>Checkout</h1>
+  {% if not rows %}
+  <div class="box"><p>Your cart is empty.</p><a class="go" href="/m/shop" style="display:block;text-align:center;text-decoration:none">Shop</a></div>
   {% else %}
-  <form class="stack" method="post" action="/checkout/pay">
-    <label>Name</label><input name="name" required value="{{ current_user.name if current_user.is_authenticated else '' }}">
-    <label>Phone</label><input name="phone" required>
-    <label>Address</label><input name="address" required>
-    <label>{{ t('payment') }}</label>
-    <label><input type="radio" name="payment_method" value="cod" checked> {{ t('cod') }}</label>
-    <label><input type="radio" name="payment_method" value="skipcash"> SkipCash</label>
-    <p><b>{{ t('total') }} {{ total|qar }}</b></p>
-    <button class="common-btn" type="submit">{{ t('checkout') }}</button>
+  <form method="post" action="/checkout/pay">
+    <div class="box">
+      <h2>Delivery</h2>
+      <label>Full name</label>
+      <input type="text" name="name" required value="{{ current_user.name if current_user.is_authenticated else '' }}">
+      <label>Phone</label>
+      <input type="tel" name="phone" required value="{{ current_user.phone if current_user.is_authenticated else '' }}">
+      <label>Email</label>
+      <input type="email" name="email" value="{{ current_user.email if current_user.is_authenticated else '' }}">
+      <label>Address</label>
+      <input type="text" name="address" required placeholder="Street, zone, Doha">
+    </div>
+    <div class="box">
+      <h2>Payment</h2>
+      <label class="pay"><input type="radio" name="payment_method" value="cod" checked> Cash on delivery</label>
+      <label class="pay"><input type="radio" name="payment_method" value="skipcash"> SkipCash</label>
+    </div>
+    <div class="box">
+      <h2>Order</h2>
+      {% for r in rows %}
+      <div class="item"><span>{{ r.product.name }} × {{ r.qty }}</span><b>{{ r.line|qar }}</b></div>
+      {% endfor %}
+      <div class="tot"><span>Total</span><span>{{ total|qar }}</span></div>
+    </div>
+    <button class="go" type="submit">Place order · {{ total|qar }}</button>
   </form>
   {% endif %}
 </section>
