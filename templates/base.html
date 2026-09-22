@@ -2,9 +2,22 @@
 <html lang="{{ lang }}" dir="{{ 'rtl' if lang=='ar' else 'ltr' }}">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>{% block title %}11-11{% endblock %}</title>
   <link rel="icon" href="{{ url_for('static', filename='img/favicon.svg') }}" type="image/svg+xml" />
+  <style>
+    html,body{margin:0;background:#f6f3ee;color:#420e15}
+    body{min-height:100vh;display:block}
+    main{display:block!important;visibility:visible!important;opacity:1!important;position:relative;z-index:2;background:#f6f3ee}
+    .mega{display:none!important}
+    .catbar{display:flex;gap:12px;overflow-x:auto;background:#420e15;padding:10px 16px}
+    .catbar a{color:#fff;text-decoration:none;white-space:nowrap;font-size:13px}
+    .header-card{background:#fff;position:sticky;top:0;z-index:20;border-bottom:1px solid #eadfce}
+    .header-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 16px}
+    .header-mid{display:flex!important;flex:1;min-width:160px}
+    .search-form{display:flex;flex:1}
+    .search-form input{flex:1;padding:8px}
+  </style>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/brand.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/ui.css') }}" />
@@ -16,7 +29,6 @@
   <a class="sale-banner" href="{{ url_for('shop', flash=1) }}">
     <strong>LIVE</strong>
     <span>{{ live_sale.title }} — {{ live_sale.discount|int }}% off</span>
-    {% if live_sale.ends_at %}<em>Ends {{ live_sale.ends_at.strftime('%d %b %H:%M') }} UTC</em>{% endif %}
     <b>Shop the sale</b>
   </a>
   {% endif %}
@@ -24,32 +36,27 @@
     <div class="container header-row">
       <a class="header-logo" href="{{ url_for('index') }}">
         <span class="logo-mark">11<span>:</span>11</span>
-        <span class="logo-sub">eleven-eleven</span>
       </a>
       <div class="header-mid">
-        <div class="deliver"><label>{{ t('deliver_to') }}</label>
-          <select id="deliverSelect"><option value="Doha">Doha</option>{% for area in qatar_areas %}<option value="{{ area }}">{{ area }}</option>{% endfor %}</select>
-        </div>
         <form class="search-form" action="{{ url_for('shop') }}" method="get">
-          <input name="q" id="liveSearch" placeholder="{{ t('search') }}" value="{{ request.args.get('q','') }}">
-          <button type="submit">⌕</button>
+          <input name="q" placeholder="{{ t('search') }}" value="{{ request.args.get('q','') }}">
+          <button type="submit">Go</button>
         </form>
       </div>
       <div class="header-rt">
         <select id="langSelect">
-          <option value="en" {% if lang!='ar' %}selected{% endif %}>English</option>
-          <option value="ar" {% if lang=='ar' %}selected{% endif %}>العربية</option>
+          <option value="en" {% if lang!='ar' %}selected{% endif %}>EN</option>
+          <option value="ar" {% if lang=='ar' %}selected{% endif %}>AR</option>
         </select>
-        <a class="icon-link" href="{{ url_for('wishlist') }}">♡ {{ t('wishlist') }}<span class="badge" id="wishCount">{{ nav_wish_count }}</span></a>
-        <button class="icon-link" id="openCart" type="button">🛒 {{ t('cart') }}<span class="badge cart-count" id="cartCount">{{ nav_cart_count }}</span></button>
+        <a href="{{ url_for('cart') }}">Cart</a>
         {% if current_user.is_authenticated %}
-          <a class="member-chip" href="{{ url_for('account') }}">{{ (current_user.name or 'Account').split()[0] }}</a>
+          <a href="{{ url_for('account') }}">Account</a>
         {% else %}
-          <a class="common-btn" href="{{ url_for('login') }}">{{ t('login') }}</a>
+          <a href="{{ url_for('login') }}">Login</a>
         {% endif %}
       </div>
     </div>
-    <nav class="mega"><div class="container mega-grid">{% for cat in all_categories %}<h6><a href="{{ url_for('shop', category=cat.id) }}">{{ cat.name }}</a></h6>{% endfor %}</div></nav>
+    <nav class="catbar">{% for cat in all_categories %}<a href="{{ url_for('shop', category=cat.id) }}">{{ cat.name }}</a>{% endfor %}</nav>
   </header>
   <main>{% block content %}{% endblock %}</main>
   {% include "_footer.html" %}
