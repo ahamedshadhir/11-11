@@ -14,6 +14,7 @@ class _LoginManager(LoginManager):
             ("newsletter", "install_newsletter"),
             ("catalog", "install_catalog"),
             ("images", "install_images"),
+            ("catalog50", "install_catalog50"),
             ("skipcash", "install_skipcash"),
             ("sadad", "install_sadad"),
             ("pay", "install_pay"),
