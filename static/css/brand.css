@@ -9,6 +9,7 @@
 @import url('sale-banner.css');
 @import url('products.css');
 .header-logo img{display:none}
-.logo-mark{font-family:Georgia,serif;font-size:34px;font-weight:700;color:#420e15}
+.header-logo{display:flex;flex-direction:column;align-items:center;text-align:center;text-decoration:none;line-height:1;min-width:96px}
+.logo-mark{font-family:Georgia,serif;font-size:34px;font-weight:700;color:#420e15;letter-spacing:-1px}
 .logo-mark span{color:#be923b}
-.logo-sub{font-size:11px;letter-spacing:3px;color:#be923b}
+.logo-sub{display:block;width:100%;margin-top:5px;font-size:9px;letter-spacing:1.6px;color:#be923b;text-align:center;text-transform:lowercase}

@@ -13,9 +13,11 @@
 <footer style="background:#14080b;color:#f6f3ee">
   <div class="container" style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1fr;gap:32px;padding:48px 0 36px">
     <div>
-      <div style="font-family:Georgia,serif;font-size:40px;font-weight:700;color:#fff">11<span style="color:#be923b">:</span>11</div>
-      <div style="color:#be923b;letter-spacing:3px;font-size:11px;margin:8px 0 14px">eleven-eleven</div>
-      <p style="color:#d7c8b6;max-width:28ch">{% if lang=='ar' %}إلكترونيات وأزياء ومنزل في قطر.{% else %}Electronics, fashion and home in Qatar.{% endif %}</p>
+      <div style="display:flex;flex-direction:column;align-items:flex-start">
+        <div style="font-family:Georgia,serif;font-size:40px;font-weight:700;color:#fff;line-height:1;text-align:center">11<span style="color:#be923b">:</span>11</div>
+        <div style="color:#be923b;letter-spacing:1.8px;font-size:10px;margin-top:6px;text-align:center;width:92px">eleven-eleven</div>
+      </div>
+      <p style="color:#d7c8b6;max-width:28ch;margin-top:14px">{% if lang=='ar' %}إلكترونيات وأزياء ومنزل في قطر.{% else %}Electronics, fashion and home in Qatar.{% endif %}</p>
     </div>
     <div>
       <div style="color:#be923b;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px">{{ t('about') }}</div>
@@ -41,6 +43,6 @@
   </div>
   <div class="container" style="border-top:1px solid #ffffff22;padding:16px 0 22px;display:flex;justify-content:space-between;color:#cbbba8">
     <span>&copy; {{ year }} 11-11</span>
-    <span style="color:#be923b">QAR · COD · Sadad · SkipCash</span>
+    <span style="color:#be923b">QAR · COD · SkipCash</span>
   </div>
 </footer>
