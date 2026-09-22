@@ -1,0 +1,12 @@
+{% macro deal_price(p) %}
+  {% set on_sale = live_sale and p.id in live_sale.ids() %}
+  {% if on_sale %}
+  <p class="price price-sale">
+    <s>{{ p.price|qar }}</s>
+    <strong>{{ (p.price * (100 - live_sale.discount) / 100)|qar }}</strong>
+    <span class="off">-{{ live_sale.discount|int }}%</span>
+  </p>
+  {% else %}
+  <p class="price">{{ p.price|qar }}</p>
+  {% endif %}
+{% endmacro %}

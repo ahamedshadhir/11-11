@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import product_card, stars with context %}
+{% from "_price.html" import deal_price with context %}
 {% block title %}{{ product.name }} | 11-11{% endblock %}
 {% block content %}
 <div class="container page-hero">
@@ -10,15 +10,10 @@
     <img src="{{ product.image }}" alt="{{ product.name }}">
     <div>
       <h1>{{ product.name }}</h1>
-      {{ stars(product.rating, product.review_count) }}
-      <p class="price" style="font-size:24px">{{ product.price|qar }}</p>
+      {{ deal_price(product) }}
       <p>{{ product.description }}</p>
-      <button class="common-btn" type="button" data-add="{{ product.id }}">{% if lang=='ar' %}أضف للسلة{% else %}Add to cart{% endif %}</button>
+      <button class="common-btn" type="button" data-add="{{ product.id }}">Add to cart</button>
     </div>
   </div>
-  {% if related %}
-  <h3 style="margin:28px 0 12px">{% if lang=='ar' %}قد يعجبك{% else %}You may also like{% endif %}</h3>
-  <div class="product-grid">{% for p in related %}{{ product_card(p) }}{% endfor %}</div>
-  {% endif %}
 </div>
 {% endblock %}
