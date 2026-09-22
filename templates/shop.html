@@ -15,7 +15,7 @@
   <div class="product-grid">
     {% for p in products %}
     <article class="card">
-      <div class="card-img"><a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}"><img src="{{ p.image }}" alt="{{ p.name }}" loading="lazy"></a></div>
+      <div class="card-img"><a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}"><img src="{{ p.image|whitebg }}" alt="{{ p.name }}" loading="lazy"></a></div>
       <div class="card-body">
         <h4><a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}">{{ p.name }}</a></h4>
         {{ deal_price(p) }}
