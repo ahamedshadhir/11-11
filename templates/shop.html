@@ -1,16 +1,18 @@
 {% extends "base.html" %}
 {% block title %}Shop | 11-11{% endblock %}
 {% block content %}
-<section class="page-hero"><div class="container"><h2>Shop</h2></div></section>
+<section class="page-hero"><div class="container"><h2>{% if live_sale and request.args.get('flash') %}{{ live_sale.title }}{% else %}Shop{% endif %}</h2></div></section>
 <div class="container shop-layout" style="padding-bottom:48px">
   <aside>
-    <h4>Categories</h4>
+    <h4>{{ t('categories') }}</h4>
+    {% if live_sale %}<p><a href="{{ url_for('shop', flash=1) }}">Flash sale</a></p>{% endif %}
+    <p><a href="{{ url_for('shop') }}">All products</a></p>
     {% for c in all_categories %}
     <p><a href="{{ url_for('shop', category=c.id) }}">{{ c.name }}</a></p>
     {% endfor %}
   </aside>
   <div class="product-grid">
-    {% for p in products or [] %}
+    {% for p in products %}
     <article class="card">
       <div class="card-img"><a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}"><img src="{{ p.image }}" alt="{{ p.name }}" loading="lazy"></a></div>
       <div class="card-body">
@@ -19,9 +21,7 @@
         <button class="common-btn w-100 mt-2" type="button" data-add="{{ p.id }}">Add to cart</button>
       </div>
     </article>
-    {% else %}
-    <p>No products.</p>
-    {% endfor %}
+    {% else %}<p>No products.</p>{% endfor %}
   </div>
 </div>
 {% endblock %}

@@ -5,19 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{% block title %}11-11{% endblock %}</title>
   <link rel="icon" href="{{ url_for('static', filename='img/favicon.svg') }}" type="image/svg+xml" />
-  <link rel="preconnect" href="https://images.unsplash.com" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/brand.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/ui.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/rtl.css') }}" />
 </head>
-<body data-wish="{{ wishlist_ids|join(',') }}">
-  {% if live_sale %}
-  <a class="sale-banner" href="{{ url_for('shop') }}">
+<body>
+  {% if live_sale and request.endpoint not in ['login','register'] %}
+  <a class="sale-banner" href="{{ url_for('shop', flash=1) }}">
     <strong>LIVE</strong>
     <span>{{ live_sale.title }} — {{ live_sale.discount|int }}% off</span>
     {% if live_sale.ends_at %}<em>Ends {{ live_sale.ends_at.strftime('%d %b %H:%M') }} UTC</em>{% endif %}
-    <b>Shop now</b>
+    <b>Shop the sale</b>
   </a>
   {% endif %}
   <header class="header-card">
@@ -52,12 +51,6 @@
     <nav class="mega"><div class="container mega-grid">{% for cat in all_categories %}<h6><a href="{{ url_for('shop', category=cat.id) }}">{{ cat.name }}</a></h6>{% endfor %}</div></nav>
   </header>
   <main>{% block content %}{% endblock %}</main>
-  <div class="overlay" id="overlay"></div>
-  <aside class="drawer" id="cartDrawer">
-    <div class="drawer-head"><h5>{{ t('cart') }}</h5><button type="button" id="closeCart">×</button></div>
-    <div class="drawer-body" id="drawerItems"></div>
-    <div class="drawer-foot"><a class="common-bd-btn" href="{{ url_for('cart') }}">{{ t('view_cart') }}</a><a class="common-btn" href="{{ url_for('checkout') }}">{{ t('checkout') }}</a></div>
-  </aside>
   {% include "_footer.html" %}
   <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
 </body>
