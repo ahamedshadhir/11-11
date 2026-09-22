@@ -12,6 +12,7 @@ class _LoginManager(LoginManager):
             ("i18n", "install_i18n"),
             ("newsletter", "install_newsletter"),
             ("catalog", "install_catalog"),
+            ("images", "install_images"),
             ("skipcash", "install_skipcash"),
             ("sadad", "install_sadad"),
             ("pay", "install_pay"),
