@@ -10,6 +10,12 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/brand.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/ui.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/rtl.css') }}" />
+  <style>
+    .header-logo{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;text-align:center!important;gap:0!important;min-width:92px}
+    .header-logo .logo-mark{display:block;line-height:1;font:700 32px/1 Georgia,serif;color:#420e15}
+    .header-logo .logo-mark span{color:#be923b}
+    .header-logo .logo-sub{display:block;width:100%;margin-top:5px;font:600 8px/1 system-ui,sans-serif;letter-spacing:1.6px;color:#be923b;text-align:center}
+  </style>
 </head>
 <body>
   {% if live_sale %}
