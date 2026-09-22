@@ -13,7 +13,7 @@ def clear_catalog():
 
 def _load():
     now = time.time()
-    if _CACHE["items"] and now - _CACHE["t"] < 60:
+    if _CACHE["items"] and now - _CACHE["t"] < 30:
         return _CACHE["items"]
     try:
         from models import Product
@@ -29,6 +29,41 @@ def _load():
     return items
 
 
+def current_sale():
+    try:
+        from flash_sale import FlashSale
+        sale = FlashSale.query.filter_by(active=True).order_by(FlashSale.id.desc()).first()
+        if not sale:
+            return None
+        if sale.ends_at and sale.ends_at < datetime.utcnow():
+            sale.active = False
+            from extensions import db
+            from models import Product
+            Product.query.update({Product.is_flash: False})
+            db.session.commit()
+            clear_catalog()
+            return None
+        return sale
+    except Exception:
+        return None
+
+
+def sale_products(sale):
+    if not sale:
+        return []
+    ids = sale.ids()
+    if not ids:
+        return []
+    try:
+        from models import Product
+        rows = Product.query.filter(Product.id.in_(ids)).all()
+        order = {i: n for n, i in enumerate(ids)}
+        rows.sort(key=lambda p: order.get(p.id, 999))
+        return rows
+    except Exception:
+        return []
+
+
 def suggest_for(pid=None, limit=4):
     items = _load()
     if not items:
@@ -41,22 +76,6 @@ def suggest_for(pid=None, limit=4):
         extra = [p for p in items if p.id != pid and p not in out]
         out.extend(extra[: limit - len(out)])
     return out
-
-
-def current_sale():
-    try:
-        from flash_sale import FlashSale
-        sale = FlashSale.query.filter_by(active=True).order_by(FlashSale.id.desc()).first()
-        if not sale:
-            return None
-        if sale.ends_at and sale.ends_at < datetime.utcnow():
-            sale.active = False
-            from extensions import db
-            db.session.commit()
-            return None
-        return sale
-    except Exception:
-        return None
 
 
 def install_catalog(app):
@@ -76,29 +95,15 @@ def install_catalog(app):
     def inject_catalog():
         items = _load()
         sale = current_sale()
-        flash_items = [p for p in items if getattr(p, "is_flash", False)]
-        if sale and not flash_items:
-            flash_items = items[:8]
         return {
             "all_products": items[:24],
-            "flash_products": flash_items or items[:8],
+            "flash_products": sale_products(sale),
             "ai_picks": suggest_for(session.get("last_pid"), 4),
             "live_sale": sale,
         }
 
-    @app.before_request
-    def remember_product():
-        try:
-            pid = (request.view_args or {}).get("pid")
-            if pid:
-                session["last_pid"] = pid
-        except Exception:
-            pass
-
     @app.route("/api/suggest")
     def api_suggest():
         pid = request.args.get("pid", type=int)
-        data = []
-        for p in suggest_for(pid, 6):
-            data.append({"id": p.id, "name": p.name, "price": p.price, "image": p.image, "slug": p.slug})
+        data = [{"id": p.id, "name": p.name, "price": p.price, "image": p.image, "slug": p.slug} for p in suggest_for(pid, 6)]
         return {"items": data}
