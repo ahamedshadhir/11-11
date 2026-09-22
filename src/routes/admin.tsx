@@ -1,8 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { RedirectToSignIn } from "@/lib/auth/gates";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
+import { isAdminEmail } from "@/lib/admin";
 import { Shell } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { CATEGORIES, PRODUCTS } from "@/lib/catalog";
@@ -47,6 +48,22 @@ function Admin() {
     );
   }
   if (!user) return <RedirectToSignIn />;
+  if (!isAdminEmail(user.primaryEmail)) {
+    return (
+      <Shell>
+        <div className="mx-auto max-w-md px-4 py-16 text-center">
+          <h1 className="font-display text-2xl font-semibold text-wine">{t.admin}</h1>
+          <p className="mt-2 text-sm text-muted">
+            {lang === "ar" ? "هذا الحساب ليس مدير المتجر." : "This account is not the store admin."}
+          </p>
+          <Button asChild className="mt-6">
+            <Link to="/login">{t.login}</Link>
+          </Button>
+        </div>
+      </Shell>
+    );
+  }
+
 
   function onSave(e: FormEvent) {
     e.preventDefault();

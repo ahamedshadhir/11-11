@@ -3,6 +3,7 @@ import { FormEvent, useEffect, useMemo, useState, type ReactNode } from "react";
 import { Heart, Search, ShoppingBag, UserRound } from "lucide-react";
 import { UserButton } from "@/lib/auth/gates";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
+import { isAdminEmail } from "@/lib/admin";
 import { CATEGORIES, QATAR_AREAS, searchProducts } from "@/lib/catalog";
 import { COPY } from "@/lib/i18n";
 import { cartCount, flashLive, useStore } from "@/lib/store";
@@ -142,6 +143,11 @@ export function Shell({ children }: { children: ReactNode }) {
               <div className="h-8 w-16 animate-pulse rounded-md bg-line" />
             ) : user ? (
               <div className="flex items-center gap-1">
+                {isAdminEmail(user.primaryEmail) ? (
+                  <Link to="/admin" className="hidden rounded-md px-2 text-xs font-semibold text-gold sm:inline">
+                    {t.admin}
+                  </Link>
+                ) : null}
                 <Link to="/account" className="grid size-11 place-items-center sm:hidden" aria-label={t.account}>
                   <UserRound className="size-5" />
                 </Link>

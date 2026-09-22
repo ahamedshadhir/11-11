@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { FormEvent, useState } from "react";
 import { GROK_PROVIDERS, authClient, authEnabled, signIn } from "@/lib/auth/client";
+import { ADMIN_EMAIL, ADMIN_NAME, ADMIN_PASSWORD } from "@/lib/admin";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { COPY } from "@/lib/i18n";
@@ -14,24 +15,56 @@ function Login() {
   const [mode, setMode] = useState<"in" | "up">("in");
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
+  const [email, setEmail] = useState(ADMIN_EMAIL);
+  const [password, setPassword] = useState(ADMIN_PASSWORD);
 
   async function onEmail(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setErr("");
     setBusy(true);
     const fd = new FormData(e.currentTarget);
-    const email = String(fd.get("email") || "");
-    const password = String(fd.get("password") || "");
-    const name = String(fd.get("name") || "11-11 member");
+    const nextEmail = String(fd.get("email") || "").trim();
+    const nextPassword = String(fd.get("password") || "");
+    const name = String(fd.get("name") || ADMIN_NAME);
     try {
       if (mode === "up") {
-        const r = await authClient.signUp.email({ email, password, name, callbackURL: "/" });
+        const r = await authClient.signUp.email({
+          email: nextEmail,
+          password: nextPassword,
+          name,
+          callbackURL: isAdmin(nextEmail) ? "/admin" : "/",
+        });
         if (r.error) throw new Error(r.error.message);
       } else {
-        const r = await authClient.signIn.email({ email, password, callbackURL: "/" });
-        if (r.error) throw new Error(r.error.message);
+        const r = await authClient.signIn.email({
+          email: nextEmail,
+          password: nextPassword,
+          callbackURL: isAdmin(nextEmail) ? "/admin" : "/",
+        });
+        if (r.error) {
+          // First visit: the demo admin is created on the fly, then signed in.
+          if (isAdmin(nextEmail) && nextPassword === ADMIN_PASSWORD) {
+            const created = await authClient.signUp.email({
+              email: nextEmail,
+              password: nextPassword,
+              name: ADMIN_NAME,
+              callbackURL: "/admin",
+            });
+            if (created.error && !alreadyExists(created.error.message)) {
+              throw new Error(created.error.message);
+            }
+            const again = await authClient.signIn.email({
+              email: nextEmail,
+              password: nextPassword,
+              callbackURL: "/admin",
+            });
+            if (again.error) throw new Error(again.error.message);
+          } else {
+            throw new Error(r.error.message);
+          }
+        }
       }
-      window.location.href = "/";
+      window.location.href = isAdmin(nextEmail) ? "/admin" : "/";
     } catch (ex) {
       setBusy(false);
       setErr(ex instanceof Error ? ex.message : "Could not sign in");
@@ -48,6 +81,9 @@ function Login() {
         <h1 className="mt-6 text-center font-display text-2xl font-semibold text-wine">
           {mode === "in" ? t.login : t.create}
         </h1>
+        <p className="mt-2 text-center text-xs text-muted">
+          Admin · {ADMIN_EMAIL} · {ADMIN_PASSWORD}
+        </p>
         {authEnabled ? (
           <div className="mt-6 space-y-2">
             {GROK_PROVIDERS.map((p) => (
@@ -71,14 +107,26 @@ function Login() {
         </div>
         <form onSubmit={onEmail} className="grid gap-3">
           {mode === "up" ? (
-            <input name="name" placeholder={t.name} className="field" />
+            <input name="name" placeholder={t.name} defaultValue={ADMIN_NAME} className="field" />
           ) : null}
-          <input required name="email" type="email" placeholder={t.email} className="field" />
+          <input
+            required
+            name="email"
+            type="text"
+            inputMode="email"
+            autoComplete="username"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder={t.email}
+            className="field"
+          />
           <input
             required
             name="password"
             type="password"
             minLength={8}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             placeholder={t.password}
             className="field"
           />
@@ -102,4 +150,13 @@ function Login() {
       </div>
     </main>
   );
+}
+
+function isAdmin(email: string) {
+  return email.trim().toLowerCase() === ADMIN_EMAIL;
+}
+
+function alreadyExists(message: string) {
+  const s = message.toLowerCase();
+  return s.includes("already") || s.includes("exists") || s.includes("registered");
 }
