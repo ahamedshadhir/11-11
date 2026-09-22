@@ -1,5 +1,5 @@
-from flask import redirect, render_template, request, session, url_for
-from flask_login import current_user
+from flask import flash, redirect, render_template, request, session, url_for
+from flask_login import current_user, login_user, logout_user
 
 PHONES = ("iphone", "ipod", "android", "webos", "blackberry", "windows phone")
 TABLETS = ("ipad", "tablet", "kindle", "silk", "playbook")
@@ -64,7 +64,6 @@ def install_mobile(app):
         mapping = {
             "/": "/m",
             "/shop": "/m/shop",
-            "/shop/product/index": "/m/shop",
             "/cart": "/m/cart",
             "/wishlist": "/m/wishlist",
             "/login": "/m/login",
@@ -72,6 +71,11 @@ def install_mobile(app):
             "/register": "/m/register",
             "/account": "/m/account",
             "/checkout": "/m/checkout",
+            "/aboutus": "/m/about",
+            "/about": "/m/about",
+            "/contactus": "/m/contact",
+            "/contact": "/m/contact",
+            "/faq": "/m/faq",
         }
         if path in mapping:
             qs = request.query_string.decode() if request.query_string else ""
@@ -98,29 +102,33 @@ def install_mobile(app):
     def mobile_product(pid, slug):
         from models import Product
         p = Product.query.get_or_404(pid)
-        items, sale, _ = catalog()
-        related = [x for x in items if x.id != p.id][:4]
-        return render_template("m_product.html", product=p, related=related, live_sale=sale)
+        return render_template("m_product.html", product=p)
 
     @app.route("/m/cart")
     def mobile_cart():
         rows = cart_rows()
-        total = sum(r["line"] for r in rows)
-        return render_template("m_cart.html", rows=rows, total=total)
+        return render_template("m_cart.html", rows=rows, total=sum(r["line"] for r in rows))
 
     @app.route("/m/wishlist")
     def mobile_wishlist():
-        return render_template("m_shop.html", products=[], q="", heading="Wishlist")
+        return render_template("m_shop.html", products=[], heading="Wishlist")
 
     @app.route("/m/login", methods=["GET", "POST"])
     def mobile_login():
         if request.method == "POST":
-            return redirect("/login", code=307)
+            from models import User
+            user = User.query.filter_by(email=(request.form.get("email") or "").strip().lower()).first()
+            if user and user.check_password(request.form.get("password") or ""):
+                login_user(user, remember=True)
+                if getattr(user, "is_admin", False):
+                    return redirect("/admin")
+                return redirect("/m/account")
+            flash("Invalid email or password.", "danger")
         return render_template("m_login.html")
 
-    @app.route("/m/register")
+    @app.route("/m/register", methods=["GET", "POST"])
     def mobile_register():
-        return redirect(url_for("register"))
+        return render_template("m_register.html")
 
     @app.route("/m/account")
     def mobile_account():
@@ -131,6 +139,17 @@ def install_mobile(app):
     @app.route("/m/checkout")
     def mobile_checkout():
         rows = cart_rows()
-        if not rows:
-            return render_template("m_cart.html", rows=[], total=0)
-        return redirect("/checkout")
+        total = sum(r["line"] for r in rows)
+        return render_template("m_checkout.html", rows=rows, subtotal=total, shipping=0, total=total)
+
+    @app.route("/m/about")
+    def mobile_about():
+        return render_template("m_page.html", heading="About 11-11", body="11-11 is a Qatar store for electronics, fashion and home.")
+
+    @app.route("/m/contact")
+    def mobile_contact():
+        return render_template("m_page.html", heading="Contact", body="Email hello@eleven-eleven.qa — Doha, Qatar.")
+
+    @app.route("/m/faq")
+    def mobile_faq():
+        return render_template("m_page.html", heading="FAQ", body="Cash on delivery and SkipCash are available. Delivery across Qatar.")

@@ -1,0 +1,20 @@
+{% extends "m_base.html" %}
+{% block title %}Checkout | 11-11{% endblock %}
+{% block content %}
+<section class="pad">
+  <h1>{{ t('checkout') }}</h1>
+  {% if not rows %}<p>Your cart is empty.</p>
+  {% else %}
+  <form class="stack" method="post" action="/checkout/pay">
+    <label>Name</label><input name="name" required value="{{ current_user.name if current_user.is_authenticated else '' }}">
+    <label>Phone</label><input name="phone" required>
+    <label>Address</label><input name="address" required>
+    <label>{{ t('payment') }}</label>
+    <label><input type="radio" name="payment_method" value="cod" checked> {{ t('cod') }}</label>
+    <label><input type="radio" name="payment_method" value="skipcash"> SkipCash</label>
+    <p><b>{{ t('total') }} {{ total|qar }}</b></p>
+    <button class="common-btn" type="submit">{{ t('checkout') }}</button>
+  </form>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "m_base.html" %}
+{% block title %}Register | 11-11{% endblock %}
+{% block content %}
+<section class="pad">
+  <h1>Create account</h1>
+  <form class="stack" method="post" action="{{ url_for('register') }}">
+    <label>Name</label><input name="name" required>
+    <label>Email</label><input type="email" name="email" required>
+    <label>Password</label><input type="password" name="password" required>
+    <p><button class="common-btn" type="submit">Register</button></p>
+  </form>
+</section>
+{% endblock %}
