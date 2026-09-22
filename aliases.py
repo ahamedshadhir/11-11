@@ -83,15 +83,14 @@ def install_aliases(app):
                 sale = None
                 deals = []
                 try:
-                    from catalog import current_sale, sale_products, clear_catalog
-                    clear_catalog()
+                    from catalog import current_sale, sale_products
                     sale = current_sale()
                     deals = sale_products(sale)
                 except Exception:
                     deals = []
                 return render_template("index.html", flash_products=deals, live_sale=sale, all_products=items, banners=[], promos=[])
             if path in ("/shop", "/shop/product/index"):
-                items = products(48)
+                items = products(24)
                 q = (request.args.get("q") or "").strip()
                 category_id = request.args.get("category") or request.args.get("category_id")
                 if request.args.get("flash"):
@@ -107,7 +106,7 @@ def install_aliases(app):
                         query = query.filter_by(category_id=int(category_id))
                     if q:
                         query = query.filter(Product.name.ilike("%" + q + "%"))
-                    items = query.limit(48).all()
+                    items = query.limit(24).all()
                 return render_template("shop.html", products=items, q=q)
         except Exception:
             return None
