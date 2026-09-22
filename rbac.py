@@ -1,10 +1,9 @@
 from functools import wraps
 
-from flask import abort, flash, redirect, url_for
+from flask import abort, flash, redirect, request, url_for
 from flask_login import current_user, login_required
 from sqlalchemy import text
 
-ROLES = ("customer", "vendor", "staff", "admin")
 LEVEL = {"customer": 0, "vendor": 1, "staff": 2, "admin": 3}
 
 
@@ -22,8 +21,6 @@ def role_of(user):
 
 
 def has_role(user, *allowed):
-    if not allowed:
-        return True
     current = role_of(user)
     if current == "admin":
         return True
@@ -38,7 +35,7 @@ def set_role(user, role):
         user.role = role
     except Exception:
         pass
-    user.is_admin = role == "admin"
+    user.is_admin = role in ("staff", "admin")
     user.is_vendor = role in ("vendor", "admin")
     return role
 
@@ -79,9 +76,19 @@ def install_rbac(app):
         current = role_of(current_user) if getattr(current_user, "is_authenticated", False) else "guest"
         return {"user_role": current, "is_staff": current in ("staff", "admin"), "is_admin_user": current == "admin"}
 
-    @app.errorhandler(403)
-    def forbidden(_e):
-        flash("You do not have access to that page.", "danger")
-        if getattr(current_user, "is_authenticated", False):
-            return redirect(url_for("account")), 403
-        return redirect(url_for("login")), 403
+    @app.before_request
+    def _rbac_guard():
+        path = request.path or ""
+        if not path.startswith("/admin"):
+            return None
+        if path.startswith("/admin/products/white-bg"):
+            allowed = ("staff", "admin")
+        elif path.startswith("/admin/users") or path.startswith("/admin/settings"):
+            allowed = ("admin",)
+        else:
+            allowed = ("staff", "admin")
+        if not getattr(current_user, "is_authenticated", False):
+            return None
+        if not has_role(current_user, *allowed):
+            abort(403)
+        return None
