@@ -4,10 +4,20 @@
 <section class="lp-hero">
   <div class="container lp-hero-inner">
     <div class="lp-copy">
+      {% if live_sale %}
+      <p class="eyebrow">LIVE · {{ live_sale.title }}</p>
+      <h1>{{ live_sale.discount|int }}% off flash sale</h1>
+      <p>
+        {% if lang=='ar' %}العرض لان على المتجر{% else %}On now across selected 11-11 products.{% endif %}
+        {% if live_sale.ends_at %} Ends {{ live_sale.ends_at.strftime('%d %b %H:%M') }} UTC.{% endif %}
+      </p>
+      <a class="common-btn" href="{{ url_for('shop') }}">{{ t('shop_now') }}</a>
+      {% else %}
       <p class="eyebrow">11-11 Qatar</p>
       <h1>{{ t('hero_title') }}</h1>
       <p>{{ t('hero_text') }}</p>
       <a class="common-btn" href="{{ url_for('shop') }}">{{ t('shop_now') }}</a>
+      {% endif %}
     </div>
     <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1200&q=80" alt="">
   </div>
@@ -27,7 +37,7 @@
 </section>
 <section class="lp-section alt">
   <div class="container">
-    <h2>{{ t('deals') }}</h2>
+    <h2>{% if live_sale %}{{ live_sale.title }}{% else %}{{ t('deals') }}{% endif %}</h2>
     <div class="product-grid">
       {% for p in (flash_products or all_products or [])[:8] %}
       <article class="card">
@@ -36,23 +46,6 @@
           <h4><a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}">{{ p.name }}</a></h4>
           <p class="price">{{ p.price|qar }}</p>
           <button class="common-btn w-100 mt-2" type="button" data-add="{{ p.id }}">{{ t('add_to_cart') }}</button>
-        </div>
-      </article>
-      {% endfor %}
-    </div>
-  </div>
-</section>
-<section class="lp-section">
-  <div class="container">
-    <h2>{{ t('view_all') }}</h2>
-    <div class="product-grid">
-      {% for p in (all_products or flash_products or [])[:12] %}
-      <article class="card">
-        <div class="card-img"><a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}"><img src="{{ p.image }}" alt="{{ p.name }}" loading="lazy"></a></div>
-        <div class="card-body">
-          <h4><a href="{{ url_for('product_detail', pid=p.id, slug=p.slug) }}">{{ p.name }}</a></h4>
-          <p class="price">{{ p.price|qar }}</p>
-          <button class="common-btn w-100" type="button" data-add="{{ p.id }}">{{ t('add_to_cart') }}</button>
         </div>
       </article>
       {% endfor %}

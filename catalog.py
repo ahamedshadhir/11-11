@@ -1,12 +1,19 @@
 import time
+from datetime import datetime
 from flask import request, session
 
 _CACHE = {"t": 0, "items": [], "by_cat": {}}
 
 
+def clear_catalog():
+    _CACHE["t"] = 0
+    _CACHE["items"] = []
+    _CACHE["by_cat"] = {}
+
+
 def _load():
     now = time.time()
-    if _CACHE["items"] and now - _CACHE["t"] < 600:
+    if _CACHE["items"] and now - _CACHE["t"] < 60:
         return _CACHE["items"]
     try:
         from models import Product
@@ -36,6 +43,22 @@ def suggest_for(pid=None, limit=4):
     return out
 
 
+def current_sale():
+    try:
+        from flash_sale import FlashSale
+        sale = FlashSale.query.filter_by(active=True).order_by(FlashSale.id.desc()).first()
+        if not sale:
+            return None
+        if sale.ends_at and sale.ends_at < datetime.utcnow():
+            sale.active = False
+            from extensions import db
+            db.session.commit()
+            return None
+        return sale
+    except Exception:
+        return None
+
+
 def install_catalog(app):
     if getattr(app, "_catalog", False):
         return
@@ -52,13 +75,16 @@ def install_catalog(app):
     @app.context_processor
     def inject_catalog():
         items = _load()
-        last = session.get("last_pid")
-        picks = []
-        try:
-            picks = suggest_for(last, 4)
-        except Exception:
-            picks = items[:4]
-        return {"all_products": items[:24], "ai_picks": picks}
+        sale = current_sale()
+        flash_items = [p for p in items if getattr(p, "is_flash", False)]
+        if sale and not flash_items:
+            flash_items = items[:8]
+        return {
+            "all_products": items[:24],
+            "flash_products": flash_items or items[:8],
+            "ai_picks": suggest_for(session.get("last_pid"), 4),
+            "live_sale": sale,
+        }
 
     @app.before_request
     def remember_product():
