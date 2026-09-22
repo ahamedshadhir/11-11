@@ -81,9 +81,18 @@ def install_aliases(app):
                 return None
             if path == "/":
                 items = products(16)
+                sale = None
+                try:
+                    from catalog import current_sale, clear_catalog
+                    sale = current_sale()
+                    clear_catalog()
+                except Exception:
+                    sale = None
+                flash_items = [p for p in items if getattr(p, "is_flash", False)] or items[:8]
                 return render_template(
                     "index.html",
-                    flash_products=items[:8],
+                    flash_products=flash_items,
+                    live_sale=sale,
                     bestsellers=items[:6],
                     recommended=items,
                     accessory_deals=items,
