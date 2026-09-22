@@ -24,56 +24,16 @@ PHOTOS = [
 ]
 
 NAMES = [
-    "iPhone 15",
-    "Galaxy S24",
-    "Pixel 8",
-    "MacBook Air 13",
-    "ThinkPad X1",
-    "Studio Headphones",
-    "Wireless Over-Ear",
-    "True Wireless Buds",
-    "Field Watch",
-    "Sport Watch",
-    "Runner Sneaker",
-    "Court Sneaker",
-    "Leather Crossbody",
-    "Aviator Sunglasses",
-    "Mirrorless Camera",
-    "4K Smart TV",
-    "Clear Phone Case",
-    "Galaxy Flip",
-    "Polaroid Camera",
-    "Classic Shades",
-    "iPhone 15 Plus",
-    "Galaxy A55",
-    "Pixel 8a",
-    "MacBook Pro 14",
-    "Yoga Slim 7",
-    "Noise-Cancel Headphones",
-    "On-Ear Headset",
-    "Sport Earbuds",
-    "Dress Watch",
-    "Smart Band",
-    "Trail Sneaker",
-    "Canvas Sneaker",
-    "Mini Shoulder Bag",
-    "Wayfarer Sunglasses",
-    "Compact Camera",
-    "55-inch LED TV",
-    "Silicone Case",
-    "Galaxy Tab",
-    "Instant Camera",
-    "Round Sunglasses",
-    "iPad Air",
-    "Laptop Sleeve",
-    "USB-C Hub",
-    "MagSafe Charger",
-    "Power Bank 20K",
-    "Bluetooth Speaker",
-    "Action Camera",
-    "Wireless Mouse",
-    "Mechanical Keyboard",
-    "HD Webcam",
+    "iPhone 15", "Galaxy S24", "Pixel 8", "MacBook Air 13", "ThinkPad X1",
+    "Studio Headphones", "Wireless Over-Ear", "True Wireless Buds", "Field Watch", "Sport Watch",
+    "Runner Sneaker", "Court Sneaker", "Leather Crossbody", "Aviator Sunglasses", "Mirrorless Camera",
+    "4K Smart TV", "Clear Phone Case", "Galaxy Flip", "Polaroid Camera", "Classic Shades",
+    "iPhone 15 Plus", "Galaxy A55", "Pixel 8a", "MacBook Pro 14", "Yoga Slim 7",
+    "Noise-Cancel Headphones", "On-Ear Headset", "Sport Earbuds", "Dress Watch", "Smart Band",
+    "Trail Sneaker", "Canvas Sneaker", "Mini Shoulder Bag", "Wayfarer Sunglasses", "Compact Camera",
+    "55-inch LED TV", "Silicone Case", "Galaxy Tab", "Instant Camera", "Round Sunglasses",
+    "iPad Air", "Laptop Sleeve", "USB-C Hub", "MagSafe Charger", "Power Bank 20K",
+    "Bluetooth Speaker", "Action Camera", "Wireless Mouse", "Mechanical Keyboard", "HD Webcam",
 ]
 
 
@@ -97,26 +57,29 @@ def install_catalog50(app):
             from catalog import clear_catalog
             if Product.query.filter(Product.slug.like("w50-%")).count() >= 40:
                 return
+            try:
+                from models import CartItem
+                CartItem.query.delete()
+            except Exception:
+                pass
             Product.query.delete()
             for i, name in enumerate(NAMES):
                 photo = PHOTOS[i % len(PHOTOS)]
                 price = 89 + (i * 37) % 2400
-                db.session.add(
-                    Product(
-                        name=name,
-                        slug="w50-%02d" % (i + 1),
-                        description="Official 11-11 catalog item. Studio photo on white.",
-                        image=pack(photo),
-                        price=float(price),
-                        compare_at=float(price + 80),
-                        stock=40 + i,
-                        sold=i,
-                        rating=4.2 + (i % 6) * 0.1,
-                        review_count=4 + i,
-                        is_featured=i < 8,
-                        category_id=(i % 8) + 1,
-                    )
-                )
+                db.session.add(Product(
+                    name=name,
+                    slug="w50-%02d" % (i + 1),
+                    description="Official 11-11 catalog. Studio photo on white.",
+                    image=pack(photo),
+                    price=float(price),
+                    compare_at=float(price + 80),
+                    stock=40 + i,
+                    sold=i,
+                    rating=4.2 + (i % 6) * 0.1,
+                    review_count=4 + i,
+                    is_featured=i < 8,
+                    category_id=(i % 8) + 1,
+                ))
             db.session.commit()
             clear_catalog()
         except Exception:
