@@ -1,6 +1,6 @@
 from functools import wraps
 
-from flask import abort, flash, redirect, request, url_for
+from flask import abort, redirect, request, url_for
 from flask_login import current_user, login_required
 from sqlalchemy import text
 
@@ -79,15 +79,21 @@ def install_rbac(app):
     @app.before_request
     def _rbac_guard():
         path = request.path or ""
+        authed = getattr(current_user, "is_authenticated", False)
+        role = role_of(current_user) if authed else "guest"
+        if authed and role in ("admin", "staff"):
+            if path in ("/login", "/user/login", "/register", "/account", "/user/account"):
+                return redirect("/admin")
+            ref = request.referrer or ""
+            if path == "/" and request.method == "GET" and "login" in ref:
+                return redirect("/admin")
         if not path.startswith("/admin"):
             return None
-        if path.startswith("/admin/products/white-bg"):
-            allowed = ("staff", "admin")
-        elif path.startswith("/admin/users") or path.startswith("/admin/settings"):
+        if path.startswith("/admin/users") or path.startswith("/admin/settings"):
             allowed = ("admin",)
         else:
             allowed = ("staff", "admin")
-        if not getattr(current_user, "is_authenticated", False):
+        if not authed:
             return None
         if not has_role(current_user, *allowed):
             abort(403)
