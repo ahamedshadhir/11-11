@@ -89,19 +89,18 @@ def install_aliases(app):
                     deals = sale_products(sale)
                 except Exception:
                     deals = []
-                return render_template(
-                    "index.html",
-                    flash_products=deals,
-                    live_sale=sale,
-                    all_products=items,
-                    banners=[],
-                    promos=[],
-                )
+                return render_template("index.html", flash_products=deals, live_sale=sale, all_products=items, banners=[], promos=[])
             if path in ("/shop", "/shop/product/index"):
                 items = products(48)
                 q = (request.args.get("q") or "").strip()
                 category_id = request.args.get("category") or request.args.get("category_id")
-                if q or category_id:
+                if request.args.get("flash"):
+                    try:
+                        from catalog import current_sale, sale_products
+                        items = sale_products(current_sale())
+                    except Exception:
+                        items = []
+                elif q or category_id:
                     from models import Product
                     query = Product.query
                     if category_id:
