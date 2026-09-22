@@ -8,6 +8,7 @@ class _LoginManager(LoginManager):
     def init_app(self, app, add_context_processor=True):
         super().init_app(app, add_context_processor=add_context_processor)
         for mod, fn in (
+            ("rbac", "install_rbac"),
             ("admin_panel", "register_admin"),
             ("i18n", "install_i18n"),
             ("newsletter", "install_newsletter"),
