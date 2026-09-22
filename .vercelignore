@@ -1,7 +1,0 @@
-.git
-*.pyc
-__pycache__
-.venv
-instance
-*.md
-.env

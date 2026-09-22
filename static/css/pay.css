@@ -1,2 +1,0 @@
-.pay-opt{display:flex;align-items:center;gap:10px;border:1px solid #eadfce;border-radius:12px;padding:12px 14px;margin:8px 0;background:#fff;font-weight:600;color:#420e15}
-.pay-opt:has(input:checked){border-color:#420e15;background:#f6efe4}

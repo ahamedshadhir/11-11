@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+@theme {
+  --color-wine: #420e15;
+  --color-gold: #be923b;
+  --color-cream: #f6f3ee;
+  --color-bg: #f6f3ee;
+  --color-fg: #2a1216;
+  --color-ink: #14080b;
+  --color-muted: #6b5b52;
+  --color-line: #eadfce;
+  --color-card: #ffffff;
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --shadow-card:
+    0 0 0 1px rgb(66 14 21 / 0.06), 0 1px 2px -1px rgb(66 14 21 / 0.06),
+    0 8px 24px rgb(66 14 21 / 0.06);
+  --shadow-card-hover:
+    0 0 0 1px rgb(66 14 21 / 0.1), 0 8px 28px rgb(66 14 21 / 0.1);
+  --shadow-pop:
+    0 0 0 1px rgb(66 14 21 / 0.08), 0 24px 48px rgb(20 8 11 / 0.18);
+}
+
+@layer base {
+  html,
+  body {
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  img {
+    max-width: 100%;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+@layer components {
+  .field {
+    height: 2.75rem;
+    width: 100%;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-line);
+    background: var(--color-card);
+    padding: 0 0.75rem;
+    font-size: 0.875rem;
+    color: var(--color-fg);
+    outline: none;
+  }
+  .field:focus {
+    border-color: var(--color-wine);
+  }
+  textarea.field {
+    height: auto;
+    padding: 0.75rem;
+  }
+  .packshot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-card);
+    overflow: hidden;
+  }
+  .packshot img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
