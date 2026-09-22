@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from extensions import db
 
 
@@ -20,3 +20,26 @@ class FlashSale(db.Model):
             if part.isdigit():
                 out.append(int(part))
         return out
+
+
+def apply_sale(sale, on):
+    from models import Product
+    from catalog import clear_catalog
+
+    Product.query.update({Product.is_flash: False})
+    ids = sale.ids()
+    if on:
+        if not ids:
+            sale.active = False
+            db.session.commit()
+            clear_catalog()
+            return False
+        Product.query.filter(Product.id.in_(ids)).update({Product.is_flash: True}, synchronize_session=False)
+        sale.active = True
+        sale.starts_at = sale.starts_at or datetime.utcnow()
+        sale.ends_at = sale.ends_at or (datetime.utcnow() + timedelta(hours=24))
+    else:
+        sale.active = False
+    db.session.commit()
+    clear_catalog()
+    return True
