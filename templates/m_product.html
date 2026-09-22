@@ -1,0 +1,11 @@
+{% extends "m_base.html" %}
+{% block title %}{{ product.name }} | 11-11{% endblock %}
+{% block content %}
+<section class="pad">
+  <img src="{{ product.image }}" alt="{{ product.name }}" style="width:100%;background:#fff;border-radius:16px">
+  <h1>{{ product.name }}</h1>
+  <p class="price">{{ product.price|qar }}</p>
+  <p>{{ product.description }}</p>
+  <button class="common-btn" type="button" data-add="{{ product.id }}">{{ t('add_to_cart') }}</button>
+</section>
+{% endblock %}
